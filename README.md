@@ -1,6 +1,6 @@
 # Expense Tracker (Client-Side Only)
 
-A simple, purely client-side web page to track credit card expenses for a chosen billing cycle and manage ongoing installments / monthly bills and fixed costs. Users can add expense rows and see live summaries by category and payment method, track installment totals, and manage fixed recurring costs.
+A simple, purely client-side web page to track credit card expenses for a chosen billing cycle and manage ongoing installments / monthly bills, fixed costs, and cash expenses. Users can add expense rows and see live summaries by category and payment method, track installment totals, manage fixed recurring costs, and record cash / non-card spending.
 
 ## Features
 
@@ -16,11 +16,24 @@ A simple, purely client-side web page to track credit card expenses for a chosen
   - Auto ID
   - Description & Amount
   - Footer total for all fixed cost amounts
+- Cash Expenses table:
+  - Auto ID
+  - Description, Amount, Payment Method (Cash, Paylah, Bank Transfer), Category (same options as card expenses)
+  - Footer total for all cash expense amounts
+- Summary panel with live metrics:
+  1. Total Credit Card Bill (current card expenses total)
+  2. Total Card Bill + Installments (1 + monthly installments amount)
+  3. Days Remaining in Cycle (inclusive length minus elapsed days; current day excluded from remaining)
+  4. Projected Cycle Spend: (CardTotal / DaysElapsed * TotalDays) + MonthlyInstallments (fallback to CardTotal + MonthlyInstallments if cycle not started)
+  5. Total Bill Projection Including Fixed Costs: (Projected Cycle Spend + Fixed Costs)
+  6. Total Installment Cost (monthly installments total)
+  7. Monthly Expected Income (user input)
+  8. Total Fixed Costs (fixed costs total)
+  9. Expected Savings: Expected Income - Total Bill Projection
 - Add unlimited rows to any table
 - Live recalculated summaries:
-  - Totals by Category
-  - Totals by Payment Method / Card
-
+  - Totals by Category (card expenses only currently)
+  - Totals by Payment Method / Card (card expenses only currently)
 - Responsive minimalist styling
 
 ## Tech Stack
@@ -44,7 +57,14 @@ A simple, purely client-side web page to track credit card expenses for a chosen
 5. Fixed Costs:
    - Click "Add Fixed Cost" to add a row.
    - Enter Amount; footer total updates instantly.
-6. Add more rows anytime; calculations are instant.
+6. Cash Expenses:
+   - Click "Add Cash Expense" to add a row.
+   - Enter Description, Amount, select Payment Method (Cash / Paylah / Bank Transfer) and Category.
+   - Footer total updates automatically.
+7. Summary Panel:
+   - Enter your Monthly Expected Income to see real-time Expected Savings.
+   - Adjust dates to recalculate projection based on elapsed days.
+8. Add more rows anytime; calculations are instant.
 
 ## Future Ideas
 
@@ -55,7 +75,8 @@ A simple, purely client-side web page to track credit card expenses for a chosen
 - Per-cycle saving & loading
 - Track paid months decrementing Remaining Months automatically
 - Color coding nearing completion installments
-- Aggregate dashboard net monthly obligations (expenses + monthly installments + fixed costs)
+- Aggregate dashboard net monthly obligations (expenses + monthly installments + fixed costs + cash)
+- Include cash expenses in category & payment summaries or display a combined summary
 
 ## Project Structure
 

@@ -102,6 +102,35 @@
         </div>
     </section>
 
+    <section id="cash-section">
+        <div class="section-header">
+            <h2>Cash Expenses</h2>
+            <button id="addCashExpenseBtn" type="button">Add Cash Expense</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="cashExpensesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Total:</th>
+                        <th id="cashExpensesTotal">0.00</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
     <section id="summaries">
         <div class="summary-block">
             <h3>Totals by Category</h3>
@@ -126,6 +155,30 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+    </section>
+
+    <section id="financial-summary">
+        <h2>Summary</h2>
+        <div class="summary-grid">
+            <div class="summary-item"><span class="label">1. Total Credit Card Bill:</span> <span id="sumCardBill"
+                    class="value">0.00</span></div>
+            <div class="summary-item"><span class="label">2. Total Card Bill + Installments:</span> <span
+                    id="sumCardPlusInst" class="value">0.00</span></div>
+            <div class="summary-item"><span class="label">3. Days Remaining in Cycle:</span> <span
+                    id="sumDaysRemaining" class="value">0</span></div>
+            <div class="summary-item"><span class="label">4. Projected Cycle Spend (Card + Installments):</span> <span
+                    id="sumProjectedCycle" class="value">0.00</span></div>
+            <div class="summary-item"><span class="label">5. Total Bill Projection (Incl. Fixed):</span> <span
+                    id="sumTotalProjection" class="value">0.00</span></div>
+            <div class="summary-item"><span class="label">6. Total Installment Cost (Monthly):</span> <span
+                    id="sumInstallmentMonthly" class="value">0.00</span></div>
+            <div class="summary-item"><span class="label">7. Monthly Expected Income:</span> <input type="number"
+                    id="expectedIncome" placeholder="0.00" min="0" step="0.01" /></div>
+            <div class="summary-item"><span class="label">8. Total Fixed Costs:</span> <span id="sumFixedCosts"
+                    class="value">0.00</span></div>
+            <div class="summary-item"><span class="label">9. Expected Savings:</span> <span id="sumExpectedSavings"
+                    class="value">0.00</span></div>
         </div>
     </section>
 

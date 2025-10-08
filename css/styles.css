@@ -124,7 +124,8 @@ input[type="number"] {
 
 #installments-section tfoot th,
 #expense-section tfoot th,
-#fixedcosts-section tfoot th {
+#fixedcosts-section tfoot th,
+#cash-section tfoot th {
     background: #1e293b;
     color: #fff;
     font-weight: 600;
@@ -134,9 +135,57 @@ input[type="number"] {
 #fixedcosts-section tfoot th#fixedCostsTotal,
 #installments-section tfoot th#instAmountTotal,
 #installments-section tfoot th#instTotalRemainingTotal,
+#cash-section tfoot th#cashExpensesTotal,
 #expense-section tfoot th[colspan],
-#fixedcosts-section tfoot th[colspan] {
+#fixedcosts-section tfoot th[colspan],
+#cash-section tfoot th[colspan] {
     text-align: right;
+}
+
+#financial-summary {
+    background: #ffffff;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+}
+
+#financial-summary h2 {
+    margin-top: 0;
+    font-size: 1.15rem;
+}
+
+.summary-grid {
+    display: grid;
+    gap: .65rem .9rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    background: #f1f5f9;
+    padding: .45rem .6rem;
+    border-radius: 6px;
+    font-size: .8rem;
+}
+
+.summary-item .label {
+    font-weight: 600;
+    flex: 1 1 auto;
+}
+
+.summary-item .value {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: #0f172a;
+    min-width: 70px;
+    text-align: right;
+}
+
+#expectedIncome {
+    max-width: 130px;
 }
 
 @media (max-width: 600px) {
@@ -152,5 +201,15 @@ input[type="number"] {
     input,
     select {
         font-size: .7rem;
+    }
+
+    .summary-item {
+        font-size: .7rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .summary-item .value {
+        text-align: left;
     }
 }
