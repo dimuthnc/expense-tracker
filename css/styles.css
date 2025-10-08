@@ -1,0 +1,151 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, Arial, sans-serif;
+    margin: 0;
+    padding: 1rem 2rem;
+    background: #f5f7fa;
+    color: #222;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+#cycle-selectors {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+#cycle-selectors label {
+    background: #fff;
+    padding: .5rem .75rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+    font-size: .9rem;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button {
+    cursor: pointer;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: .55rem .9rem;
+    border-radius: 6px;
+    font-size: .9rem;
+    transition: background .2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+}
+
+th,
+td {
+    padding: .55rem .6rem;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: .85rem;
+}
+
+thead th {
+    background: #eef2f7;
+    font-weight: 600;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: #f0f7ff;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: .4rem .45rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: .8rem;
+    background: #fff;
+}
+
+input[type="number"] {
+    text-align: right;
+}
+
+#summaries {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.summary-block h3 {
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+.summary-table td,
+.summary-table th {
+    font-size: .75rem;
+}
+
+.summary-table tbody tr td:last-child {
+    text-align: right;
+}
+
+#installments-section tfoot th {
+    background: #1e293b;
+    color: #fff;
+    font-weight: 600;
+}
+
+#installments-section tfoot th#instAmountTotal,
+#installments-section tfoot th#instTotalRemainingTotal,
+#installments-section tfoot th[colspan] {
+    text-align: right;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+
+    th,
+    td {
+        font-size: .75rem;
+    }
+
+    input,
+    select {
+        font-size: .7rem;
+    }
+}

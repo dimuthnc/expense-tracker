@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Credit Card Expense Tracker</h1>
+    </header>
+    <section id="cycle-selectors">
+        <label>Cycle From: <input type="date" id="cycleFrom" /></label>
+        <label>Cycle To: <input type="date" id="cycleTo" /></label>
+    </section>
+
+    <section id="expense-section">
+        <div class="section-header">
+            <h2>Expenses</h2>
+            <button id="addRowBtn" type="button">Add Expense</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="expenseTable">
+                <thead>
+                    <tr>
+                        <th>Expense ID</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Category</th>
+                        <th>Payment Method / Card</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="installments-section">
+        <div class="section-header">
+            <h2>Installations and Monthly Bills</h2>
+            <button id="addInstallmentBtn" type="button">Add Item</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="installmentsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Remaining Months</th>
+                        <th>Card</th>
+                        <th>Total Remaining</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Totals:</th>
+                        <th id="instAmountTotal">0.00</th>
+                        <th></th>
+                        <th></th>
+                        <th id="instTotalRemainingTotal">0.00</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+    <section id="summaries">
+        <div class="summary-block">
+            <h3>Totals by Category</h3>
+            <table id="categorySummary" class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="summary-block">
+            <h3>Totals by Payment Method / Card</h3>
+            <table id="paymentSummary" class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Payment Method / Card</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
