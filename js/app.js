@@ -5,12 +5,14 @@
 
     let nextId = 1;
     let nextInstallmentId = 1;
+    let nextFixedCostId = 1;
 
     // Existing Expenses elements
     const expenseTableBody = document.querySelector('#expenseTable tbody');
     const addRowBtn = document.getElementById('addRowBtn');
     const categorySummaryBody = document.querySelector('#categorySummary tbody');
     const paymentSummaryBody = document.querySelector('#paymentSummary tbody');
+    const expenseAmountTotalEl = document.getElementById('expenseAmountTotal');
 
     // Installments elements
     const installmentsTable = document.getElementById('installmentsTable');
@@ -18,6 +20,12 @@
     const addInstallmentBtn = document.getElementById('addInstallmentBtn');
     const instAmountTotalEl = document.getElementById('instAmountTotal');
     const instTotalRemainingEl = document.getElementById('instTotalRemainingTotal');
+
+    // Fixed Costs elements
+    const fixedCostsTable = document.getElementById('fixedCostsTable');
+    const fixedCostsBody = fixedCostsTable ? fixedCostsTable.querySelector('tbody') : null;
+    const addFixedCostBtn = document.getElementById('addFixedCostBtn');
+    const fixedCostsTotalEl = document.getElementById('fixedCostsTotal');
 
     function createSelect(options, cls) {
         const sel = document.createElement('select');
@@ -56,7 +64,7 @@
         amtInput.min = '0';
         amtInput.step = '0.01';
         amtInput.placeholder = '0.00';
-        amtInput.addEventListener('input', updateSummaries);
+        amtInput.addEventListener('input', () => { updateSummaries(); updateExpenseTotal(); });
         amtTd.appendChild(amtInput);
         tr.appendChild(amtTd);
 
@@ -121,10 +129,19 @@
         });
 
         updateInstallmentsFooterTotals();
+        updateExpenseTotal();
+        updateFixedCostsTotal();
     }
 
     function formatCurrency(num) {
         return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function updateExpenseTotal() {
+        if (!expenseAmountTotalEl) return;
+        const data = collectExpenseData();
+        const total = data.reduce((sum, r) => sum + r.amount, 0);
+        expenseAmountTotalEl.textContent = formatCurrency(total);
     }
 
     // ---------------- Installments ----------------
@@ -217,6 +234,49 @@
         instTotalRemainingEl.textContent = formatCurrency(sumTotalRemaining);
     }
 
+    // ---------------- Fixed Costs ----------------
+    function addFixedCostRow() {
+        if (!fixedCostsBody) return;
+        const tr = document.createElement('tr');
+
+        // ID
+        const idTd = document.createElement('td');
+        idTd.textContent = String(nextFixedCostId++);
+        tr.appendChild(idTd);
+
+        // Description
+        const descTd = document.createElement('td');
+        const descInput = document.createElement('input');
+        descInput.type = 'text';
+        descInput.placeholder = 'Description';
+        descTd.appendChild(descInput);
+        tr.appendChild(descTd);
+
+        // Amount
+        const amtTd = document.createElement('td');
+        const amtInput = document.createElement('input');
+        amtInput.type = 'number';
+        amtInput.min = '0';
+        amtInput.step = '0.01';
+        amtInput.placeholder = '0.00';
+        amtInput.addEventListener('input', updateFixedCostsTotal);
+        amtTd.appendChild(amtInput);
+        tr.appendChild(amtTd);
+
+        fixedCostsBody.appendChild(tr);
+    }
+
+    function updateFixedCostsTotal() {
+        if (!fixedCostsBody || !fixedCostsTotalEl) return;
+        let total = 0;
+        const rows = Array.from(fixedCostsBody.querySelectorAll('tr'));
+        rows.forEach(row => {
+            const amt = parseFloat(row.children[2].querySelector('input').value) || 0;
+            total += amt;
+        });
+        fixedCostsTotalEl.textContent = formatCurrency(total);
+    }
+
     // ---------------- Event Listeners ----------------
     addRowBtn.addEventListener('click', () => {
         addExpenseRow();
@@ -229,11 +289,22 @@
         });
     }
 
+    if (addFixedCostBtn) {
+        addFixedCostBtn.addEventListener('click', () => {
+            addFixedCostRow();
+            updateFixedCostsTotal();
+        });
+    }
+
     // Initialize
     addExpenseRow();
     updateSummaries();
     if (installmentsBody) {
         addInstallmentRow();
         updateInstallmentsFooterTotals();
+    }
+    if (fixedCostsBody) {
+        addFixedCostRow();
+        updateFixedCostsTotal();
     }
 })();

@@ -122,15 +122,20 @@ input[type="number"] {
     text-align: right;
 }
 
-#installments-section tfoot th {
+#installments-section tfoot th,
+#expense-section tfoot th,
+#fixedcosts-section tfoot th {
     background: #1e293b;
     color: #fff;
     font-weight: 600;
 }
 
+#expense-section tfoot th#expenseAmountTotal,
+#fixedcosts-section tfoot th#fixedCostsTotal,
 #installments-section tfoot th#instAmountTotal,
 #installments-section tfoot th#instTotalRemainingTotal,
-#installments-section tfoot th[colspan] {
+#expense-section tfoot th[colspan],
+#fixedcosts-section tfoot th[colspan] {
     text-align: right;
 }
 

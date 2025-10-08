@@ -33,8 +33,15 @@
                         <th>Payment Method / Card</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2" style="text-align:right;">Total:</th>
+                        <th id="expenseAmountTotal">0.00</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </section>
@@ -64,6 +71,31 @@
                         <th></th>
                         <th></th>
                         <th id="instTotalRemainingTotal">0.00</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+    <section id="fixedcosts-section">
+        <div class="section-header">
+            <h2>Fixed Costs</h2>
+            <button id="addFixedCostBtn" type="button">Add Fixed Cost</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="fixedCostsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th style="text-align:right;" colspan="2">Total:</th>
+                        <th id="fixedCostsTotal">0.00</th>
                     </tr>
                 </tfoot>
             </table>
