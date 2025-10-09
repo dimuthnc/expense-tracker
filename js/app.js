@@ -47,6 +47,8 @@
     const sumExpectedSavingsEl = document.getElementById('sumExpectedSavings');
     const cycleFromInput = document.getElementById('cycleFrom');
     const cycleToInput = document.getElementById('cycleTo');
+    const cyclePrevBtn = document.getElementById('cyclePrevBtn');
+    const cycleNextBtn = document.getElementById('cycleNextBtn');
 
     // Import/Export elements
     const exportJsonBtn = document.getElementById('exportJsonBtn');
@@ -608,6 +610,55 @@
     }
     if (cycleFromInput) cycleFromInput.addEventListener('change', updateSummary);
     if (cycleToInput) cycleToInput.addEventListener('change', updateSummary);
+    if (cyclePrevBtn) cyclePrevBtn.addEventListener('click', () => shiftCycle(-1));
+    if (cycleNextBtn) cycleNextBtn.addEventListener('click', () => shiftCycle(1));
+
+    // -------- Cycle Helpers (15th to 15th logic) --------
+    function formatYMD(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+    function computeCycleContaining(date) {
+        // A cycle runs from the 15th of a month (inclusive) to the 15th of next month (exclusive? For UI we mark end date as that next 15th)
+        // Given a date, find the start 15th <= date < next 15th.
+        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        let start; let end;
+        if (d.getDate() >= 15) {
+            start = new Date(d.getFullYear(), d.getMonth(), 15);
+            end = new Date(d.getFullYear(), d.getMonth() + 1, 15);
+        } else {
+            start = new Date(d.getFullYear(), d.getMonth() - 1, 15);
+            end = new Date(d.getFullYear(), d.getMonth(), 15);
+        }
+        return { start, end };
+    }
+    function setCycle(startDate, endDate) {
+        if (cycleFromInput) cycleFromInput.value = formatYMD(startDate);
+        if (cycleToInput) cycleToInput.value = formatYMD(endDate);
+        updateSummary();
+    }
+    function initDefaultCycleIfEmpty() {
+        if (cycleFromInput && cycleToInput && !cycleFromInput.value && !cycleToInput.value) {
+            const today = new Date();
+            const { start, end } = computeCycleContaining(today);
+            setCycle(start, end);
+        }
+    }
+    function shiftCycle(deltaMonths) {
+        if (!cycleFromInput || !cycleToInput || !cycleFromInput.value || !cycleToInput.value) {
+            initDefaultCycleIfEmpty();
+        }
+        if (!cycleFromInput.value || !cycleToInput.value) return; // still missing
+        const start = new Date(cycleFromInput.value + 'T00:00:00');
+        const end = new Date(cycleToInput.value + 'T00:00:00');
+        if (isNaN(start) || isNaN(end)) return;
+        // We assume they align to 15th boundaries; shift both by deltaMonths
+        const newStart = new Date(start.getFullYear(), start.getMonth() + deltaMonths, 15);
+        const newEnd = new Date(end.getFullYear(), end.getMonth() + deltaMonths, 15);
+        setCycle(newStart, newEnd);
+    }
 
     // Import/export helper implementations
     function collectInstallmentsData() {
@@ -646,6 +697,7 @@
         return {
             cycleStart: cycleFromInput?.value || '',
             cycleEnd: cycleToInput?.value || '',
+            expectedIncome: expectedIncomeInput?.value ? parseFloat(expectedIncomeInput.value) || 0 : 0,
             expenses: expenseFiltered,
             installments: installmentsFiltered,
             fixedCosts: fixedFiltered,
@@ -675,8 +727,8 @@
         const data = getDataModel();
         const lines = [];
         lines.push('# Cycle');
-        lines.push('cycleStart,cycleEnd');
-        lines.push(`${data.cycleStart || ''},${data.cycleEnd || ''}`);
+        lines.push('cycleStart,cycleEnd,expectedIncome');
+        lines.push(`${data.cycleStart || ''},${data.cycleEnd || ''},${data.expectedIncome != null ? data.expectedIncome : ''}`);
         lines.push('');
         lines.push('# Expenses');
         lines.push('description,amount,category,payment');
@@ -702,7 +754,9 @@
         wrap.className = 'row-actions';
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
-        delBtn.textContent = 'Delete';
+        delBtn.classList.add('icon-btn','delete-btn');
+        delBtn.setAttribute('aria-label', 'Delete row');
+        delBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6"/><path d="M10 10v6"/><path d="M14 10v6"/><path d="M9 6l1-2h4l1 2"/></svg>';
         delBtn.addEventListener('click', () => {
             tr.remove();
             postRowMutation(type);
@@ -734,6 +788,9 @@
         clearAllTables();
         if (cycleFromInput && data.cycleStart) cycleFromInput.value = data.cycleStart;
         if (cycleToInput && data.cycleEnd) cycleToInput.value = data.cycleEnd;
+        if (expectedIncomeInput && typeof data.expectedIncome !== 'undefined' && data.expectedIncome !== null && data.expectedIncome !== '') {
+            expectedIncomeInput.value = data.expectedIncome;
+        }
         const eArr = Array.isArray(data.expenses) ? data.expenses : [];
         const iArr = Array.isArray(data.installments) ? data.installments : [];
         const fArr = Array.isArray(data.fixedCosts) ? data.fixedCosts : [];
@@ -778,7 +835,7 @@
     function importCSVText(text) {
         const lines = text.split(/\r?\n/);
         let mode = ''; let headerConsumed = false;
-        const data = { cycleStart: '', cycleEnd: '', expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
+        const data = { cycleStart: '', cycleEnd: '', expectedIncome: '', expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
         lines.forEach(raw => {
             const line = raw.trim();
             if (line.startsWith('#')) { mode = line.replace(/^#\s*/, '').trim(); headerConsumed = false; return; }
@@ -787,7 +844,11 @@
             const cols = splitCsv(line);
             switch (mode) {
                 case 'Cycle':
-                    if (cols.length >= 2 && !data.cycleStart) { data.cycleStart = cols[0]; data.cycleEnd = cols[1]; }
+                    if (cols.length >= 2 && !data.cycleStart) {
+                        data.cycleStart = cols[0];
+                        data.cycleEnd = cols[1];
+                        if (cols.length >= 3) data.expectedIncome = cols[2];
+                    }
                     break;
                 case 'Expenses':
                     if (cols.length >= 4) data.expenses.push({ description: cols[0], amount: parseFloat(cols[1]) || 0, category: cols[2], payment: cols[3] });
@@ -834,6 +895,7 @@
     }
 
     // Initialize
+    initDefaultCycleIfEmpty();
     addExpenseRow();
     updateSummaries();
     if (installmentsBody) {
