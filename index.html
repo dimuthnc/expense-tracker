@@ -11,6 +11,12 @@
 <body>
     <header>
         <h1>Credit Card Expense Tracker</h1>
+        <div id="importExportBar">
+            <button id="exportJsonBtn" type="button">Export JSON</button>
+            <button id="exportCsvBtn" type="button">Export CSV</button>
+            <button id="importBtn" type="button">Import...</button>
+            <input type="file" id="importFileInput" accept=".json,.csv,text/csv" style="display:none;" />
+        </div>
     </header>
     <section id="cycle-selectors">
         <label>Cycle From: <input type="date" id="cycleFrom" /></label>

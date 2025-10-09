@@ -30,6 +30,7 @@ A simple, purely client-side web page to track credit card expenses for a chosen
   7. Monthly Expected Income (user input)
   8. Total Fixed Costs (fixed costs total)
   9. Expected Savings: Expected Income - Total Bill Projection
+- Import / Export (JSON & CSV) of cycle, expenses, installments, fixed costs, cash expenses (excluding internal IDs)
 - Add unlimited rows to any table
 - Live recalculated summaries:
   - Totals by Category (card expenses only currently)
@@ -64,12 +65,90 @@ A simple, purely client-side web page to track credit card expenses for a chosen
 7. Summary Panel:
    - Enter your Monthly Expected Income to see real-time Expected Savings.
    - Adjust dates to recalculate projection based on elapsed days.
-8. Add more rows anytime; calculations are instant.
+8. Import / Export:
+   - Use the header buttons: Export JSON / Export CSV / Import...
+   - Import accepts a previously exported `.json` or `.csv` file (see formats below).
+9. Add more rows anytime; calculations are instant.
+
+## Import / Export Formats
+
+### JSON Format
+
+File name pattern: `expense_export_<timestamp>.json`
+
+Schema:
+```json
+{
+  "cycleStart": "YYYY-MM-DD",
+  "cycleEnd": "YYYY-MM-DD",
+  "expenses": [
+    { "description": "string", "amount": number, "category": "string", "payment": "string" }
+  ],
+  "installments": [
+    { "description": "string", "amount": number, "remainingMonths": number, "card": "string" }
+  ],
+  "fixedCosts": [
+    { "description": "string", "amount": number }
+  ],
+  "cashExpenses": [
+    { "description": "string", "amount": number, "paymentMethod": "string", "category": "string" }
+  ]
+}
+```
+Notes:
+- Internal row IDs are not stored; they are regenerated sequentially on import.
+- Amount fields are stored as raw numbers.
+
+### CSV Format
+
+Multi-section text file with section headers prefixed by `#`. Blank line separates sections. First line after a section header is that section's column header row. Example:
+
+```
+# Cycle
+cycleStart,cycleEnd
+2025-10-01,2025-10-31
+
+# Expenses
+description,amount,category,payment
+Lunch,12.50,Outside Food,HSBC
+Groceries,45.90,Grocery,DBS
+
+# Installments
+description,amount,remainingMonths,card
+Phone Plan,30.00,6,HSBC
+
+# FixedCosts
+description,amount
+Rent,1200
+Internet,45
+
+# CashExpenses
+description,amount,paymentMethod,category
+Market Veg,18.25,Cash,Grocery
+```
+
+Parsing Rules:
+- Lines starting with `#` begin a new section.
+- First non-empty line after a section header is treated as that section's header and skipped.
+- Commas inside quoted fields and escaped quotes (`""`) are supported.
+- Amount / numeric values parsed with `parseFloat` / `parseInt`.
+
+### Import Behavior
+
+- Existing table rows are cleared before population.
+- Cycle dates set if provided.
+- All totals, summaries, and projections recomputed automatically after import.
+- Missing sections or empty arrays are safe (treated as empty lists).
+
+### Validation & Errors
+
+- Invalid JSON triggers a simple alert.
+- CSV parser is forgiving; malformed lines that do not match expected column counts are skipped.
 
 ## Future Ideas
 
 - Persist data with `localStorage`
-- Export to CSV (all tables)
+- Export to CSV (all tables) (DONE)
 - Delete / reorder rows
 - Validation & currency selection
 - Per-cycle saving & loading
@@ -77,6 +156,8 @@ A simple, purely client-side web page to track credit card expenses for a chosen
 - Color coding nearing completion installments
 - Aggregate dashboard net monthly obligations (expenses + monthly installments + fixed costs + cash)
 - Include cash expenses in category & payment summaries or display a combined summary
+- Import validation report / error highlighting
+- Download template button
 
 ## Project Structure
 

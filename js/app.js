@@ -48,6 +48,12 @@
     const cycleFromInput = document.getElementById('cycleFrom');
     const cycleToInput = document.getElementById('cycleTo');
 
+    // Import/Export elements
+    const exportJsonBtn = document.getElementById('exportJsonBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const importBtn = document.getElementById('importBtn');
+    const importFileInput = document.getElementById('importFileInput');
+
     function createSelect(options, cls) {
         const sel = document.createElement('select');
         if (cls) sel.className = cls;
@@ -66,7 +72,7 @@
     }
 
     // ---------------- Expenses ----------------
-    function addExpenseRow() {
+    function addExpenseRow(prefill) {
         const tr = document.createElement('tr');
 
         // ID (auto)
@@ -108,6 +114,12 @@
         tr.appendChild(payTd);
 
         expenseTableBody.appendChild(tr);
+        if (prefill) {
+            descInput.value = prefill.description || '';
+            amtInput.value = prefill.amount != null ? prefill.amount : '';
+            if (prefill.category) catSelect.value = prefill.category;
+            if (prefill.payment) paySelect.value = prefill.payment;
+        }
     }
 
     function collectExpenseData() {
@@ -172,7 +184,7 @@
     }
 
     // ---------------- Installments ----------------
-    function addInstallmentRow() {
+    function addInstallmentRow(prefill) {
         if (!installmentsBody) return;
         const tr = document.createElement('tr');
 
@@ -224,6 +236,13 @@
         tr.appendChild(totalRemTd);
 
         installmentsBody.appendChild(tr);
+        if (prefill) {
+            descInput.value = prefill.description || '';
+            amtInput.value = prefill.amount != null ? prefill.amount : '';
+            remInput.value = prefill.remainingMonths != null ? prefill.remainingMonths : '';
+            if (prefill.card) cardSelect.value = prefill.card;
+            recalcInstallmentRowTotals();
+        }
     }
 
     function handleInstallmentChange() {
@@ -262,7 +281,7 @@
     }
 
     // ---------------- Fixed Costs ----------------
-    function addFixedCostRow() {
+    function addFixedCostRow(prefill) {
         if (!fixedCostsBody) return;
         const tr = document.createElement('tr');
 
@@ -291,6 +310,10 @@
         tr.appendChild(amtTd);
 
         fixedCostsBody.appendChild(tr);
+        if (prefill) {
+            descInput.value = prefill.description || '';
+            amtInput.value = prefill.amount != null ? prefill.amount : '';
+        }
     }
 
     function updateFixedCostsTotal() {
@@ -305,7 +328,7 @@
     }
 
     // ---------------- Cash Expenses ----------------
-    function addCashExpenseRow() {
+    function addCashExpenseRow(prefill) {
         if (!cashExpensesBody) return;
         const tr = document.createElement('tr');
 
@@ -348,6 +371,12 @@
         tr.appendChild(catTd);
 
         cashExpensesBody.appendChild(tr);
+        if (prefill) {
+            descInput.value = prefill.description || '';
+            amtInput.value = prefill.amount != null ? prefill.amount : '';
+            if (prefill.paymentMethod) paySelect.value = prefill.paymentMethod;
+            if (prefill.category) catSelect.value = prefill.category;
+        }
     }
 
     function updateCashExpensesTotal() {
@@ -462,6 +491,201 @@
     }
     if (cycleFromInput) cycleFromInput.addEventListener('change', updateSummary);
     if (cycleToInput) cycleToInput.addEventListener('change', updateSummary);
+
+    // Import/export helper implementations
+    function collectInstallmentsData() {
+        if (!installmentsBody) return [];
+        return Array.from(installmentsBody.querySelectorAll('tr')).map(r => ({
+            description: r.children[1].querySelector('input').value.trim(),
+            amount: parseFloat(r.children[2].querySelector('input').value) || 0,
+            remainingMonths: parseInt(r.children[3].querySelector('input').value) || 0,
+            card: r.children[4].querySelector('select').value
+        }));
+    }
+    function collectFixedCostsData() {
+        if (!fixedCostsBody) return [];
+        return Array.from(fixedCostsBody.querySelectorAll('tr')).map(r => ({
+            description: r.children[1].querySelector('input').value.trim(),
+            amount: parseFloat(r.children[2].querySelector('input').value) || 0
+        }));
+    }
+    function collectCashExpensesData() {
+        if (!cashExpensesBody) return [];
+        return Array.from(cashExpensesBody.querySelectorAll('tr')).map(r => ({
+            description: r.children[1].querySelector('input').value.trim(),
+            amount: parseFloat(r.children[2].querySelector('input').value) || 0,
+            paymentMethod: r.children[3].querySelector('select').value,
+            category: r.children[4].querySelector('select').value
+        }));
+    }
+    function getDataModel() {
+        // Filter out purely empty rows (no description and zero/blank amount)
+        const expenseFiltered = collectExpenseData()
+            .filter(e => e.description || e.amount)
+            .map(e => ({ description: e.description, amount: e.amount, category: e.category, payment: e.payment }));
+        const installmentsFiltered = collectInstallmentsData().filter(i => i.description || i.amount || i.remainingMonths);
+        const fixedFiltered = collectFixedCostsData().filter(f => f.description || f.amount);
+        const cashFiltered = collectCashExpensesData().filter(c => c.description || c.amount);
+        return {
+            cycleStart: cycleFromInput?.value || '',
+            cycleEnd: cycleToInput?.value || '',
+            expenses: expenseFiltered,
+            installments: installmentsFiltered,
+            fixedCosts: fixedFiltered,
+            cashExpenses: cashFiltered
+        };
+    }
+    function downloadBlob(filename, mime, text) {
+        const blob = new Blob([text], { type: mime });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+    }
+    function csvEscape(val) {
+        if (val == null) return '';
+        const s = String(val).replace(/"/g, '""');
+        if (/[",\n]/.test(s)) return '"' + s + '"';
+        return s;
+    }
+    function exportJSON() {
+        const data = getDataModel();
+        downloadBlob(`expense_export_${Date.now()}.json`, 'application/json', JSON.stringify(data, null, 2));
+    }
+    function exportCSV() {
+        const data = getDataModel();
+        const lines = [];
+        lines.push('# Cycle');
+        lines.push('cycleStart,cycleEnd');
+        lines.push(`${data.cycleStart || ''},${data.cycleEnd || ''}`);
+        lines.push('');
+        lines.push('# Expenses');
+        lines.push('description,amount,category,payment');
+        data.expenses.forEach(e => lines.push(`${csvEscape(e.description)},${e.amount},${csvEscape(e.category)},${csvEscape(e.payment)}`));
+        lines.push('');
+        lines.push('# Installments');
+        lines.push('description,amount,remainingMonths,card');
+        data.installments.forEach(i => lines.push(`${csvEscape(i.description)},${i.amount},${i.remainingMonths},${csvEscape(i.card)}`));
+        lines.push('');
+        lines.push('# FixedCosts');
+        lines.push('description,amount');
+        data.fixedCosts.forEach(f => lines.push(`${csvEscape(f.description)},${f.amount}`));
+        lines.push('');
+        lines.push('# CashExpenses');
+        lines.push('description,amount,paymentMethod,category');
+        data.cashExpenses.forEach(c => lines.push(`${csvEscape(c.description)},${c.amount},${csvEscape(c.paymentMethod)},${csvEscape(c.category)}`));
+        downloadBlob(`expense_export_${Date.now()}.csv`, 'text/csv', lines.join('\n'));
+    }
+    function clearAllTables() {
+        expenseTableBody.innerHTML = '';
+        if (installmentsBody) installmentsBody.innerHTML = '';
+        if (fixedCostsBody) fixedCostsBody.innerHTML = '';
+        if (cashExpensesBody) cashExpensesBody.innerHTML = '';
+        nextId = 1; nextInstallmentId = 1; nextFixedCostId = 1; nextCashExpenseId = 1;
+    }
+    function populateFromData(data) {
+        clearAllTables();
+        if (cycleFromInput && data.cycleStart) cycleFromInput.value = data.cycleStart;
+        if (cycleToInput && data.cycleEnd) cycleToInput.value = data.cycleEnd;
+        const eArr = Array.isArray(data.expenses) ? data.expenses : [];
+        const iArr = Array.isArray(data.installments) ? data.installments : [];
+        const fArr = Array.isArray(data.fixedCosts) ? data.fixedCosts : [];
+        const cArr = Array.isArray(data.cashExpenses) ? data.cashExpenses : [];
+        eArr.forEach(e => addExpenseRow(e));
+        iArr.forEach(i => addInstallmentRow(i));
+        fArr.forEach(f => addFixedCostRow(f));
+        cArr.forEach(c => addCashExpenseRow(c));
+        // If all sections empty, ensure at least one blank starter row per table for UX
+        if (eArr.length === 0) addExpenseRow();
+        if (iArr.length === 0 && installmentsBody) addInstallmentRow();
+        if (fArr.length === 0 && fixedCostsBody) addFixedCostRow();
+        if (cArr.length === 0 && cashExpensesBody) addCashExpenseRow();
+        updateSummaries();
+        recalcInstallmentRowTotals();
+        updateInstallmentsFooterTotals();
+        updateFixedCostsTotal();
+        updateCashExpensesTotal();
+        updateSummary();
+    }
+    function importJSONText(text) {
+        try { const obj = JSON.parse(text); populateFromData(obj); }
+        catch { alert('Invalid JSON file.'); }
+    }
+    function splitCsv(line) {
+        const result = []; let cur = ''; let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (inQuotes) {
+                if (ch === '"') { if (i + 1 < line.length && line[i + 1] === '"') { cur += '"'; i++; } else { inQuotes = false; } }
+                else cur += ch;
+            } else {
+                if (ch === ',') { result.push(cur); cur = ''; }
+                else if (ch === '"') { inQuotes = true; }
+                else cur += ch;
+            }
+        }
+        result.push(cur);
+        return result.map(s => s.trim());
+    }
+    function importCSVText(text) {
+        const lines = text.split(/\r?\n/);
+        let mode = ''; let headerConsumed = false;
+        const data = { cycleStart: '', cycleEnd: '', expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
+        lines.forEach(raw => {
+            const line = raw.trim();
+            if (line.startsWith('#')) { mode = line.replace(/^#\s*/, '').trim(); headerConsumed = false; return; }
+            if (!line) return;
+            if (!headerConsumed) { headerConsumed = true; return; }
+            const cols = splitCsv(line);
+            switch (mode) {
+                case 'Cycle':
+                    if (cols.length >= 2 && !data.cycleStart) { data.cycleStart = cols[0]; data.cycleEnd = cols[1]; }
+                    break;
+                case 'Expenses':
+                    if (cols.length >= 4) data.expenses.push({ description: cols[0], amount: parseFloat(cols[1]) || 0, category: cols[2], payment: cols[3] });
+                    break;
+                case 'Installments':
+                    if (cols.length >= 4) data.installments.push({ description: cols[0], amount: parseFloat(cols[1]) || 0, remainingMonths: parseInt(cols[2]) || 0, card: cols[3] });
+                    break;
+                case 'FixedCosts':
+                    if (cols.length >= 2) data.fixedCosts.push({ description: cols[0], amount: parseFloat(cols[1]) || 0 });
+                    break;
+                case 'CashExpenses':
+                    if (cols.length >= 4) data.cashExpenses.push({ description: cols[0], amount: parseFloat(cols[1]) || 0, paymentMethod: cols[2], category: cols[3] });
+                    break;
+            }
+        });
+        populateFromData(data);
+    }
+    function handleFileImport(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const text = e.target.result;
+            if (file.name.toLowerCase().endsWith('.json')) importJSONText(text);
+            else importCSVText(text);
+        };
+        reader.readAsText(file);
+    }
+
+    // Bind export/import buttons (ensure available even with no data yet)
+    if (exportJsonBtn) exportJsonBtn.addEventListener('click', () => {
+        const data = getDataModel();
+        // Always allow export, even if arrays empty.
+        downloadBlob(`expense_export_${Date.now()}.json`, 'application/json', JSON.stringify(data, null, 2));
+    });
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', () => {
+        exportCSV();
+    });
+    if (importBtn && importFileInput) {
+        importBtn.addEventListener('click', () => importFileInput.click());
+        importFileInput.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) handleFileImport(file);
+            importFileInput.value = '';
+        });
+    }
 
     // Initialize
     addExpenseRow();
