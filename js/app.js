@@ -271,6 +271,7 @@
         updateExpenseTotal();
         updateFixedCostsTotal();
         updateCashExpensesTotal();
+        updateExpenseCharts(byCategory, byPayment);
         updateSummary();
     }
 
@@ -283,6 +284,115 @@
         const data = collectExpenseData();
         const total = data.reduce((sum, r) => sum + r.amount, 0);
         expenseAmountTotalEl.textContent = formatCurrency(total);
+    }
+
+    // ---------------- Pie Charts (Expenses Distribution) ----------------
+    const chartByCategoryCanvas = document.getElementById('chartByCategory');
+    const chartByPaymentCanvas = document.getElementById('chartByPayment');
+    const legendByCategory = document.getElementById('legendByCategory');
+    const legendByPayment = document.getElementById('legendByPayment');
+    let lastCategoryDataKey = '';
+    let lastPaymentDataKey = '';
+
+    function buildDataKey(obj) {
+        return Object.keys(obj).sort().map(k => k + ':' + obj[k]).join('|');
+    }
+
+    function generatePalette(n, seedHue) {
+        // Simple evenly spaced hues; adjust saturation/lightness for theme.
+        const colors = [];
+        const baseHue = typeof seedHue === 'number' ? seedHue : Math.floor(Math.random() * 360);
+        for (let i = 0; i < n; i++) {
+            const hue = (baseHue + (360 / n) * i) % 360;
+            colors.push(`hsl(${hue} 70% 55%)`);
+        }
+        return colors;
+    }
+
+    function drawPie(ctx, dataPairs, palette) {
+        const total = dataPairs.reduce((s, p) => s + p[1], 0);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        const centerX = ctx.canvas.width / 2;
+        const centerY = ctx.canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 4;
+        if (total <= 0) {
+            // Draw empty ring / placeholder
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--surface-alt') || '#eee';
+            ctx.fill();
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-muted') || '#666';
+            ctx.font = '12px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('No data', centerX, centerY);
+            return;
+        }
+        let startAngle = -Math.PI / 2; // start at top
+        dataPairs.forEach(([label, value], idx) => {
+            const sliceAngle = (value / total) * Math.PI * 2;
+            const endAngle = startAngle + sliceAngle;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = palette[idx % palette.length];
+            ctx.fill();
+            startAngle = endAngle;
+        });
+        // Optional: donut hole for style
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+        // Hole background
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.43, 0, Math.PI * 2);
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--surface');
+        ctx.fill();
+    }
+
+    function updateLegend(listEl, dataPairs, palette) {
+        if (!listEl) return;
+        const total = dataPairs.reduce((s, p) => s + p[1], 0) || 0;
+        listEl.innerHTML = '';
+        dataPairs.forEach(([label, value], idx) => {
+            const li = document.createElement('li');
+            const sw = document.createElement('span'); sw.className = 'swatch'; sw.style.background = palette[idx % palette.length];
+            const lbl = document.createElement('span'); lbl.className = 'label'; lbl.textContent = label || '(Uncategorized)';
+            const amt = document.createElement('span'); amt.className = 'value'; amt.textContent = formatCurrency(value);
+            const pct = document.createElement('span'); pct.className = 'percent';
+            pct.textContent = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+            li.appendChild(sw); li.appendChild(lbl); li.appendChild(amt); li.appendChild(pct);
+            listEl.appendChild(li);
+        });
+    }
+
+    function updateExpenseCharts(byCategory, byPayment) {
+        // Prepare sorted data arrays excluding zeroes
+        if (chartByCategoryCanvas) {
+            const ctxCat = chartByCategoryCanvas.getContext('2d');
+            const catPairs = Object.entries(byCategory).filter(([,v]) => v > 0).sort((a,b)=>b[1]-a[1]);
+            const key = buildDataKey(byCategory);
+            if (buildDataKey(byCategory) !== lastCategoryDataKey) {
+                const palette = generatePalette(Math.max(catPairs.length, 1), 330);
+                drawPie(ctxCat, catPairs, palette);
+                updateLegend(legendByCategory, catPairs, palette);
+                lastCategoryDataKey = key;
+            }
+        }
+        if (chartByPaymentCanvas) {
+            const ctxPay = chartByPaymentCanvas.getContext('2d');
+            const payPairs = Object.entries(byPayment).filter(([,v]) => v > 0).sort((a,b)=>b[1]-a[1]);
+            const key = buildDataKey(byPayment);
+            if (buildDataKey(byPayment) !== lastPaymentDataKey) {
+                const palette = generatePalette(Math.max(payPairs.length, 1), 210);
+                drawPie(ctxPay, payPairs, palette);
+                updateLegend(legendByPayment, payPairs, palette);
+                lastPaymentDataKey = key;
+            }
+        }
     }
 
     // ---------------- Installments ----------------
@@ -759,6 +869,9 @@
             cycleEnd: cycleToInput?.value || '',
             expectedIncome: expectedIncomeInput?.value ? parseFloat(expectedIncomeInput.value) || 0 : 0,
             expectedSavings: expectedSavingsInput?.value ? parseFloat(expectedSavingsInput.value) || 0 : 0,
+            categories: Array.isArray(CATEGORY_OPTIONS) ? CATEGORY_OPTIONS.slice() : [],
+            cardPaymentMethods: Array.isArray(PAYMENT_OPTIONS) ? PAYMENT_OPTIONS.slice() : [],
+            cashPaymentMethods: Array.isArray(CASH_PAYMENT_OPTIONS) ? CASH_PAYMENT_OPTIONS.slice() : [],
             expenses: expenseFiltered,
             installments: installmentsFiltered,
             fixedCosts: fixedFiltered,
@@ -790,6 +903,18 @@
         lines.push('# Cycle');
         lines.push('cycleStart,cycleEnd,expectedIncome,expectedSavings');
         lines.push(`${data.cycleStart || ''},${data.cycleEnd || ''},${data.expectedIncome != null ? data.expectedIncome : ''},${data.expectedSavings != null ? data.expectedSavings : ''}`);
+        lines.push('');
+        lines.push('# Categories');
+        lines.push('category');
+        (data.categories || []).forEach(cat => lines.push(`${csvEscape(cat)}`));
+        lines.push('');
+        lines.push('# CardPaymentMethods');
+        lines.push('card');
+        (data.cardPaymentMethods || []).forEach(card => lines.push(`${csvEscape(card)}`));
+        lines.push('');
+        lines.push('# CashPaymentMethods');
+        lines.push('method');
+        (data.cashPaymentMethods || []).forEach(method => lines.push(`${csvEscape(method)}`));
         lines.push('');
         lines.push('# Expenses');
         lines.push('description,amount,category,payment');
@@ -855,6 +980,12 @@
         if (expectedSavingsInput && typeof data.expectedSavings !== 'undefined' && data.expectedSavings !== null && data.expectedSavings !== '') {
             expectedSavingsInput.value = data.expectedSavings;
         }
+        // Apply configurable lists if provided
+        if (Array.isArray(data.categories) && data.categories.length) CATEGORY_OPTIONS = data.categories.slice();
+        if (Array.isArray(data.cardPaymentMethods) && data.cardPaymentMethods.length) PAYMENT_OPTIONS = data.cardPaymentMethods.slice();
+        if (Array.isArray(data.cashPaymentMethods) && data.cashPaymentMethods.length) CASH_PAYMENT_OPTIONS = data.cashPaymentMethods.slice();
+        // Re-render config lists and ensure selects use new options
+        renderConfigLists();
         const eArr = Array.isArray(data.expenses) ? data.expenses : [];
         const iArr = Array.isArray(data.installments) ? data.installments : [];
         const fArr = Array.isArray(data.fixedCosts) ? data.fixedCosts : [];
@@ -868,6 +999,8 @@
         if (iArr.length === 0 && installmentsBody) addInstallmentRow();
         if (fArr.length === 0 && fixedCostsBody) addFixedCostRow();
         if (cArr.length === 0 && cashExpensesBody) addCashExpenseRow();
+        // After rows are created, refresh selects to include legacy values if needed
+        refreshAllSelects();
         updateSummaries();
         recalcInstallmentRowTotals();
         updateInstallmentsFooterTotals();
@@ -899,7 +1032,7 @@
     function importCSVText(text) {
         const lines = text.split(/\r?\n/);
         let mode = ''; let headerConsumed = false;
-        const data = { cycleStart: '', cycleEnd: '', expectedIncome: '', expectedSavings: '', expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
+        const data = { cycleStart: '', cycleEnd: '', expectedIncome: '', expectedSavings: '', categories: [], cardPaymentMethods: [], cashPaymentMethods: [], expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
         lines.forEach(raw => {
             const line = raw.trim();
             if (line.startsWith('#')) { mode = line.replace(/^#\s*/, '').trim(); headerConsumed = false; return; }
@@ -914,6 +1047,15 @@
                         if (cols.length >= 3) data.expectedIncome = cols[2];
                         if (cols.length >= 4) data.expectedSavings = cols[3];
                     }
+                    break;
+                case 'Categories':
+                    if (cols.length >= 1 && cols[0] !== '') data.categories.push(cols[0]);
+                    break;
+                case 'CardPaymentMethods':
+                    if (cols.length >= 1 && cols[0] !== '') data.cardPaymentMethods.push(cols[0]);
+                    break;
+                case 'CashPaymentMethods':
+                    if (cols.length >= 1 && cols[0] !== '') data.cashPaymentMethods.push(cols[0]);
                     break;
                 case 'Expenses':
                     if (cols.length >= 4) data.expenses.push({ description: cols[0], amount: parseFloat(cols[1]) || 0, category: cols[2], payment: cols[3] });

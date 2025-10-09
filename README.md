@@ -21,10 +21,11 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | Dynamic Configuration | ✅ | Add/remove categories & payment methods (legacy preserved) |
 | Billing Cycle (15th→15th) | ✅ | Auto-detected current cycle + prev/next buttons |
 | Live Projections | ✅ | Spend projection, bill projection, savings calc |
-| Import / Export JSON | ✅ | Full data model + expected income |
-| Import / Export CSV | ✅ | Multi-section format with expectedIncome |
+| Import / Export JSON | ✅ | Full data model + expected income + configurable lists |
+| Import / Export CSV | ✅ | Multi-section format with expectedIncome + lists |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
 | Theme Selector | ✅ | Light, Dark, Dracula, VSCode, Pink (header dropdown, persisted) |
+| Expense Distribution Charts | ✅ | Live pie charts by Category & Payment/Card |
 | Accessibility Basics | ✅ | Native controls, labels, focus outlines |
 | Undo / Edit Modes | ❌ (Removed) | Simplified immediate edits & deletes |
 | Persistence (Local Storage) | ❌ | Future enhancement idea |
@@ -159,6 +160,9 @@ Buttons: Export JSON, Export CSV, Import… (choose a previously exported file).
   "cycleEnd": "YYYY-MM-DD",
   "expectedIncome": 0,
   "expectedSavings": 0,
+  "categories": ["Grocery", "Outside Food", "..."] ,
+  "cardPaymentMethods": ["HSBC", "CITI", "SC"],
+  "cashPaymentMethods": ["Cash", "Paylah", "Bank Transfer"],
   "expenses": [ { "description": "", "amount": 0, "category": "", "payment": "" } ],
   "installments": [ { "description": "", "amount": 0, "remainingMonths": 0, "card": "" } ],
   "fixedCosts": [ { "description": "", "amount": 0 } ],
@@ -170,12 +174,27 @@ Row IDs are regenerated sequentially; only semantic fields persist.
 
 ### CSV Multi-Section Format
 
-Sections in order (blank line between): Cycle, Expenses, Installments, FixedCosts, CashExpenses.
+Sections in order (blank line between): Cycle, Categories, CardPaymentMethods, CashPaymentMethods, Expenses, Installments, FixedCosts, CashExpenses.
 
 ```csv
 # Cycle
 cycleStart,cycleEnd,expectedIncome,expectedSavings
 2025-10-01,2025-10-31,4500
+
+# Categories
+category
+Grocery
+Transport
+
+# CardPaymentMethods
+card
+HSBC
+DBS
+
+# CashPaymentMethods
+method
+Cash
+Paylah
 
 # Expenses
 description,amount,category,payment
@@ -323,6 +342,7 @@ Future Enhancement (Optional):
 * UI: Added Remaining Budget & Remaining Budget Per Day metrics with negative highlight styling
 * UI: Added quick "↓ bottom" jump links for large tables and Alt + A shortcut to add a new expense row
 * UI: Added Pink theme option (new color palette)
+* UI: Added live expense distribution pie charts (Category & Payment/Card)
 
 ---
 Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.

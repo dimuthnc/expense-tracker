@@ -228,6 +228,23 @@
                 </div>
     </section>
 
+    <!-- Expense Distribution Charts -->
+    <section id="expense-charts" aria-labelledby="expenseChartsHeading">
+        <h2 id="expenseChartsHeading">Expense Distribution</h2>
+        <div class="charts-grid">
+            <figure class="chart-block">
+                <figcaption>By Category</figcaption>
+                <canvas id="chartByCategory" width="320" height="320" aria-label="Pie chart showing expense distribution by category" role="img"></canvas>
+                <ul id="legendByCategory" class="chart-legend" aria-label="Category legend"></ul>
+            </figure>
+            <figure class="chart-block">
+                <figcaption>By Payment Method / Card</figcaption>
+                <canvas id="chartByPayment" width="320" height="320" aria-label="Pie chart showing expense distribution by payment method or card" role="img"></canvas>
+                <ul id="legendByPayment" class="chart-legend" aria-label="Payment method legend"></ul>
+            </figure>
+        </div>
+    </section>
+
 
     <script src="js/app.js"></script>
 </body>
