@@ -1,0 +1,69 @@
+# === OS / Filesystem ===
+.DS_Store
+Thumbs.db
+
+# === Editor / IDE metadata ===
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.history/
+
+# === Logs & diagnostics ===
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Temporary / cache ===
+*.swp
+*.swo
+*.tmp
+*.temp
+*.cache
+*.bak
+*.orig
+*.rej
+
+# === Dependency directories (if tooling added later) ===
+node_modules/
+dist/
+build/
+.parcel-cache/
+.next/
+out/
+
+# === Environment / secrets (avoid committing) ===
+.env
+.env.local
+.env.*.local
+
+# === Coverage / test artifacts ===
+coverage/
+.nyc_output/
+
+# === Python (if experimentation scripts added) ===
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# === Archives / exports ===
+*.zip
+*.tar
+*.tgz
+*.gz
+
+# === Design / source assets (exported working files) ===
+*.psd
+*.ai
+*.sketch
+
+# === Generated screenshots/videos (keep raw captures out unless curated) ===
+raw_captures/
+
+# End of file
