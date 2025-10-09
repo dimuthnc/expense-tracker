@@ -1,4 +1,4 @@
-// Expense Tracker Front-End Only
+// Personal Expense Manager (Front-End Only)
 (function () {
     let CATEGORY_OPTIONS = ["Grocery", "Outside Food", "Transport", "Health", "Household", "Entertainment", "Other"];
     let PAYMENT_OPTIONS = ["HSBC", "CITI", "SC", "Trust", "DBS"];
@@ -55,6 +55,7 @@
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const importBtn = document.getElementById('importBtn');
     const importFileInput = document.getElementById('importFileInput');
+    const themeSelect = document.getElementById('themeSelect');
     // Config elements
     const categoryListEl = document.getElementById('categoryList');
     const cardListEl = document.getElementById('cardList');
@@ -612,6 +613,12 @@
     if (cycleToInput) cycleToInput.addEventListener('change', updateSummary);
     if (cyclePrevBtn) cyclePrevBtn.addEventListener('click', () => shiftCycle(-1));
     if (cycleNextBtn) cycleNextBtn.addEventListener('click', () => shiftCycle(1));
+    if (themeSelect) {
+        themeSelect.addEventListener('change', () => {
+            applyTheme(themeSelect.value);
+            try { localStorage.setItem('et_theme', themeSelect.value); } catch {}
+        });
+    }
 
     // -------- Cycle Helpers (15th to 15th logic) --------
     function formatYMD(d) {
@@ -658,6 +665,26 @@
         const newStart = new Date(start.getFullYear(), start.getMonth() + deltaMonths, 15);
         const newEnd = new Date(end.getFullYear(), end.getMonth() + deltaMonths, 15);
         setCycle(newStart, newEnd);
+    }
+
+    // ---------------- Theming ----------------
+    function applyTheme(theme) {
+        const body = document.body;
+        body.classList.remove('theme-dark','theme-dracula','theme-vscode');
+        switch(theme) {
+            case 'dark': body.classList.add('theme-dark'); break;
+            case 'dracula': body.classList.add('theme-dracula'); break;
+            case 'vscode': body.classList.add('theme-vscode'); break;
+            default: /* light */ break;
+        }
+    }
+    function initTheme() {
+        if (!themeSelect) return;
+        let stored = '';
+        try { stored = localStorage.getItem('et_theme') || ''; } catch {}
+        if (!['light','dark','dracula','vscode'].includes(stored)) stored = 'light';
+        themeSelect.value = stored;
+        applyTheme(stored);
     }
 
     // Import/export helper implementations
@@ -895,6 +922,7 @@
     }
 
     // Initialize
+    initTheme();
     initDefaultCycleIfEmpty();
     addExpenseRow();
     updateSummaries();

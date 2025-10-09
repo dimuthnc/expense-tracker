@@ -4,18 +4,24 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expense Tracker</title>
+    <title>Personal Expense Manager</title>
     <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
     <header>
-        <h1>Credit Card Expense Tracker</h1>
+    <h1>Personal Expense Manager</h1>
         <div id="importExportBar">
             <button id="exportJsonBtn" type="button">Export JSON</button>
             <button id="exportCsvBtn" type="button">Export CSV</button>
             <button id="importBtn" type="button">Import...</button>
             <input type="file" id="importFileInput" accept=".json,.csv,text/csv" style="display:none;" />
+            <select id="themeSelect" aria-label="Select Theme">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="dracula">Dracula</option>
+                <option value="vscode">VSCode</option>
+            </select>
         </div>
     </header>
     <div id="cycle-selectors-wrapper">

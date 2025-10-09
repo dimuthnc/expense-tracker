@@ -1,10 +1,10 @@
-# Expense Tracker (Client‑Side)
+# Personal Expense Manager (Client‑Side)
 
 ![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Build](https://img.shields.io/badge/build-none%20(required)-informational) ![Stack](https://img.shields.io/badge/stack-HTML%20%2F%20CSS%20%2F%20JS-lightgrey) ![Privacy](https://img.shields.io/badge/privacy-offline-green)
 
 Pure HTML / CSS / Vanilla JavaScript · No build step · Private & offline capable.
 
-A zero‑backend, single‑page budgeting tool for tracking card expenses, installments, fixed costs, and cash spending with live projections and fully configurable categories & payment methods.
+A zero‑backend, single‑page personal expense manager for tracking credit card expenses, installments, fixed costs, and cash spending with live projections and fully configurable categories & payment methods.
 
 ## 1. Feature Summary
 
@@ -20,6 +20,7 @@ A zero‑backend, single‑page budgeting tool for tracking card expenses, insta
 | Import / Export JSON | ✅ | Full data model + expected income |
 | Import / Export CSV | ✅ | Multi-section format with expectedIncome |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
+| Theme Selector | ✅ | Light, Dark, Dracula, VSCode (header dropdown, persisted) |
 | Accessibility Basics | ✅ | Native controls, labels, focus outlines |
 | Undo / Edit Modes | ❌ (Removed) | Simplified immediate edits & deletes |
 | Persistence (Local Storage) | ❌ | Future enhancement idea |
@@ -42,6 +43,7 @@ Common tasks at a glance:
 | Update expected income | Edit numeric field in Summary panel |
 | Projected bill including fixed | See "Total Bill Projection (Incl. Fixed)" metric |
 | Save work | Export (no automatic persistence) |
+| Change theme | Use theme dropdown (top right) |
 
 ## 3. Overview
 
