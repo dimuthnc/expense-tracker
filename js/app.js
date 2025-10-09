@@ -1,8 +1,8 @@
 // Expense Tracker Front-End Only
 (function () {
-    const CATEGORY_OPTIONS = ["Grocery", "Outside Food", "Transport", "Health", "Household", "Entertainment", "Other"];
-    const PAYMENT_OPTIONS = ["HSBC", "CITI", "SC", "Trust", "DBS"];
-    const CASH_PAYMENT_OPTIONS = ["Cash", "Paylah", "Bank Transfer"];
+    let CATEGORY_OPTIONS = ["Grocery", "Outside Food", "Transport", "Health", "Household", "Entertainment", "Other"];
+    let PAYMENT_OPTIONS = ["HSBC", "CITI", "SC", "Trust", "DBS"];
+    let CASH_PAYMENT_OPTIONS = ["Cash", "Paylah", "Bank Transfer"];
 
     let nextId = 1;
     let nextInstallmentId = 1;
@@ -53,18 +53,23 @@
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const importBtn = document.getElementById('importBtn');
     const importFileInput = document.getElementById('importFileInput');
+    // Config elements
+    const categoryListEl = document.getElementById('categoryList');
+    const cardListEl = document.getElementById('cardList');
+    const cashListEl = document.getElementById('cashList');
+    const newCategoryInput = document.getElementById('newCategoryInput');
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const newCardInput = document.getElementById('newCardInput');
+    const addCardBtn = document.getElementById('addCardBtn');
+    const newCashInput = document.getElementById('newCashInput');
+    const addCashBtn = document.getElementById('addCashBtn');
 
     // Simplified version: no modal / undo / edit-save complexity.
 
     function createSelect(options, cls) {
         const sel = document.createElement('select');
         if (cls) sel.className = cls;
-        options.forEach(o => {
-            const opt = document.createElement('option');
-            opt.value = o;
-            opt.textContent = o;
-            sel.appendChild(opt);
-        });
+        populateSelectOptions(sel, options);
         sel.addEventListener('change', () => {
             updateSummaries();
             updateCashExpensesTotal();
@@ -72,6 +77,96 @@
         });
         return sel;
     }
+
+    function populateSelectOptions(selectEl, list, currentValue) {
+        const existing = currentValue || selectEl.value;
+        selectEl.innerHTML = '';
+        list.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o; opt.textContent = o; selectEl.appendChild(opt);
+        });
+        // Preserve legacy value if removed
+        if (existing && existing.length && !list.includes(existing)) {
+            const legacyOpt = document.createElement('option');
+            legacyOpt.value = existing; legacyOpt.textContent = existing + ' (legacy)';
+            legacyOpt.className = 'legacy-option';
+            selectEl.appendChild(legacyOpt);
+        }
+        if (existing) selectEl.value = existing;
+    }
+
+    function refreshAllSelects() {
+        // Expenses table selects (categories & card payment)
+        expenseTableBody.querySelectorAll('tr').forEach(tr => {
+            const catSel = tr.children[3]?.querySelector('select');
+            const paySel = tr.children[4]?.querySelector('select');
+            if (catSel) populateSelectOptions(catSel, CATEGORY_OPTIONS);
+            if (paySel) populateSelectOptions(paySel, PAYMENT_OPTIONS);
+        });
+        // Installments table card selects
+        if (installmentsBody) installmentsBody.querySelectorAll('tr').forEach(tr => {
+            const cardSel = tr.children[4]?.querySelector('select');
+            if (cardSel) populateSelectOptions(cardSel, PAYMENT_OPTIONS);
+        });
+        // Cash expenses table selects (payment + category)
+        if (cashExpensesBody) cashExpensesBody.querySelectorAll('tr').forEach(tr => {
+            const paySel = tr.children[3]?.querySelector('select');
+            const catSel = tr.children[4]?.querySelector('select');
+            if (paySel) populateSelectOptions(paySel, CASH_PAYMENT_OPTIONS);
+            if (catSel) populateSelectOptions(catSel, CATEGORY_OPTIONS);
+        });
+        updateSummaries();
+    }
+
+    function renderConfigLists() {
+        if (categoryListEl) {
+            categoryListEl.innerHTML = '';
+            CATEGORY_OPTIONS.forEach(cat => {
+                const li = document.createElement('li');
+                li.textContent = cat;
+                const btn = document.createElement('button'); btn.type='button'; btn.textContent='x'; btn.addEventListener('click', ()=>{ removeCategory(cat); });
+                li.appendChild(btn); categoryListEl.appendChild(li);
+            });
+        }
+        if (cardListEl) {
+            cardListEl.innerHTML='';
+            PAYMENT_OPTIONS.forEach(card => {
+                const li = document.createElement('li'); li.textContent=card;
+                const btn=document.createElement('button'); btn.type='button'; btn.textContent='x'; btn.addEventListener('click',()=>{ removeCard(card); });
+                li.appendChild(btn); cardListEl.appendChild(li);
+            });
+        }
+        if (cashListEl) {
+            cashListEl.innerHTML='';
+            CASH_PAYMENT_OPTIONS.forEach(c => {
+                const li=document.createElement('li'); li.textContent=c;
+                const btn=document.createElement('button'); btn.type='button'; btn.textContent='x'; btn.addEventListener('click',()=>{ removeCash(c); });
+                li.appendChild(btn); cashListEl.appendChild(li);
+            });
+        }
+    }
+
+    function addUnique(listRef, value) {
+        const v = value.trim();
+        if (!v) return false;
+        if (listRef.includes(v)) return false;
+        listRef.push(v);
+        return true;
+    }
+    function removeItem(listRef, value) {
+        const idx = listRef.indexOf(value);
+        if (idx >= 0) listRef.splice(idx,1);
+    }
+    function removeCategory(cat) { removeItem(CATEGORY_OPTIONS, cat); renderConfigLists(); refreshAllSelects(); }
+    function removeCard(card) { removeItem(PAYMENT_OPTIONS, card); renderConfigLists(); refreshAllSelects(); }
+    function removeCash(c) { removeItem(CASH_PAYMENT_OPTIONS, c); renderConfigLists(); refreshAllSelects(); }
+
+    addCategoryBtn?.addEventListener('click', ()=>{ if(addUnique(CATEGORY_OPTIONS, newCategoryInput.value)) { newCategoryInput.value=''; renderConfigLists(); refreshAllSelects(); }});
+    addCardBtn?.addEventListener('click', ()=>{ if(addUnique(PAYMENT_OPTIONS, newCardInput.value)) { newCardInput.value=''; renderConfigLists(); refreshAllSelects(); }});
+    addCashBtn?.addEventListener('click', ()=>{ if(addUnique(CASH_PAYMENT_OPTIONS, newCashInput.value)) { newCashInput.value=''; renderConfigLists(); refreshAllSelects(); }});
+    newCategoryInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCategoryBtn.click(); }});
+    newCardInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCardBtn.click(); }});
+    newCashInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCashBtn.click(); }});
 
     // ---------------- Expenses ----------------
     function addExpenseRow(prefill) {
@@ -754,4 +849,7 @@
         updateCashExpensesTotal();
     }
     updateSummary();
+    // Initial config render
+    renderConfigLists();
+    refreshAllSelects();
 })();

@@ -23,6 +23,37 @@
         <label>Cycle To: <input type="date" id="cycleTo" /></label>
     </section>
 
+    <section id="config-section">
+        <h2>Configuration</h2>
+        <div class="config-grid">
+            <div class="config-block">
+                <h3>Categories</h3>
+                <ul id="categoryList" class="config-list"></ul>
+                <div class="config-add-row">
+                    <input type="text" id="newCategoryInput" placeholder="New category" />
+                    <button type="button" id="addCategoryBtn">Add</button>
+                </div>
+            </div>
+            <div class="config-block">
+                <h3>Card Payment Methods</h3>
+                <ul id="cardList" class="config-list"></ul>
+                <div class="config-add-row">
+                    <input type="text" id="newCardInput" placeholder="New card" />
+                    <button type="button" id="addCardBtn">Add</button>
+                </div>
+            </div>
+            <div class="config-block">
+                <h3>Cash Payment Methods</h3>
+                <ul id="cashList" class="config-list"></ul>
+                <div class="config-add-row">
+                    <input type="text" id="newCashInput" placeholder="New cash method" />
+                    <button type="button" id="addCashBtn">Add</button>
+                </div>
+            </div>
+        </div>
+        <p class="config-note">Removing an item does not erase existing row values; those rows will keep the old value (marked as legacy) until edited.</p>
+    </section>
+
     <section id="expense-section">
         <div class="section-header">
             <h2>Expenses</h2>

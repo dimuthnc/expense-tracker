@@ -34,6 +34,20 @@ section {
     margin-bottom: 2rem;
 }
 
+/* Configuration Section */
+#config-section h2 { margin-top:0; }
+.config-grid { display:grid; gap:1.25rem; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
+.config-block { background:#ffffff; padding:.75rem .9rem; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.config-block h3 { margin:.2rem 0 .6rem; font-size:.95rem; }
+.config-list { list-style:none; margin:0 0 .5rem; padding:0; max-height:200px; overflow:auto; }
+.config-list li { display:flex; justify-content:space-between; align-items:center; font-size:.75rem; background:#f1f5f9; margin-bottom:.35rem; padding:.3rem .45rem; border-radius:4px; }
+.config-list button { background:#dc2626; font-size:.6rem; padding:.25rem .45rem; }
+.config-add-row { display:flex; gap:.4rem; }
+.config-add-row input { flex:1 1 auto; font-size:.75rem; padding:.35rem .45rem; }
+.config-add-row button { font-size:.7rem; padding:.4rem .65rem; }
+.config-note { font-size:.65rem; color:#555; margin-top:.6rem; }
+.legacy-option { color:#b45309; font-style:italic; }
+
 .section-header {
     display: flex;
     justify-content: space-between;
