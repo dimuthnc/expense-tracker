@@ -701,19 +701,21 @@
     // ---------------- Theming ----------------
     function applyTheme(theme) {
         const body = document.body;
-        body.classList.remove('theme-dark','theme-dracula','theme-vscode');
+        // Remove any previously applied theme classes
+        body.classList.remove('theme-dark','theme-dracula','theme-vscode','theme-pink');
         switch(theme) {
             case 'dark': body.classList.add('theme-dark'); break;
             case 'dracula': body.classList.add('theme-dracula'); break;
             case 'vscode': body.classList.add('theme-vscode'); break;
-            default: /* light */ break;
+            case 'pink': body.classList.add('theme-pink'); break;
+            default: /* light fallback (root vars) */ break;
         }
     }
     function initTheme() {
         if (!themeSelect) return;
         let stored = '';
         try { stored = localStorage.getItem('et_theme') || ''; } catch {}
-        if (!['light','dark','dracula','vscode'].includes(stored)) stored = 'light';
+        if (!['light','dark','dracula','vscode','pink'].includes(stored)) stored = 'light';
         themeSelect.value = stored;
         applyTheme(stored);
     }

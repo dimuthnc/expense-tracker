@@ -24,7 +24,7 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | Import / Export JSON | ✅ | Full data model + expected income |
 | Import / Export CSV | ✅ | Multi-section format with expectedIncome |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
-| Theme Selector | ✅ | Light, Dark, Dracula, VSCode (header dropdown, persisted) |
+| Theme Selector | ✅ | Light, Dark, Dracula, VSCode, Pink (header dropdown, persisted) |
 | Accessibility Basics | ✅ | Native controls, labels, focus outlines |
 | Undo / Edit Modes | ❌ (Removed) | Simplified immediate edits & deletes |
 | Persistence (Local Storage) | ❌ | Future enhancement idea |
@@ -322,6 +322,7 @@ Future Enhancement (Optional):
 * Data/UI: Added expectedSavings field (manual savings target) to JSON & CSV export/import
 * UI: Added Remaining Budget & Remaining Budget Per Day metrics with negative highlight styling
 * UI: Added quick "↓ bottom" jump links for large tables and Alt + A shortcut to add a new expense row
+* UI: Added Pink theme option (new color palette)
 
 ---
 Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.

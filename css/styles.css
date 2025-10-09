@@ -101,6 +101,28 @@ body.theme-vscode {
     --footer-text: #d4d4d4;
 }
 
+body.theme-pink {
+    --bg: #fff5f8;
+    --surface: #ffe9f1;
+    --surface-alt: #ffd4e4;
+    --border: #f5b6cb;
+    --border-strong: #ec9fb9;
+    --text: #4a2b35;
+    --text-muted: #8a5c6b;
+    --accent: #ff4f9c;
+    --accent-hover: #e43e86;
+    --danger: #d7266e;
+    --danger-hover: #b71c57;
+    --danger-active: #8f123f;
+    --grad-primary: linear-gradient(135deg,#ff4f9c,#ff85c9);
+    --table-head: #ffc4dc;
+    --table-row-hover: #ffdbe9;
+    --summary-chip: #ffd4e4;
+    --footer-bg: #ff85c9;
+    --footer-text: #4a2b35;
+    --focus: 2px solid #ff4f9c;
+}
+
 header {
     display:flex;
     justify-content:space-between;
