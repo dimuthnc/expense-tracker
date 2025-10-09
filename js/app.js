@@ -54,6 +54,8 @@
     const importBtn = document.getElementById('importBtn');
     const importFileInput = document.getElementById('importFileInput');
 
+    // Simplified version: no modal / undo / edit-save complexity.
+
     function createSelect(options, cls) {
         const sel = document.createElement('select');
         if (cls) sel.className = cls;
@@ -112,6 +114,11 @@
         paySelect.addEventListener('change', () => { updateSummaries(); updateSummary(); });
         payTd.appendChild(paySelect);
         tr.appendChild(payTd);
+
+    // Actions
+    const actionsTd = document.createElement('td');
+    actionsTd.appendChild(buildRowActions(tr, 'expense'));
+        tr.appendChild(actionsTd);
 
         expenseTableBody.appendChild(tr);
         if (prefill) {
@@ -235,6 +242,11 @@
         totalRemTd.textContent = '0.00';
         tr.appendChild(totalRemTd);
 
+    // Actions
+    const actionsTd = document.createElement('td');
+    actionsTd.appendChild(buildRowActions(tr, 'installment'));
+        tr.appendChild(actionsTd);
+
         installmentsBody.appendChild(tr);
         if (prefill) {
             descInput.value = prefill.description || '';
@@ -309,6 +321,11 @@
         amtTd.appendChild(amtInput);
         tr.appendChild(amtTd);
 
+    // Actions
+    const actionsTd = document.createElement('td');
+    actionsTd.appendChild(buildRowActions(tr, 'fixed'));
+        tr.appendChild(actionsTd);
+
         fixedCostsBody.appendChild(tr);
         if (prefill) {
             descInput.value = prefill.description || '';
@@ -369,6 +386,11 @@
         catSelect.addEventListener('change', () => { updateCashExpensesTotal(); updateSummary(); });
         catTd.appendChild(catSelect);
         tr.appendChild(catTd);
+
+    // Actions
+    const actionsTd = document.createElement('td');
+    actionsTd.appendChild(buildRowActions(tr, 'cash'));
+        tr.appendChild(actionsTd);
 
         cashExpensesBody.appendChild(tr);
         if (prefill) {
@@ -578,6 +600,34 @@
         data.cashExpenses.forEach(c => lines.push(`${csvEscape(c.description)},${c.amount},${csvEscape(c.paymentMethod)},${csvEscape(c.category)}`));
         downloadBlob(`expense_export_${Date.now()}.csv`, 'text/csv', lines.join('\n'));
     }
+
+    // -------- Row Action Helpers --------
+    function buildRowActions(tr, type) {
+        const wrap = document.createElement('div');
+        wrap.className = 'row-actions';
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => {
+            tr.remove();
+            postRowMutation(type);
+        });
+        wrap.appendChild(delBtn);
+        return wrap;
+    }
+    // Modal + undo helpers injected later (see bottom additions)
+    function postRowMutation(type) {
+        // Recalculate everything based on type; simplest is global updates
+        updateSummaries();
+        if (type === 'installment') {
+            recalcInstallmentRowTotals();
+            updateInstallmentsFooterTotals();
+        }
+        updateFixedCostsTotal();
+        updateCashExpensesTotal();
+        updateExpenseTotal();
+        updateSummary();
+    }
     function clearAllTables() {
         expenseTableBody.innerHTML = '';
         if (installmentsBody) installmentsBody.innerHTML = '';
@@ -609,6 +659,7 @@
         updateCashExpensesTotal();
         updateSummary();
     }
+    // Removed modal / undo / edit helpers.
     function importJSONText(text) {
         try { const obj = JSON.parse(text); populateFromData(obj); }
         catch { alert('Invalid JSON file.'); }
