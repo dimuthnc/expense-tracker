@@ -1,10 +1,14 @@
 # Personal Expense Manager (Client‑Side)
 
-![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Build](https://img.shields.io/badge/build-none%20(required)-informational) ![Stack](https://img.shields.io/badge/stack-HTML%20%2F%20CSS%20%2F%20JS-lightgrey) ![Privacy](https://img.shields.io/badge/privacy-offline-green)
+![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Build](https://img.shields.io/badge/build-none%20(required)-informational) ![Stack](https://img.shields.io/badge/stack-HTML%20%2F%20CSS%20%2F%20JS-lightgrey) ![Privacy](https://img.shields.io/badge/privacy-offline-green) [![Live Demo](https://img.shields.io/badge/demo-available-brightgreen)](https://personal-expense-manager.pages.dev/)
 
 Pure HTML / CSS / Vanilla JavaScript · No build step · Private & offline capable.
 
 A zero‑backend, single‑page personal expense manager for tracking credit card expenses, installments, fixed costs, and cash spending with live projections and fully configurable categories & payment methods.
+
+➡️ Live Demo: [personal-expense-manager.pages.dev](https://personal-expense-manager.pages.dev/)
+
+Offline note: The app is fully client-side and can be saved locally (File > Save Page As) for offline use. No service worker yet; after a hard refresh you need connectivity only to re-load the static assets (or host them locally).
 
 ## 1. Feature Summary
 
@@ -26,7 +30,21 @@ A zero‑backend, single‑page personal expense manager for tracking credit car
 | Persistence (Local Storage) | ❌ | Future enhancement idea |
 | Auth / Multi-user | ❌ | Intentionally out of scope |
 
-## 2. Quick Reference
+## 2. Screenshots & Demo Preview
+
+> Replace the placeholders below with actual screenshots / GIFs (store under a `screenshots/` folder).
+
+| View | Dark Theme | Light Theme | Description |
+|------|------------|-------------|-------------|
+| Main Dashboard | ![Main Dark](screenshots/main-dark.png) | ![Main Light](screenshots/main-light.png) | Core tables + summary metrics |
+| Billing Cycle & Themes | ![Cycle](screenshots/cycle-and-theme.gif) | — | Shows cycle shifting + theme switching |
+| Import / Export | ![Import Export](screenshots/import-export.png) | — | Data portability workflow |
+
+Live interactive version: [Open the Live Demo](https://personal-expense-manager.pages.dev/) (always latest main branch build).
+
+Accessibility: Ensure each image has descriptive alt text (as above) for screen readers.
+
+## 3. Quick Reference
 
 Common tasks at a glance:
 
@@ -39,13 +57,14 @@ Common tasks at a glance:
 | Add new category/card | Enter name in Configuration block → Add |
 | Export data | Use Export JSON or Export CSV buttons (header) |
 | Import data | Click Import… and choose previous JSON/CSV export |
+| Open live demo | Visit the deployed site: [personal-expense-manager.pages.dev](https://personal-expense-manager.pages.dev/) |
 | View totals by category | See "Totals by Category" summary table |
 | Update expected income | Edit numeric field in Summary panel |
 | Projected bill including fixed | See "Total Bill Projection (Incl. Fixed)" metric |
 | Save work | Export (no automatic persistence) |
 | Change theme | Use theme dropdown (top right) |
 
-## 3. Overview
+## 4. Overview
 
 This project is a lightweight browser-only expense dashboard. All data lives in the page until you export it (JSON or CSV).
 
@@ -59,7 +78,7 @@ It supports:
 
 No frameworks, no bundlers, no tracking — just open `index.html` and start entering data.
 
-## 4. Quick Start
+## 5. Quick Start
 
 1. Clone or download the repository.
 2. Open `index.html` in any modern browser (Chrome, Edge, Firefox, Safari).
@@ -67,7 +86,7 @@ No frameworks, no bundlers, no tracking — just open `index.html` and start ent
 4. Enter or import data, adjust configuration lists, and review live summaries.
 5. Export when you want to persist or share.
 
-## 5. Core Data Areas
+## 6. Core Data Areas
 
 | Section | Purpose | Key Fields |
 |---------|---------|-----------|
@@ -76,7 +95,7 @@ No frameworks, no bundlers, no tracking — just open `index.html` and start ent
 | Fixed Costs | Recurring fixed monthly obligations | Description, Amount |
 | Cash Expenses | Non-card spending (cash / transfers / wallets) | Description, Amount, Cash Payment Method, Category |
 
-## 6. Configuration (Dynamic Lists)
+## 7. Configuration (Dynamic Lists)
 
 Located in the “Configuration” section:
 
@@ -96,7 +115,7 @@ Click the “x” next to an entry. Existing rows preserving the removed value r
 
 Removed options still in use are appended as trailing options in affected selects with class `legacy-option` so historical data isn’t broken.
 
-## 7. Live Metrics (Summary Panel)
+## 8. Live Metrics (Summary Panel)
 
 The Summary section displays these live-calculated values:
 
@@ -110,7 +129,7 @@ The Summary section displays these live-calculated values:
 * Total Fixed Costs – Sum of fixed costs
 * Expected Savings – `Expected Income - Total Bill Projection`
 
-## 8. Table Footers & Computations
+## 9. Table Footers & Computations
 
 * Card Expenses footer: total of all card amounts
 * Installments footer: sum of monthly amounts + sum of computed remaining totals (monthly * remaining months)
@@ -119,7 +138,7 @@ The Summary section displays these live-calculated values:
 
 Installment row “Total Remaining” updates whenever Amount or Remaining Months changes.
 
-## 9. Interactions
+## 10. Interactions
 
 * Add Row buttons create new blank rows (auto ID).
 * Trash icon button on each row removes it immediately (no undo).
@@ -127,7 +146,7 @@ Installment row “Total Remaining” updates whenever Amount or Remaining Month
 * Billing Cycle auto-sets on first load to the cycle containing today, defined as the 15th of one month through the 15th of the next month.
 * Use the small arrow buttons beside the Billing Cycle heading to shift backward (down arrow) or forward (up arrow) by one full cycle (15th→15th). Multiple clicks queue additional month shifts.
 
-## 10. Import & Export
+## 11. Import & Export
 
 Buttons: Export JSON, Export CSV, Import… (choose a previously exported file).
 
@@ -187,7 +206,7 @@ Quoted fields and escaped quotes (`""`) are supported.
 * Invalid JSON → simple alert
 * CSV lines with insufficient columns for a section are skipped silently
 
-## 11. Data Model (In-Memory)
+## 12. Data Model (In-Memory)
 
 ```ts
 interface Expense { description: string; amount: number; category: string; payment: string; }
@@ -204,17 +223,17 @@ interface ExportModel {
 }
 ```
 
-## 12. Performance & Limits
+## 13. Performance & Limits
 
 Designed for personal-scale usage (hundreds of rows). All operations are DOM-based; no virtualized rendering.
 
-## 13. Accessibility Notes
+## 14. Accessibility Notes
 
 * All inputs are native HTML controls
 * Tab order follows document flow
 * (Potential improvement) Add ARIA labels for summary metrics
 
-## 14. Customization Ideas
+## 15. Customization Ideas
 
 | Enhancement | Description |
 |-------------|-------------|
@@ -225,7 +244,7 @@ Designed for personal-scale usage (hundreds of rows). All operations are DOM-bas
 | Installment Auto-Progress | Decrement remaining months at cycle rollover |
 | Validation Layer | Highlight incomplete/invalid rows |
 
-## 15. Development
+## 16. Development
 
 No build tools required.
 
@@ -233,24 +252,58 @@ No build tools required.
 2. Refresh browser.
 3. Use browser dev tools to inspect runtime state.
 
-## 16. Known Constraints
+## 17. Known Constraints
 
 * No persistence unless you export
 * No multi-user or sync
 * Deleting a row is irreversible (no undo)
 * No sorting or filtering built-in
 
-## 17. Security & Privacy
+## 18. Security & Privacy
 
 * All data stays in your browser tab
 * Exports are plain text files you control
 * No external network requests
 
-## 18. License
+## 19. License
 
 MIT — do whatever you like; attribution appreciated but not required.
 
-## 19. Changelog (High Level)
+## 20. Deployment
+
+Current Hosting: Deployed via Cloudflare Pages at [personal-expense-manager.pages.dev](https://personal-expense-manager.pages.dev/).
+
+Why Cloudflare Pages:
+
+* Zero-cost static hosting for HTML/CSS/JS
+* Automatic CDN + HTTPS
+* Quick redeploys on pushes
+
+
+Deployment Steps (Cloudflare Pages):
+
+1. Push changes to the `main` (or designated) branch.
+2. Cloudflare Pages project is connected to the repository; it auto-builds (no build command needed — set "None").
+3. After build completes, the new version is live globally.
+
+
+Manual Alternative:
+
+1. Run locally: just open `index.html`.
+2. Host from any static provider (GitHub Pages, Netlify, Vercel). No build config required.
+
+
+Local Offline Copy:
+
+* Save the page (File > Save Page As) including resources OR clone the repo and open `index.html`.
+* Optional: Serve via a simple local server (Python `python3 -m http.server 8080`) for consistent relative path handling.
+
+
+Future Enhancement (Optional):
+
+* Add a service worker for full offline-first loading after first visit.
+
+## 21. Changelog (High Level)
 
 * Initial: Core tables + summaries
 * Added: Installments, Fixed Costs, Cash Expenses
@@ -262,6 +315,7 @@ MIT — do whatever you like; attribution appreciated but not required.
 * UI: Added Billing Cycle auto-default (15th→15th) with previous/next cycle shift buttons
 * UI: Replaced textual Delete with trash icon button
 * Data: Added expectedIncome to export/import (JSON + CSV cycle section)
+* Deploy: Public live demo published at personal-expense-manager.pages.dev
 
 ---
 Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.
