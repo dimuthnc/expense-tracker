@@ -32,8 +32,6 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 
 ## 2. Screenshots & Demo Preview
 
-> Replace the placeholders below with actual screenshots / GIFs (store under a `screenshots/` folder).
-
 | View | Dark Theme | Light Theme | Description |
 |------|------------|-------------|-------------|
 | Main Dashboard | ![Main Dark](screenshots/main-dark.png) | ![Main Light](screenshots/main-light.png) | Core tables + summary metrics |
