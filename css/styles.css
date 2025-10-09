@@ -308,6 +308,11 @@ input[type="number"] {
     max-width: 130px;
 }
 
+/* Negative financial indicator */
+.summary-item .value.negative {
+    color: var(--danger);
+}
+
 /* Row action styles */
 .row-actions button {
     font-size: .65rem;

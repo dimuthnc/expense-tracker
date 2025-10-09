@@ -58,7 +58,7 @@ Common tasks at a glance:
 | Open live demo | Visit the deployed site: [personal-expense-manager.pages.dev](https://personal-expense-manager.pages.dev/) |
 | View totals by category | See "Totals by Category" summary table |
 | Update expected income | Edit numeric field in Summary panel |
-| Projected bill including fixed | See "Total Bill Projection (Incl. Fixed)" metric |
+| Remaining budget | See "Remaining Budget" metric |
 | Save work | Export (no automatic persistence) |
 | Change theme | Use theme dropdown (top right) |
 
@@ -70,7 +70,7 @@ It supports:
 
 * Multiple spending domains (Card Expenses, Installments, Fixed Costs, Cash Expenses)
 * Live per-category and per-card summaries
-* Monthly projection + fixed cost inclusion + expected savings estimation
+* Monthly projection + fixed cost inclusion + projected savings estimation
 * Dynamic configuration of Categories, Card Payment Methods, and Cash Payment Methods at runtime
 * Safe retention of removed option values (marked as legacy) in existing rows
 
@@ -118,14 +118,15 @@ Removed options still in use are appended as trailing options in affected select
 The Summary section displays these live-calculated values:
 
 * Total Credit Card Bill – Sum of all current credit card expense amounts
-* Total Card Bill + Installments – Credit card bill + sum of monthly installment amounts
-* Days Remaining in Cycle – Inclusive cycle length minus elapsed days (current day excluded from remaining)
-* Projected Cycle Spend – If cycle started: `(CardTotal / DaysElapsed * TotalDays) + MonthlyInstallments`; otherwise fallback `CardTotal + MonthlyInstallments`
-* Total Bill Projection (Incl. Fixed) – Projected Cycle Spend + Fixed Costs total
 * Total Installment Cost (Monthly) – Sum of monthly installment amounts
+* Days Remaining in Cycle – Inclusive cycle length minus elapsed days (current day excluded from remaining)
 * Monthly Expected Income – User input field (also exported/imported)
 * Total Fixed Costs – Sum of fixed costs
-* Expected Savings – `Expected Income - Total Bill Projection`
+* Total Cash Expenses – Sum of all cash expense amounts
+* Expected Savings (Input) – User-entered target savings for the month
+* Remaining Budget – `Expected Income - (Card Total + Installment Monthly + Fixed Costs + Expected Savings Input)`
+* Remaining Budget Per Day – Remaining Budget divided by days remaining ("Not Applicable" if out of cycle)
+* Projected Savings – Same as Expected Savings (Input) displayed
 
 ## 9. Table Footers & Computations
 
@@ -155,6 +156,7 @@ Buttons: Export JSON, Export CSV, Import… (choose a previously exported file).
   "cycleStart": "YYYY-MM-DD",
   "cycleEnd": "YYYY-MM-DD",
   "expectedIncome": 0,
+  "expectedSavings": 0,
   "expenses": [ { "description": "", "amount": 0, "category": "", "payment": "" } ],
   "installments": [ { "description": "", "amount": 0, "remainingMonths": 0, "card": "" } ],
   "fixedCosts": [ { "description": "", "amount": 0 } ],
@@ -170,7 +172,7 @@ Sections in order (blank line between): Cycle, Expenses, Installments, FixedCost
 
 ```csv
 # Cycle
-cycleStart,cycleEnd,expectedIncome
+cycleStart,cycleEnd,expectedIncome,expectedSavings
 2025-10-01,2025-10-31,4500
 
 # Expenses
@@ -305,7 +307,7 @@ Future Enhancement (Optional):
 
 * Initial: Core tables + summaries
 * Added: Installments, Fixed Costs, Cash Expenses
-* Added: Projection & expected savings metrics
+* Added: Projection & projected savings metrics
 * Added: JSON / CSV import-export
 * Added: Dynamic configuration (categories & payment methods)
 * Simplified: Removed edit/save modal & undo (immediate delete only)
@@ -314,6 +316,9 @@ Future Enhancement (Optional):
 * UI: Replaced textual Delete with trash icon button
 * Data: Added expectedIncome to export/import (JSON + CSV cycle section)
 * Deploy: Public live demo published at personal-expense-manager.pages.dev
+* UI: Renamed "Expected Savings" metric label to "Projected Savings" for clarity
+* Data/UI: Added expectedSavings field (manual savings target) to JSON & CSV export/import
+* UI: Added Remaining Budget & Remaining Budget Per Day metrics with negative highlight styling
 
 ---
 Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.

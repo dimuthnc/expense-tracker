@@ -221,26 +221,18 @@
 
     <section id="financial-summary">
         <h2>Summary</h2>
-        <div class="summary-grid">
-        <div class="summary-item"><span class="label">Total Credit Card Bill:</span> <span id="sumCardBill"
-                    class="value">0.00</span></div>
-        <div class="summary-item"><span class="label">Total Card Bill + Installments:</span> <span
-                    id="sumCardPlusInst" class="value">0.00</span></div>
-        <div class="summary-item"><span class="label">Days Remaining in Cycle:</span> <span
-                    id="sumDaysRemaining" class="value">0</span></div>
-        <div class="summary-item"><span class="label">Projected Cycle Spend (Card + Installments):</span> <span
-                    id="sumProjectedCycle" class="value">0.00</span></div>
-        <div class="summary-item"><span class="label">Total Bill Projection (Incl. Fixed):</span> <span
-                    id="sumTotalProjection" class="value">0.00</span></div>
-        <div class="summary-item"><span class="label">Total Installment Cost (Monthly):</span> <span
-                    id="sumInstallmentMonthly" class="value">0.00</span></div>
-        <div class="summary-item"><span class="label">Monthly Expected Income:</span> <input type="number"
-                    id="expectedIncome" placeholder="0.00" min="0" step="0.01" /></div>
-        <div class="summary-item"><span class="label">Total Fixed Costs:</span> <span id="sumFixedCosts"
-                    class="value">0.00</span></div>
-        <div class="summary-item"><span class="label">Expected Savings:</span> <span id="sumExpectedSavings"
-                    class="value">0.00</span></div>
-        </div>
+                <div class="summary-grid">
+                      <div class="summary-item"><span class="label" title="Sum of all credit card expenses in this cycle">Total Credit Card Bill:</span> <span id="sumCardBill" class="value">0.00</span></div>
+                      <div class="summary-item"><span class="label" title="Number of days left (excluding today) until cycle end">Days Remaining in Cycle:</span> <span id="sumDaysRemaining" class="value">0</span></div>
+                      <div class="summary-item"><span class="label" title="Sum of monthly installment amounts">Total Installment Cost (Monthly):</span> <span id="sumInstallmentMonthly" class="value">0.00</span></div>
+                      <div class="summary-item"><span class="label" title="Your monthly take-home or budgeted income">Monthly Expected Income:</span> <input type="number" id="expectedIncome" placeholder="0.00" min="0" step="0.01" /></div>
+                      <div class="summary-item"><span class="label" title="Sum of recurring monthly fixed obligations">Total Fixed Costs:</span> <span id="sumFixedCosts" class="value">0.00</span></div>
+                      <div class="summary-item"><span class="label" title="Sum of non-card (cash / transfer / wallet) expenses">Total Cash Expenses:</span> <span id="sumCashExpenses" class="value">0.00</span></div>
+                      <div class="summary-item"><span class="label" title="Target savings you plan to set aside this month">Expected Savings (Input):</span> <input type="number" id="expectedSavingsInput" placeholder="0.00" min="0" step="0.01" /></div>
+                      <div class="summary-item"><span class="label" title="Income - (Card + Installments + Fixed + Expected Savings)">Remaining Budget:</span> <span id="sumRemainingBudget" class="value">0.00</span></div>
+                      <div class="summary-item"><span class="label" title="Remaining Budget divided by days remaining">Remaining Budget Per Day:</span> <span id="sumRemainingPerDay" class="value">Not Applicable</span></div>
+                      <div class="summary-item"><span class="label" title="Displays your Entered Expected Savings target">Projected Savings:</span> <span id="sumExpectedSavings" class="value">0.00</span></div>
+                </div>
     </section>
 
 

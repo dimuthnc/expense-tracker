@@ -37,10 +37,7 @@
 
     // Summary elements
     const sumCardBillEl = document.getElementById('sumCardBill');
-    const sumCardPlusInstEl = document.getElementById('sumCardPlusInst');
     const sumDaysRemainingEl = document.getElementById('sumDaysRemaining');
-    const sumProjectedCycleEl = document.getElementById('sumProjectedCycle');
-    const sumTotalProjectionEl = document.getElementById('sumTotalProjection');
     const sumInstallmentMonthlyEl = document.getElementById('sumInstallmentMonthly');
     const expectedIncomeInput = document.getElementById('expectedIncome');
     const sumFixedCostsEl = document.getElementById('sumFixedCosts');
@@ -533,48 +530,64 @@
         return { daysElapsed, daysRemaining, totalDays };
     }
 
+    // Cache new elements (added metrics)
+    const expectedSavingsInput = document.getElementById('expectedSavingsInput');
+    const sumRemainingBudgetEl = document.getElementById('sumRemainingBudget');
+    const sumRemainingPerDayEl = document.getElementById('sumRemainingPerDay');
+    const sumCashExpensesEl = document.getElementById('sumCashExpenses');
+
     function updateSummary() {
         if (!sumCardBillEl) return; // summary section not present
         const cardTotal = parseNumberFromEl(expenseAmountTotalEl);
         const monthlyInstallments = parseNumberFromEl(instAmountTotalEl); // monthly amount
         const fixedCosts = parseNumberFromEl(fixedCostsTotalEl);
-        // Requirement 2 uses card total + installments monthly amount
-        const cardPlusInstallments = cardTotal + monthlyInstallments;
+        const cashExpenses = parseNumberFromEl(cashExpensesTotalEl); // already aggregated elsewhere
 
         // Days info
         const cycleFrom = cycleFromInput ? cycleFromInput.value : '';
         const cycleTo = cycleToInput ? cycleToInput.value : '';
         const { daysElapsed, daysRemaining, totalDays } = daysBetweenExclusive(cycleFrom, cycleTo);
 
-        // Projected cycle spend (4): (cardTotal / daysElapsed * totalDays) + monthlyInstallments
-        let projectedCycle = 0;
-        if (daysElapsed > 0) {
-            projectedCycle = (cardTotal / daysElapsed) * totalDays + monthlyInstallments;
-        } else {
-            projectedCycle = cardTotal + monthlyInstallments; // fallback when cycle not started
-        }
-
-        // Total bill projection including fixed (5)
-        const totalProjection = projectedCycle + fixedCosts;
-
-        // Total installment cost (6) = monthlyInstallments (already monthly total)
+        // Total installment cost (monthly)
         const totalInstallmentCost = monthlyInstallments;
 
-        // Expected Income (7)
+        // Inputs
         const expectedIncome = parseFloat(expectedIncomeInput?.value || '0') || 0;
+        const expectedSavingsManual = parseFloat(expectedSavingsInput?.value || '0') || 0; // user-defined
 
-        // Expected Savings (9) = expectedIncome - totalProjection
-        const expectedSavings = expectedIncome - totalProjection;
+        // Remaining Budget = Expected Income - Card Total - Installment Monthly - Fixed Costs - Expected Savings (user input)
+        const remainingBudget = expectedIncome - cardTotal - totalInstallmentCost - fixedCosts - expectedSavingsManual;
+
+        // Remaining Budget Per Day = remainingBudget / daysRemaining (if in-cycle and daysRemaining>0)
+        let remainingPerDayDisplay = 'Not Applicable';
+        if (daysElapsed > 0 && daysRemaining > 0 && totalDays > 0) {
+            remainingPerDayDisplay = formatCurrency(remainingBudget / daysRemaining);
+        }
+
+        // Projected Savings (replacing old meaning) we now treat as manual expectedSavingsInput vs computed savings
+        // Display the manual expected savings value in sumExpectedSavingsEl
+        const projectedSavings = expectedSavingsManual;
 
         // Populate DOM
         sumCardBillEl.textContent = formatCurrency(cardTotal);
-        sumCardPlusInstEl.textContent = formatCurrency(cardPlusInstallments);
         sumDaysRemainingEl.textContent = daysRemaining.toString();
-        sumProjectedCycleEl.textContent = formatCurrency(projectedCycle);
-        sumTotalProjectionEl.textContent = formatCurrency(totalProjection);
         sumInstallmentMonthlyEl.textContent = formatCurrency(totalInstallmentCost);
         sumFixedCostsEl.textContent = formatCurrency(fixedCosts);
-        sumExpectedSavingsEl.textContent = formatCurrency(expectedSavings);
+        if (sumCashExpensesEl) sumCashExpensesEl.textContent = formatCurrency(cashExpenses);
+        sumExpectedSavingsEl.textContent = formatCurrency(projectedSavings);
+        if (sumRemainingBudgetEl) {
+            sumRemainingBudgetEl.textContent = formatCurrency(remainingBudget);
+            sumRemainingBudgetEl.classList.toggle('negative', remainingBudget < 0);
+        }
+        if (sumRemainingPerDayEl) {
+            sumRemainingPerDayEl.textContent = remainingPerDayDisplay;
+            if (remainingPerDayDisplay !== 'Not Applicable') {
+                const numeric = remainingBudget / (daysElapsed > 0 ? daysRemaining || 1 : 1);
+                sumRemainingPerDayEl.classList.toggle('negative', numeric < 0);
+            } else {
+                sumRemainingPerDayEl.classList.remove('negative');
+            }
+        }
     }
 
     // ---------------- Event Listeners ----------------
@@ -606,9 +619,8 @@
         });
     }
 
-    if (expectedIncomeInput) {
-        expectedIncomeInput.addEventListener('input', updateSummary);
-    }
+    if (expectedIncomeInput) expectedIncomeInput.addEventListener('input', updateSummary);
+    if (expectedSavingsInput) expectedSavingsInput.addEventListener('input', updateSummary);
     if (cycleFromInput) cycleFromInput.addEventListener('change', updateSummary);
     if (cycleToInput) cycleToInput.addEventListener('change', updateSummary);
     if (cyclePrevBtn) cyclePrevBtn.addEventListener('click', () => shiftCycle(-1));
@@ -725,6 +737,7 @@
             cycleStart: cycleFromInput?.value || '',
             cycleEnd: cycleToInput?.value || '',
             expectedIncome: expectedIncomeInput?.value ? parseFloat(expectedIncomeInput.value) || 0 : 0,
+            expectedSavings: expectedSavingsInput?.value ? parseFloat(expectedSavingsInput.value) || 0 : 0,
             expenses: expenseFiltered,
             installments: installmentsFiltered,
             fixedCosts: fixedFiltered,
@@ -754,8 +767,8 @@
         const data = getDataModel();
         const lines = [];
         lines.push('# Cycle');
-        lines.push('cycleStart,cycleEnd,expectedIncome');
-        lines.push(`${data.cycleStart || ''},${data.cycleEnd || ''},${data.expectedIncome != null ? data.expectedIncome : ''}`);
+        lines.push('cycleStart,cycleEnd,expectedIncome,expectedSavings');
+        lines.push(`${data.cycleStart || ''},${data.cycleEnd || ''},${data.expectedIncome != null ? data.expectedIncome : ''},${data.expectedSavings != null ? data.expectedSavings : ''}`);
         lines.push('');
         lines.push('# Expenses');
         lines.push('description,amount,category,payment');
@@ -818,6 +831,9 @@
         if (expectedIncomeInput && typeof data.expectedIncome !== 'undefined' && data.expectedIncome !== null && data.expectedIncome !== '') {
             expectedIncomeInput.value = data.expectedIncome;
         }
+        if (expectedSavingsInput && typeof data.expectedSavings !== 'undefined' && data.expectedSavings !== null && data.expectedSavings !== '') {
+            expectedSavingsInput.value = data.expectedSavings;
+        }
         const eArr = Array.isArray(data.expenses) ? data.expenses : [];
         const iArr = Array.isArray(data.installments) ? data.installments : [];
         const fArr = Array.isArray(data.fixedCosts) ? data.fixedCosts : [];
@@ -862,7 +878,7 @@
     function importCSVText(text) {
         const lines = text.split(/\r?\n/);
         let mode = ''; let headerConsumed = false;
-        const data = { cycleStart: '', cycleEnd: '', expectedIncome: '', expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
+        const data = { cycleStart: '', cycleEnd: '', expectedIncome: '', expectedSavings: '', expenses: [], installments: [], fixedCosts: [], cashExpenses: [] };
         lines.forEach(raw => {
             const line = raw.trim();
             if (line.startsWith('#')) { mode = line.replace(/^#\s*/, '').trim(); headerConsumed = false; return; }
@@ -875,6 +891,7 @@
                         data.cycleStart = cols[0];
                         data.cycleEnd = cols[1];
                         if (cols.length >= 3) data.expectedIncome = cols[2];
+                        if (cols.length >= 4) data.expectedSavings = cols[3];
                     }
                     break;
                 case 'Expenses':
