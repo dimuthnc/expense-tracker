@@ -202,6 +202,12 @@ button:hover { background: var(--accent-hover); }
     overflow-x: auto;
 }
 
+.table-add-row { margin-top:.6rem; }
+.table-add-row button { font-size:.75rem; padding:.45rem .8rem; }
+
+.jump-bottom { font-size:.6rem; margin-left:.5rem; text-decoration:none; background:var(--surface-alt); padding:.15rem .4rem; border-radius:4px; color:var(--text); border:1px solid var(--border); }
+.jump-bottom:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+
 table {
     width: 100%;
     border-collapse: collapse;

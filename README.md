@@ -48,11 +48,13 @@ Common tasks at a glance:
 
 | Action | How |
 |--------|-----|
-| Add credit card expense | Click "Add Expense" under Credit Card Expenses |
+| Add credit card expense | Use "Add Expense" button below the credit card expenses table |
+| Jump to table bottom | Use the small "↓ bottom" link near any table heading |
+| Add expense via keyboard | Press Alt + A (when not focused in an input) |
 | Remove any row | Click trash icon in its row |
 | Shift billing cycle forward | Up (▲) arrow beside Billing Cycle heading |
 | Shift billing cycle backward | Down (▼) arrow beside Billing Cycle heading |
-| Add new category/card | Enter name in Configuration block → Add |
+| Add new category/card | Enter name in Configuration block → Add (bottom inline input) |
 | Export data | Use Export JSON or Export CSV buttons (header) |
 | Import data | Click Import… and choose previous JSON/CSV export |
 | Open live demo | Visit the deployed site: [personal-expense-manager.pages.dev](https://personal-expense-manager.pages.dev/) |
@@ -319,6 +321,7 @@ Future Enhancement (Optional):
 * UI: Renamed "Expected Savings" metric label to "Projected Savings" for clarity
 * Data/UI: Added expectedSavings field (manual savings target) to JSON & CSV export/import
 * UI: Added Remaining Budget & Remaining Budget Per Day metrics with negative highlight styling
+* UI: Added quick "↓ bottom" jump links for large tables and Alt + A shortcut to add a new expense row
 
 ---
 Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.

@@ -632,6 +632,25 @@
         });
     }
 
+    // Keyboard shortcut: Alt + A to add a new credit card expense row quickly
+    document.addEventListener('keydown', (e) => {
+        if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+            // Prevent default only if not typing inside an input/select/textarea
+            const tag = document.activeElement && document.activeElement.tagName;
+            if (tag && ['INPUT','SELECT','TEXTAREA'].includes(tag)) return; // don't hijack when editing
+            addExpenseRow();
+            updateExpenseTotal();
+            updateSummary();
+            // Focus description field of last added row
+            const rows = expenseTableBody.querySelectorAll('tr');
+            if (rows.length) {
+                const last = rows[rows.length - 1];
+                const descInput = last.querySelector('input[type="text"]');
+                if (descInput) descInput.focus();
+            }
+        }
+    });
+
     // -------- Cycle Helpers (15th to 15th logic) --------
     function formatYMD(d) {
         const y = d.getFullYear();
