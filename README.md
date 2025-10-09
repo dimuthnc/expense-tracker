@@ -1,116 +1,117 @@
-# Expense Tracker (Client-Side Only)
+# Expense Tracker (Client‑Side)
 
-A simple, purely client-side web page to track credit card expenses for a chosen billing cycle and manage ongoing installments / monthly bills, fixed costs, and cash expenses. Users can add expense rows and see live summaries by category and payment method, track installment totals, manage fixed recurring costs, and record cash / non-card spending.
+Pure HTML / CSS / Vanilla JavaScript · No build step · Private & offline capable.
 
-## Features
+A zero‑backend, single‑page budgeting tool for tracking card expenses, installments, fixed costs, and cash spending with live projections and fully configurable categories & payment methods.
 
-- Date pickers to select billing cycle (from / to)
-- Dynamic expenses table with auto-incrementing Expense ID
-  - Footer total for all expense amounts
-- Expense Fields: Description, Amount, Category (dropdown), Payment Method/Card (dropdown)
-- Installations & Monthly Bills table:
-  - Auto ID
-  - Description, Monthly Amount, Remaining Months, Card, Computed Total Remaining (Amount * Remaining Months)
-  - Footer totals for Monthly Amount and Total Remaining
-- Fixed Costs table:
-  - Auto ID
-  - Description & Amount
-  - Footer total for all fixed cost amounts
-- Cash Expenses table:
-  - Auto ID
-  - Description, Amount, Payment Method (Cash, Paylah, Bank Transfer), Category (same options as card expenses)
-  - Footer total for all cash expense amounts
-- Summary panel with live metrics:
-  1. Total Credit Card Bill (current card expenses total)
-  2. Total Card Bill + Installments (1 + monthly installments amount)
-  3. Days Remaining in Cycle (inclusive length minus elapsed days; current day excluded from remaining)
-  4. Projected Cycle Spend: (CardTotal / DaysElapsed * TotalDays) + MonthlyInstallments (fallback to CardTotal + MonthlyInstallments if cycle not started)
-  5. Total Bill Projection Including Fixed Costs: (Projected Cycle Spend + Fixed Costs)
-  6. Total Installment Cost (monthly installments total)
-  7. Monthly Expected Income (user input)
-  8. Total Fixed Costs (fixed costs total)
-  9. Expected Savings: Expected Income - Total Bill Projection
-- Import / Export (JSON & CSV) of cycle, expenses, installments, fixed costs, cash expenses (excluding internal IDs)
-- Add unlimited rows to any table
-- Live recalculated summaries:
-  - Totals by Category (card expenses only currently)
-  - Totals by Payment Method / Card (card expenses only currently)
-- Responsive minimalist styling
+## 1. Overview
 
-## Tech Stack
+This project is a lightweight browser-only expense dashboard. All data lives in the page until you export it (JSON or CSV).
 
-- HTML
-- CSS (no framework)
-- Vanilla JavaScript (no dependencies)
+It supports:
 
-## How to Use
+* Multiple spending domains (Card Expenses, Installments, Fixed Costs, Cash Expenses)
+* Live per-category and per-card summaries
+* Monthly projection + fixed cost inclusion + expected savings estimation
+* Dynamic configuration of Categories, Card Payment Methods, and Cash Payment Methods at runtime
+* Safe retention of removed option values (marked as legacy) in existing rows
 
-1. Open `index.html` directly in your browser (double-click or drag into a tab).
-2. (Optional) Set the cycle From/To dates.
-3. Expenses:
-   - Click "Add Expense" to insert new rows.
-   - Fill Description, Amount, select Category & Payment Method.
-   - Footer total updates automatically.
-4. Installations & Monthly Bills:
-   - Click "Add Item" to add a new installment/bill.
-   - Enter a monthly Amount and Remaining Months; Total Remaining auto-calculates.
-   - Footer totals update automatically.
-5. Fixed Costs:
-   - Click "Add Fixed Cost" to add a row.
-   - Enter Amount; footer total updates instantly.
-6. Cash Expenses:
-   - Click "Add Cash Expense" to add a row.
-   - Enter Description, Amount, select Payment Method (Cash / Paylah / Bank Transfer) and Category.
-   - Footer total updates automatically.
-7. Summary Panel:
-   - Enter your Monthly Expected Income to see real-time Expected Savings.
-   - Adjust dates to recalculate projection based on elapsed days.
-8. Import / Export:
-   - Use the header buttons: Export JSON / Export CSV / Import...
-   - Import accepts a previously exported `.json` or `.csv` file (see formats below).
-9. Add more rows anytime; calculations are instant.
+No frameworks, no bundlers, no tracking — just open `index.html` and start entering data.
 
-## Import / Export Formats
+## 2. Quick Start
 
-### JSON Format
+1. Clone or download the repository.
+2. Open `index.html` in any modern browser (Chrome, Edge, Firefox, Safari).
+3. (Optional) Set your billing cycle dates at the top.
+4. Enter or import data, adjust configuration lists, and review live summaries.
+5. Export when you want to persist or share.
 
-File name pattern: `expense_export_<timestamp>.json`
+## 3. Core Data Areas
 
-Schema:
+| Section | Purpose | Key Fields |
+|---------|---------|-----------|
+| Card Expenses | One-off or normal card transactions | Description, Amount, Category, Card (Payment Method) |
+| Installments & Monthly Bills | Items paid monthly for N remaining months | Description, Monthly Amount, Remaining Months, Card, Computed Total Remaining |
+| Fixed Costs | Recurring fixed monthly obligations | Description, Amount |
+| Cash Expenses | Non-card spending (cash / transfers / wallets) | Description, Amount, Cash Payment Method, Category |
+
+## 4. Configuration (Dynamic Lists)
+
+Located in the “Configuration” section:
+
+* Categories
+* Card Payment Methods
+* Cash Payment Methods
+
+### Adding
+
+Type a unique name and press Add (or Enter). All existing dropdowns refresh automatically.
+
+### Removing
+
+Click the “x” next to an entry. Existing rows preserving the removed value retain it as a selectable option labelled with “(legacy)” until you manually change it.
+
+### Legacy Handling
+
+Removed options still in use are appended as trailing options in affected selects with class `legacy-option` so historical data isn’t broken.
+
+## 5. Live Metrics (Summary Panel)
+
+1. Total Credit Card Bill – Sum of all current card expense amounts
+2. Total Card Bill + Installments – (1) + sum of monthly installment amounts
+3. Days Remaining in Cycle – Inclusive cycle length minus elapsed days (current day excluded from remaining)
+4. Projected Cycle Spend – If cycle started: `(CardTotal / DaysElapsed * TotalDays) + MonthlyInstallments`; else fallback `CardTotal + MonthlyInstallments`
+5. Total Bill Projection (Incl. Fixed) – Projected Cycle Spend + Fixed Costs total
+6. Total Installment Cost (Monthly) – Sum of monthly installment amounts
+7. Monthly Expected Income – User input field
+8. Total Fixed Costs – Sum of fixed costs
+9. Expected Savings – `Expected Income - Total Bill Projection`
+
+## 6. Table Footers & Computations
+
+* Card Expenses footer: total of all card amounts
+* Installments footer: sum of monthly amounts + sum of computed remaining totals (monthly * remaining months)
+* Fixed Costs footer: total amount
+* Cash Expenses footer: total amount
+
+Installment row “Total Remaining” updates whenever Amount or Remaining Months changes.
+
+## 7. Interactions
+
+* Add Row buttons create new blank rows (auto ID).
+* Delete button on each row removes it immediately.
+* Inputs/selects update summaries and projections in real time.
+
+## 8. Import & Export
+
+Buttons: Export JSON, Export CSV, Import… (choose a previously exported file).
+
+### JSON Schema
+
 ```json
 {
   "cycleStart": "YYYY-MM-DD",
   "cycleEnd": "YYYY-MM-DD",
-  "expenses": [
-    { "description": "string", "amount": number, "category": "string", "payment": "string" }
-  ],
-  "installments": [
-    { "description": "string", "amount": number, "remainingMonths": number, "card": "string" }
-  ],
-  "fixedCosts": [
-    { "description": "string", "amount": number }
-  ],
-  "cashExpenses": [
-    { "description": "string", "amount": number, "paymentMethod": "string", "category": "string" }
-  ]
+  "expenses": [ { "description": "", "amount": 0, "category": "", "payment": "" } ],
+  "installments": [ { "description": "", "amount": 0, "remainingMonths": 0, "card": "" } ],
+  "fixedCosts": [ { "description": "", "amount": 0 } ],
+  "cashExpenses": [ { "description": "", "amount": 0, "paymentMethod": "", "category": "" } ]
 }
 ```
-Notes:
-- Internal row IDs are not stored; they are regenerated sequentially on import.
-- Amount fields are stored as raw numbers.
 
-### CSV Format
+Row IDs are regenerated sequentially; only semantic fields persist.
 
-Multi-section text file with section headers prefixed by `#`. Blank line separates sections. First line after a section header is that section's column header row. Example:
+### CSV Multi-Section Format
 
-```
+Sections in order (blank line between): Cycle, Expenses, Installments, FixedCosts, CashExpenses.
+
+```csv
 # Cycle
 cycleStart,cycleEnd
 2025-10-01,2025-10-31
 
 # Expenses
 description,amount,category,payment
-Lunch,12.50,Outside Food,HSBC
 Groceries,45.90,Grocery,DBS
 
 # Installments
@@ -120,55 +121,97 @@ Phone Plan,30.00,6,HSBC
 # FixedCosts
 description,amount
 Rent,1200
-Internet,45
 
 # CashExpenses
 description,amount,paymentMethod,category
 Market Veg,18.25,Cash,Grocery
 ```
 
-Parsing Rules:
-- Lines starting with `#` begin a new section.
-- First non-empty line after a section header is treated as that section's header and skipped.
-- Commas inside quoted fields and escaped quotes (`""`) are supported.
-- Amount / numeric values parsed with `parseFloat` / `parseInt`.
+Quoted fields and escaped quotes (`""`) are supported.
 
 ### Import Behavior
 
-- Existing table rows are cleared before population.
-- Cycle dates set if provided.
-- All totals, summaries, and projections recomputed automatically after import.
-- Missing sections or empty arrays are safe (treated as empty lists).
+* Clears existing rows first
+* Recomputes all summaries automatically
+* Missing sections are treated as empty arrays
+* Unknown option values are preserved as legacy entries
 
-### Validation & Errors
+### Validation
 
-- Invalid JSON triggers a simple alert.
-- CSV parser is forgiving; malformed lines that do not match expected column counts are skipped.
+* Invalid JSON → simple alert
+* CSV lines with insufficient columns for a section are skipped silently
 
-## Future Ideas
+## 9. Data Model (In-Memory)
 
-- Persist data with `localStorage`
-- Export to CSV (all tables) (DONE)
-- Delete / reorder rows
-- Validation & currency selection
-- Per-cycle saving & loading
-- Track paid months decrementing Remaining Months automatically
-- Color coding nearing completion installments
-- Aggregate dashboard net monthly obligations (expenses + monthly installments + fixed costs + cash)
-- Include cash expenses in category & payment summaries or display a combined summary
-- Import validation report / error highlighting
-- Download template button
-
-## Project Structure
-
-```plaintext
-index.html
-css/
-  styles.css
-js/
-  app.js
+```ts
+interface Expense { description: string; amount: number; category: string; payment: string; }
+interface Installment { description: string; amount: number; remainingMonths: number; card: string; }
+interface FixedCost { description: string; amount: number; }
+interface CashExpense { description: string; amount: number; paymentMethod: string; category: string; }
+interface ExportModel {
+  cycleStart: string;
+  cycleEnd: string;
+  expenses: Expense[];
+  installments: Installment[];
+  fixedCosts: FixedCost[];
+  cashExpenses: CashExpense[];
+}
 ```
 
-## License
+## 10. Performance & Limits
 
-MIT
+Designed for personal-scale usage (hundreds of rows). All operations are DOM-based; no virtualized rendering.
+
+## 11. Accessibility Notes
+
+* All inputs are native HTML controls
+* Tab order follows document flow
+* (Potential improvement) Add ARIA labels for summary metrics
+
+## 12. Customization Ideas
+
+| Enhancement | Description |
+|-------------|-------------|
+| Local Storage Persistence | Auto-save & load last session |
+| Combined Category Summary | Merge card + cash categories |
+| Currency Support | Multi-currency display & conversion |
+| Dark Mode | Themed alternative stylesheet |
+| Installment Auto-Progress | Decrement remaining months at cycle rollover |
+| Validation Layer | Highlight incomplete/invalid rows |
+
+## 13. Development
+
+No build tools required.
+
+1. Edit files directly (`index.html`, `css/styles.css`, `js/app.js`).
+2. Refresh browser.
+3. Use browser dev tools to inspect runtime state.
+
+## 14. Known Constraints
+
+* No persistence unless you export
+* No multi-user or sync
+* Deleting a row is irreversible (no undo)
+* No sorting or filtering built-in
+
+## 15. Security & Privacy
+
+* All data stays in your browser tab
+* Exports are plain text files you control
+* No external network requests
+
+## 16. License
+
+MIT — do whatever you like; attribution appreciated but not required.
+
+## 17. Changelog (High Level)
+
+* Initial: Core tables + summaries
+* Added: Installments, Fixed Costs, Cash Expenses
+* Added: Projection & expected savings metrics
+* Added: JSON / CSV import-export
+* Added: Dynamic configuration (categories & payment methods)
+* Simplified: Removed edit/save modal & undo (immediate delete only)
+
+---
+Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.
