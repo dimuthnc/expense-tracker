@@ -36,7 +36,6 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | View | Dark Theme | Light Theme | Description |
 |------|------------|-------------|-------------|
 | Main Dashboard | ![Main Dark](screenshots/main-dark.png) | ![Main Light](screenshots/main-light.png) | Core tables + summary metrics |
-| Billing Cycle & Themes | ![Cycle](screenshots/cycle-and-theme.gif) | — | Shows cycle shifting + theme switching |
 | Import / Export | ![Import Export](screenshots/import-export.png) | — | Data portability workflow |
 
 Live interactive version: [Open the Live Demo](https://personal-expense-manager.pages.dev/) (always latest main branch build).
@@ -252,7 +251,7 @@ Designed for personal-scale usage (hundreds of rows). All operations are DOM-bas
 
 * All inputs are native HTML controls
 * Tab order follows document flow
-* (Potential improvement) Add ARIA labels for summary metrics
+* (Improved) Inputs missing labels now include `aria-label` for screen readers
 
 ## 15. Customization Ideas
 
@@ -319,7 +318,6 @@ Local Offline Copy:
 * Save the page (File > Save Page As) including resources OR clone the repo and open `index.html`.
 * Optional: Serve via a simple local server (Python `python3 -m http.server 8080`) for consistent relative path handling.
 
-
 Future Enhancement (Optional):
 
 * Add a service worker for full offline-first loading after first visit.
@@ -343,6 +341,27 @@ Future Enhancement (Optional):
 * UI: Added quick "↓ bottom" jump links for large tables and Alt + A shortcut to add a new expense row
 * UI: Added Pink theme option (new color palette)
 * UI: Added live expense distribution pie charts (Category & Payment/Card)
+* SEO: Added meta description and dynamic canonical via Cloudflare Pages Function
 
----
-Enjoy budgeting! If you extend this (storage, themes, analytics), consider contributing your variant back.
+## 22. SEO & Canonicalization (for forks)
+
+This repository is intended for forking and self-hosting. To avoid hard-coding a domain in the HTML while still giving search engines a canonical URL:
+
+1) Dynamic canonical (Cloudflare Pages Function — default)
+
+* File: `functions/[[path]].js`
+* Behavior: Sets an HTTP `Link: <absolute-url>; rel="canonical"` header on every HTML response using the current request origin + path.
+* Extras: Strips common tracking params (`utm_*`, `gclid`, `fbclid`) so the canonical stays clean.
+* No configuration required; works for your domain and any forks automatically.
+
+2) Alternatives (if not using Cloudflare Pages)
+
+Pick ONE of the following per deploy:
+
+* Static tag: Add `<link rel="canonical" href="https://your-domain.example/" />` to `index.html` yourself.
+* Build-time injection: Replace a placeholder with your base URL during your build.
+  - Example strategy: keep `__CANONICAL_BASE__` in HTML and replace it with an env var in your pipeline (e.g., with a small Node script or a `sed` substitution).
+
+3) Hostname redirects (www vs non‑www)
+
+Configure at your host/CDN level. For Cloudflare Pages with a custom domain, set a Primary domain and add a redirect rule for the alternate host (e.g., `www` → apex). This is intentionally not hard-coded so forks can pick their own preference.

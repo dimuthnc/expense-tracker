@@ -5,6 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personal Expense Manager</title>
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="Client‑side expense tracker to manage credit card and cash spending, installments and fixed costs, with live summaries, charts, and CSV/JSON import/export." />
+    <!-- Canonical URL intentionally not hard-coded for OSS; set via Cloudflare Pages Function (HTTP Link header) -->
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Personal Expense Manager" />
+    <meta property="og:description" content="Client‑side expense tracker to manage credit card and cash spending, installments and fixed costs, with live summaries, charts, and CSV/JSON import/export." />
+    <!-- og:url omitted so deployers don't need to change code; platforms infer current URL -->
+    <meta property="og:image" content="screenshots/main-light.png" />
+    <meta property="og:image:alt" content="Personal Expense Manager dashboard screenshot" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Personal Expense Manager" />
+    <meta name="twitter:description" content="Client‑side expense tracker to manage credit card and cash spending, installments and fixed costs, with live summaries, charts, and CSV/JSON import/export." />
+    <meta name="twitter:image" content="screenshots/main-light.png" />
     <link rel="stylesheet" href="css/styles.css" />
 </head>
 
@@ -51,7 +66,7 @@
                 <h3>Categories</h3>
                 <ul id="categoryList" class="config-list"></ul>
                 <div class="config-add-row">
-                    <input type="text" id="newCategoryInput" placeholder="New category" />
+                    <input type="text" id="newCategoryInput" placeholder="New category" aria-label="Add new category" />
                     <button type="button" id="addCategoryBtn">Add</button>
                 </div>
             </div>
@@ -59,7 +74,7 @@
                 <h3>Card Payment Methods</h3>
                 <ul id="cardList" class="config-list"></ul>
                 <div class="config-add-row">
-                    <input type="text" id="newCardInput" placeholder="New card" />
+                    <input type="text" id="newCardInput" placeholder="New card" aria-label="Add new card payment method" />
                     <button type="button" id="addCardBtn">Add</button>
                 </div>
             </div>
@@ -67,7 +82,7 @@
                 <h3>Cash Payment Methods</h3>
                 <ul id="cashList" class="config-list"></ul>
                 <div class="config-add-row">
-                    <input type="text" id="newCashInput" placeholder="New cash method" />
+                    <input type="text" id="newCashInput" placeholder="New cash method" aria-label="Add new cash payment method" />
                     <button type="button" id="addCashBtn">Add</button>
                 </div>
             </div>
@@ -215,16 +230,16 @@
     <section id="financial-summary">
         <h2>Summary</h2>
                 <div class="summary-grid">
+                      <div class="summary-item"><span class="label" title="Your monthly take-home or budgeted income">Monthly Expected Income:</span> <input type="number" id="expectedIncome" placeholder="0.00" min="0" step="0.01" aria-label="Monthly expected income" /></div>
                       <div class="summary-item"><span class="label" title="Sum of all credit card expenses in this cycle">Total Credit Card Bill:</span> <span id="sumCardBill" class="value">0.00</span></div>
-                      <div class="summary-item"><span class="label" title="Number of days left (excluding today) until cycle end">Days Remaining in Cycle:</span> <span id="sumDaysRemaining" class="value">0</span></div>
                       <div class="summary-item"><span class="label" title="Sum of monthly installment amounts">Total Installment Cost (Monthly):</span> <span id="sumInstallmentMonthly" class="value">0.00</span></div>
-                      <div class="summary-item"><span class="label" title="Your monthly take-home or budgeted income">Monthly Expected Income:</span> <input type="number" id="expectedIncome" placeholder="0.00" min="0" step="0.01" /></div>
                       <div class="summary-item"><span class="label" title="Sum of recurring monthly fixed obligations">Total Fixed Costs:</span> <span id="sumFixedCosts" class="value">0.00</span></div>
                       <div class="summary-item"><span class="label" title="Sum of non-card (cash / transfer / wallet) expenses">Total Cash Expenses:</span> <span id="sumCashExpenses" class="value">0.00</span></div>
-                      <div class="summary-item"><span class="label" title="Target savings you plan to set aside this month">Expected Savings (Input):</span> <input type="number" id="expectedSavingsInput" placeholder="0.00" min="0" step="0.01" /></div>
                       <div class="summary-item"><span class="label" title="Income - (Card + Installments + Fixed + Expected Savings)">Remaining Budget:</span> <span id="sumRemainingBudget" class="value">0.00</span></div>
                       <div class="summary-item"><span class="label" title="Remaining Budget divided by days remaining">Remaining Budget Per Day:</span> <span id="sumRemainingPerDay" class="value">Not Applicable</span></div>
                       <div class="summary-item"><span class="label" title="Displays your Entered Expected Savings target">Projected Savings:</span> <span id="sumExpectedSavings" class="value">0.00</span></div>
+                      <div class="summary-item"><span class="label" title="Target savings you plan to set aside this month">Expected Savings (Input):</span> <input type="number" id="expectedSavingsInput" placeholder="0.00" min="0" step="0.01" aria-label="Expected savings target" /></div>
+                      <div class="summary-item"><span class="label" title="Number of days left (excluding today) until cycle end">Days Remaining in Cycle:</span> <span id="sumDaysRemaining" class="value">0</span></div>
                 </div>
     </section>
 
