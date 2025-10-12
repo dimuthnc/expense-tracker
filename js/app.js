@@ -830,6 +830,15 @@
         applyTheme(stored);
     }
 
+    // Keep theme in sync across tabs/pages
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'et_theme') {
+            const newTheme = e.newValue && ['light','dark','dracula','vscode','pink'].includes(e.newValue) ? e.newValue : 'light';
+            applyTheme(newTheme);
+            if (themeSelect) themeSelect.value = newTheme;
+        }
+    });
+
     // Import/export helper implementations
     function collectInstallmentsData() {
         if (!installmentsBody) return [];
@@ -1123,3 +1132,4 @@
     renderConfigLists();
     refreshAllSelects();
 })();
+
