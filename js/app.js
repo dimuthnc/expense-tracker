@@ -902,9 +902,15 @@
         if (/[",\n]/.test(s)) return '"' + s + '"';
         return s;
     }
+    // New helper: build human-readable timestamp segment for export filenames (YYYY-MM-DD-HHmm)
+    function buildExportTimestamp() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes());
+    }
     function exportJSON() {
         const data = getDataModel();
-        downloadBlob(`expense_export_${Date.now()}.json`, 'application/json', JSON.stringify(data, null, 2));
+        downloadBlob(`expense_export_${buildExportTimestamp()}.json`, 'application/json', JSON.stringify(data, null, 2));
     }
     function exportCSV() {
         const data = getDataModel();
@@ -940,7 +946,7 @@
         lines.push('# CashExpenses');
         lines.push('description,amount,paymentMethod,category');
         data.cashExpenses.forEach(c => lines.push(`${csvEscape(c.description)},${c.amount},${csvEscape(c.paymentMethod)},${csvEscape(c.category)}`));
-        downloadBlob(`expense_export_${Date.now()}.csv`, 'text/csv', lines.join('\n'));
+        downloadBlob(`expense_export_${buildExportTimestamp()}.csv`, 'text/csv', lines.join('\n'));
     }
 
     // -------- Row Action Helpers --------
@@ -1096,7 +1102,7 @@
     if (exportJsonBtn) exportJsonBtn.addEventListener('click', () => {
         const data = getDataModel();
         // Always allow export, even if arrays empty.
-        downloadBlob(`expense_export_${Date.now()}.json`, 'application/json', JSON.stringify(data, null, 2));
+        downloadBlob(`expense_export_${buildExportTimestamp()}.json`, 'application/json', JSON.stringify(data, null, 2));
     });
     if (exportCsvBtn) exportCsvBtn.addEventListener('click', () => {
         exportCSV();
@@ -1132,4 +1138,3 @@
     renderConfigLists();
     refreshAllSelects();
 })();
-
