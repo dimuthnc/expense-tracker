@@ -1,5 +1,7 @@
 # Personal Expense Manager (Client‑Side)
 
+[Maintainers/Contributors: See COPILOT.md for deep technical and architectural guidance.](./COPILOT.md)
+
 ![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Build](https://img.shields.io/badge/build-none%20(required)-informational) ![Stack](https://img.shields.io/badge/stack-HTML%20%2F%20CSS%20%2F%20JS-lightgrey) ![Privacy](https://img.shields.io/badge/privacy-offline-green) [![Live Demo](https://img.shields.io/badge/demo-available-brightgreen)](https://personal-expense-manager.pages.dev/)
 
 Pure HTML / CSS / Vanilla JavaScript · No build step · Private & offline capable.
