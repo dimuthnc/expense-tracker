@@ -5,6 +5,7 @@ import { ExpenseCharts } from '@/components/ExpenseCharts';
 import { FinancialSummary } from '@/components/FinancialSummary';
 import { Header } from '@/components/Header';
 import { SummaryTables } from '@/components/SummaryTables';
+import { TopTransactions } from '@/components/TopTransactions';
 import { CashExpensesTable } from '@/components/tables/CashExpensesTable';
 import { ExpensesTable } from '@/components/tables/ExpensesTable';
 import { FixedCostsTable } from '@/components/tables/FixedCostsTable';
@@ -30,6 +31,7 @@ export function Home() {
       <SummaryTables />
       <FinancialSummary />
       <ExpenseCharts />
+      <TopTransactions />
     </div>
   );
 }

@@ -1,6 +1,49 @@
 import { daysBetweenExclusive } from '@/lib/cycle';
 import type { AppState, DataModel } from './types';
 
+export type TopTransactionSource = 'expense' | 'installment';
+
+export interface TopTransaction {
+  key: string;
+  source: TopTransactionSource;
+  description: string;
+  amount: number;
+  category: string;
+  paymentOrCard: string;
+  validated: boolean;
+  meta?: string;
+}
+
+export function topTransactions(state: AppState, limit = 10): TopTransaction[] {
+  const items: TopTransaction[] = [];
+  state.expenses.forEach((e) => {
+    if (!(e.description || e.amount)) return;
+    items.push({
+      key: `expense-${e.id}`,
+      source: 'expense',
+      description: e.description,
+      amount: e.amount || 0,
+      category: e.category || '',
+      paymentOrCard: e.payment || '',
+      validated: e.validated,
+    });
+  });
+  state.installments.forEach((i) => {
+    if (!(i.description || i.amount || i.remainingMonths)) return;
+    items.push({
+      key: `installment-${i.id}`,
+      source: 'installment',
+      description: i.description,
+      amount: i.amount || 0,
+      category: '',
+      paymentOrCard: i.card || '',
+      validated: i.validated,
+      meta: i.remainingMonths ? `${i.remainingMonths} mo left` : undefined,
+    });
+  });
+  return items.sort((a, b) => b.amount - a.amount).slice(0, limit);
+}
+
 export function sumExpenses(state: AppState): number {
   return state.expenses.reduce((s, e) => s + (e.amount || 0), 0);
 }
