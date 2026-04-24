@@ -2,9 +2,9 @@
 
 [Maintainers/Contributors: See COPILOT.md for deep technical and architectural guidance.](./COPILOT.md)
 
-![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Build](https://img.shields.io/badge/build-none%20(required)-informational) ![Stack](https://img.shields.io/badge/stack-HTML%20%2F%20CSS%20%2F%20JS-lightgrey) ![Privacy](https://img.shields.io/badge/privacy-offline-green) [![Live Demo](https://img.shields.io/badge/demo-available-brightgreen)](https://personal-expense-manager.pages.dev/)
+![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Stack](https://img.shields.io/badge/stack-React%20%2F%20TypeScript%20%2F%20Vite-blueviolet) ![UI](https://img.shields.io/badge/ui-Tailwind%20%2B%20shadcn%2Fui-38bdf8) ![Privacy](https://img.shields.io/badge/privacy-offline-green) [![Live Demo](https://img.shields.io/badge/demo-available-brightgreen)](https://personal-expense-manager.pages.dev/)
 
-Pure HTML / CSS / Vanilla JavaScript · No build step · Private & offline capable.
+React · TypeScript · Vite · Tailwind CSS · shadcn/ui · Kokonut Bento Grid · Private & offline capable.
 
 A zero‑backend, single‑page personal expense manager for tracking credit card expenses, installments, fixed costs, and cash spending with live projections and fully configurable categories & payment methods.
 
@@ -82,8 +82,15 @@ No frameworks, no bundlers, no tracking — just open `index.html` and start ent
 
 ## 5. Quick Start
 
-1. Clone or download the repository.
-2. Open `index.html` in any modern browser (Chrome, Edge, Firefox, Safari).
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # outputs to dist/
+npm run preview  # serve the built bundle locally
+```
+
+1. Clone the repository and run `npm install`.
+2. Run `npm run dev` and open the printed URL.
 3. (Optional) Set your billing cycle dates at the top.
 4. Enter or import data, adjust configuration lists, and review live summaries.
 5. Export when you want to persist or share.
@@ -268,11 +275,22 @@ Designed for personal-scale usage (hundreds of rows). All operations are DOM-bas
 
 ## 16. Development
 
-No build tools required.
+React + TypeScript + Vite. Tailwind CSS + shadcn/ui (copied components under `src/components/ui/`). Kokonut Bento Grid is vendored at `src/components/bento/BentoGrid.tsx`.
 
-1. Edit files directly (`index.html`, `css/styles.css`, `js/app.js`).
-2. Refresh browser.
-3. Use browser dev tools to inspect runtime state.
+```bash
+npm install
+npm run dev      # Vite dev server with HMR
+npm run build    # type-check + production build
+npm run preview  # preview built bundle
+```
+
+Source layout:
+
+* `src/state/` — `useReducer` store, types, selectors
+* `src/lib/` — pure utilities (cycle math, currency formatting, CSV/JSON IO, palette)
+* `src/components/` — feature components, plus shadcn primitives in `ui/` and Kokonut in `bento/`
+* `src/pages/` — `Home` and `Docs` routes
+* `src/hooks/` — `useTheme`, `useAltAShortcut`
 
 ## 17. Known Constraints
 
@@ -305,19 +323,15 @@ Why Cloudflare Pages:
 Deployment Steps (Cloudflare Pages):
 
 1. Push changes to the `main` (or designated) branch.
-2. Cloudflare Pages project is connected to the repository; it auto-builds (no build command needed — set "None").
-3. After build completes, the new version is live globally.
-
+2. In the Cloudflare Pages project, set:
+   * Build command: `npm run build`
+   * Build output directory: `dist`
+3. The `functions/[[path]].js` Pages Function (canonical Link header) and `public/_redirects` (SPA fallback) are picked up automatically.
 
 Manual Alternative:
 
-1. Run locally: just open `index.html`.
-2. Host from any static provider (GitHub Pages, Netlify, Vercel). No build config required.
-
-
-Local Offline Copy:
-
-* Save the page (File > Save Page As) including resources OR clone the repo and open `index.html`.
+1. Run `npm run build` locally.
+2. Upload `dist/` to any static provider (Netlify, Vercel, GitHub Pages). Ensure SPA fallback to `index.html` for unknown routes.
 * Optional: Serve via a simple local server (Python `python3 -m http.server 8080`) for consistent relative path handling.
 
 Future Enhancement (Optional):
