@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ImportExportBar } from './ImportExportBar';
 import { ThemeToggle } from './ThemeToggle';
+import { UserProfile } from './UserProfile';
 
 interface HeaderProps {
   title: string;
@@ -31,6 +32,7 @@ export function Header({ title, showImportExport = true, docsLink = true, backLi
             </Link>
           </Button>
         )}
+        <UserProfile />
       </div>
     </header>
   );
