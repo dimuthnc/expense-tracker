@@ -1,0 +1,4 @@
+# Runtime vars for the Pages Function middleware when testing locally with
+# `npx wrangler pages dev dist`. Copy to .dev.vars (gitignored).
+AUTH0_DOMAIN=your-tenant.us.auth0.com
+AUTH0_AUDIENCE=https://api.expense.dimuthmenikgama.com
