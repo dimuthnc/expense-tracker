@@ -24,7 +24,7 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | Billing Cycle (15th→15th) | ✅ | Auto-detected current cycle + prev/next buttons |
 | Live Projections | ✅ | Spend projection, bill projection, savings calc |
 | Import / Export JSON | ✅ | Full data model + expected income + configurable lists |
-| Import / Export CSV | ✅ | Multi-section format with expectedIncome + lists |
+| Import / Export CSV | ❌ (Removed) | JSON covers backup/restore |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
 | Theme Selector | ✅ | Light, Dark, Dracula, VSCode, Pink (header dropdown, persisted) |
 | Expense Distribution Charts | ✅ | Live pie charts by Category & Payment/Card |
@@ -57,8 +57,8 @@ Common tasks at a glance:
 | Shift billing cycle forward | Up (▲) arrow beside Billing Cycle heading |
 | Shift billing cycle backward | Down (▼) arrow beside Billing Cycle heading |
 | Add new category/card | Enter name in Configuration block → Add (bottom inline input) |
-| Export data | Use Export JSON or Export CSV buttons (header) |
-| Import data | Click Import… and choose previous JSON/CSV export |
+| Export data | Use Export JSON button (header) |
+| Import data | Click Import… and choose previous JSON export |
 | Open live demo | Visit the deployed site: [personal-expense-manager.pages.dev](https://personal-expense-manager.pages.dev/) |
 | View totals by category | See "Totals by Category" summary table |
 | Update expected income | Edit numeric field in Summary panel |
@@ -68,7 +68,7 @@ Common tasks at a glance:
 
 ## 4. Overview
 
-This project is a lightweight browser-only expense dashboard. All data lives in the page until you export it (JSON or CSV).
+This project is a lightweight browser-only expense dashboard. All data lives in the page until you export it (JSON).
 
 It supports:
 
@@ -158,7 +158,7 @@ Installment row “Total Remaining” updates whenever Amount or Remaining Month
 
 ## 11. Import & Export
 
-Buttons: Export JSON, Export CSV, Import… (choose a previously exported file).
+Buttons: Export JSON, Import… (choose a previously exported file).
 
 ### JSON Schema
 
@@ -180,49 +180,6 @@ Buttons: Export JSON, Export CSV, Import… (choose a previously exported file).
 
 Row IDs are regenerated sequentially; only semantic fields persist.
 
-### CSV Multi-Section Format
-
-Sections in order (blank line between): Cycle, Categories, CardPaymentMethods, CashPaymentMethods, Expenses, Installments, FixedCosts, CashExpenses.
-
-```csv
-# Cycle
-cycleStart,cycleEnd,expectedIncome,expectedSavings
-2025-10-01,2025-10-31,4500
-
-# Categories
-category
-Grocery
-Transport
-
-# CardPaymentMethods
-card
-HSBC
-DBS
-
-# CashPaymentMethods
-method
-Cash
-Paylah
-
-# Expenses
-description,amount,category,payment
-Groceries,45.90,Grocery,DBS
-
-# Installments
-description,amount,remainingMonths,card
-Phone Plan,30.00,6,HSBC
-
-# FixedCosts
-description,amount
-Rent,1200
-
-# CashExpenses
-description,amount,paymentMethod,category
-Market Veg,18.25,Cash,Grocery
-```
-
-Quoted fields and escaped quotes (`""`) are supported.
-
 ### Import Behavior
 
 * Clears existing rows first
@@ -233,7 +190,6 @@ Quoted fields and escaped quotes (`""`) are supported.
 ### Validation
 
 * Invalid JSON → simple alert
-* CSV lines with insufficient columns for a section are skipped silently
 
 ## 12. Data Model (In-Memory)
 
@@ -287,7 +243,7 @@ npm run preview  # preview built bundle
 Source layout:
 
 * `src/state/` — `useReducer` store, types, selectors
-* `src/lib/` — pure utilities (cycle math, currency formatting, CSV/JSON IO, palette)
+* `src/lib/` — pure utilities (cycle math, currency formatting, JSON IO, palette)
 * `src/components/` — feature components, plus shadcn primitives in `ui/` and Kokonut in `bento/`
 * `src/pages/` — `Home` and `Docs` routes
 * `src/hooks/` — `useTheme`, `useAltAShortcut`
@@ -358,6 +314,7 @@ Future Enhancement (Optional):
 * UI: Added Pink theme option (new color palette)
 * UI: Added live expense distribution pie charts (Category & Payment/Card)
 * SEO: Added meta description and dynamic canonical via Cloudflare Pages Function
+* Simplified: Removed CSV import/export (JSON is the only data format)
 
 ## 22. SEO & Canonicalization (for forks)
 

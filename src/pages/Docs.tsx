@@ -92,7 +92,7 @@ export function Docs() {
             </li>
             <li>
               <a href="#importExport" className="hover:underline">
-                Import &amp; Export (CSV/JSON)
+                Import &amp; Export (JSON)
               </a>
             </li>
             <li>
@@ -247,7 +247,7 @@ export function Docs() {
           />
         </Section>
 
-        <Section id="importExport" title="7) Import & Export (CSV/JSON)">
+        <Section id="importExport" title="7) Import & Export (JSON)">
           <p className="text-sm">Use the buttons in the page header:</p>
           <ul className="list-disc space-y-1 pl-5 text-sm">
             <li>
@@ -255,10 +255,7 @@ export function Docs() {
               backups and later re-import.
             </li>
             <li>
-              <strong>Export CSV</strong> &ndash; readable spreadsheet format with sections.
-            </li>
-            <li>
-              <strong>Import&hellip;</strong> &ndash; load a previous JSON or CSV export to restore
+              <strong>Import&hellip;</strong> &ndash; load a previous JSON export to restore
               your data.
             </li>
           </ul>
