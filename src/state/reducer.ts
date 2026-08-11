@@ -22,13 +22,23 @@ export const DEFAULT_CATEGORIES = [
 export const DEFAULT_CARD_PAYMENTS = ['HSBC', 'CITI', 'SC', 'Trust', 'DBS'];
 export const DEFAULT_CASH_PAYMENTS = ['Cash', 'Paylah', 'Bank Transfer'];
 
-function blankExpense(id: number, categories: string[], cards: string[]): Expense {
+/** Reuse a previous row's choice when it is still a configured option, else fall back. */
+function carryOver(previous: string | undefined, options: string[]): string {
+  return previous && options.includes(previous) ? previous : (options[0] ?? '');
+}
+
+function blankExpense(
+  id: number,
+  categories: string[],
+  cards: string[],
+  previous?: Expense,
+): Expense {
   return {
     id,
     description: '',
     amount: 0,
-    category: categories[0] ?? '',
-    payment: cards[0] ?? '',
+    category: carryOver(previous?.category, categories),
+    payment: carryOver(previous?.payment, cards),
     validated: false,
   };
 }
@@ -79,6 +89,7 @@ export function createInitialState(): AppState {
 
 export type Action =
   | { type: 'ADD_ROW'; table: RowTable }
+  | { type: 'DUPLICATE_LAST_EXPENSE' }
   | { type: 'DELETE_ROW'; table: RowTable; id: number }
   | { type: 'UPDATE_EXPENSE'; id: number; patch: Partial<Omit<Expense, 'id'>> }
   | { type: 'UPDATE_INSTALLMENT'; id: number; patch: Partial<Omit<Installment, 'id'>> }
@@ -98,11 +109,12 @@ export function reducer(state: AppState, action: Action): AppState {
       switch (action.table) {
         case 'expenses': {
           const id = state.nextIds.expense;
+          const last = state.expenses[state.expenses.length - 1];
           return {
             ...state,
             expenses: [
               ...state.expenses,
-              blankExpense(id, state.categories, state.cardPaymentMethods),
+              blankExpense(id, state.categories, state.cardPaymentMethods, last),
             ],
             nextIds: { ...state.nextIds, expense: id + 1 },
           };
@@ -136,6 +148,19 @@ export function reducer(state: AppState, action: Action): AppState {
         }
       }
       return state;
+    }
+
+    case 'DUPLICATE_LAST_EXPENSE': {
+      const last = state.expenses[state.expenses.length - 1];
+      const id = state.nextIds.expense;
+      const copy: Expense = last
+        ? { ...last, id, validated: false }
+        : blankExpense(id, state.categories, state.cardPaymentMethods);
+      return {
+        ...state,
+        expenses: [...state.expenses, copy],
+        nextIds: { ...state.nextIds, expense: id + 1 },
+      };
     }
 
     case 'DELETE_ROW': {

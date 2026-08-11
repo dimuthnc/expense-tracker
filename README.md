@@ -50,7 +50,8 @@ Common tasks at a glance:
 
 | Action | How |
 |--------|-----|
-| Add credit card expense | Use "Add Expense" button below the credit card expenses table |
+| Add credit card expense | Use "Add Expense" button below the credit card expenses table (inherits the last row's category and card) |
+| Repeat a similar expense | Use "Add Duplicate Row" to copy the last row in full, then edit what differs |
 | Jump to table bottom | Use the small "↓ bottom" link near any table heading |
 | Add expense via keyboard | Press Alt + A (when not focused in an input) |
 | Remove any row | Click trash icon in its row |
