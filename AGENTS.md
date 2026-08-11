@@ -188,14 +188,18 @@ hit on `/docs` 404s.
   `DEFAULT_CASH_PAYMENTS`), and `createInitialState()`.
 - `selectors.ts` — every derived value. Nothing computed is stored in state.
 
-Actions: `ADD_ROW`, `DELETE_ROW`, `UPDATE_EXPENSE`, `UPDATE_INSTALLMENT`, `UPDATE_FIXED`,
-`UPDATE_CASH`, `ADD_CONFIG`, `REMOVE_CONFIG`, `SET_CYCLE`, `SHIFT_CYCLE`, `SET_INCOME`,
-`SET_SAVINGS`, `LOAD`.
+Actions: `ADD_ROW`, `DUPLICATE_LAST_EXPENSE`, `DELETE_ROW`, `UPDATE_EXPENSE`, `UPDATE_INSTALLMENT`,
+`UPDATE_FIXED`, `UPDATE_CASH`, `ADD_CONFIG`, `REMOVE_CONFIG`, `SET_CYCLE`, `SHIFT_CYCLE`,
+`SET_INCOME`, `SET_SAVINGS`, `LOAD`.
 
 Conventions:
 
 - Update actions take a `patch: Partial<Omit<Row, 'id'>>`, so a component sends only the field it
   changed.
+- `ADD_ROW` on `expenses` carries the last row's category and card into the new blank row (falling
+  back to the first configured option when the list is empty or the value was since removed).
+  `DUPLICATE_LAST_EXPENSE` copies the whole last row — description and amount included — and resets
+  `validated` to `false`.
 - IDs come from `state.nextIds` (monotonic per table) and are UI keys only — they are never
   exported.
 - `expectedIncome` / `expectedSavings` are stored as **strings** so the input can be empty; parse

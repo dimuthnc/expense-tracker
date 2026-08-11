@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { AmountInput } from '@/components/AmountInput';
 import { OptionSelect } from '@/components/OptionSelect';
 import { SectionHeader } from '@/components/SectionHeader';
@@ -130,13 +130,23 @@ export function ExpensesTable() {
           </TableFooter>
         </Table>
       </div>
-      <div id="expense-bottom" className="mt-2">
+      <div id="expense-bottom" className="mt-2 flex flex-wrap gap-2">
         <Button
           id="addRowBtn"
           size="sm"
           onClick={() => dispatch({ type: 'ADD_ROW', table: 'expenses' })}
         >
           Add Expense
+        </Button>
+        <Button
+          id="duplicateRowBtn"
+          size="sm"
+          variant="outline"
+          title="Copy the last row into a new one"
+          onClick={() => dispatch({ type: 'DUPLICATE_LAST_EXPENSE' })}
+        >
+          <Copy className="mr-1.5 h-3.5 w-3.5" />
+          Add Duplicate Row
         </Button>
       </div>
     </section>

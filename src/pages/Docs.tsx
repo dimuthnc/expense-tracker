@@ -161,6 +161,12 @@ export function Docs() {
             <li>Choose a Category and the Card you used.</li>
           </ol>
           <p className="mt-2 text-sm">
+            New rows start with the Category and Card of the row above, so a run of expenses on the
+            same card needs no re-picking. For expenses that repeat almost exactly, click &ldquo;Add
+            Duplicate Row&rdquo; instead &ndash; it copies the last row in full (description and
+            amount too, unticking Validated) so you only edit what differs.
+          </p>
+          <p className="mt-2 text-sm">
             The table footer shows the total of your card expenses. The summary tables and charts
             update automatically.
           </p>
