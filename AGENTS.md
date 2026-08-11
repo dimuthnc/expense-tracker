@@ -34,7 +34,7 @@ Deployed on Cloudflare Pages: <https://personal-expense-manager.pages.dev/>
 | Framework | React 18 (function components + hooks only) |
 | Language | TypeScript 5, `strict: true`, `noUnusedLocals`/`noUnusedParameters` on |
 | Build | Vite 8 (`@vitejs/plugin-react`) |
-| Routing | react-router-dom 6 (`BrowserRouter`) |
+| Routing | react-router-dom 7 (`BrowserRouter`) |
 | Styling | Tailwind CSS 3 + CSS custom properties (shadcn token scheme) |
 | UI primitives | shadcn/ui components vendored in `src/components/ui/` (Radix under the hood) |
 | Charts | Recharts (`PieChart`) |
