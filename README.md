@@ -1,6 +1,6 @@
 # Personal Expense Manager (Client‑Side)
 
-[Maintainers/Contributors: See COPILOT.md for deep technical and architectural guidance.](./COPILOT.md)
+[Maintainers/Contributors/AI assistants: See AGENTS.md for deep technical and architectural guidance.](./AGENTS.md)
 
 ![Status](https://img.shields.io/badge/status-active-success) ![License](https://img.shields.io/badge/license-MIT-blue) ![Stack](https://img.shields.io/badge/stack-React%20%2F%20TypeScript%20%2F%20Vite-blueviolet) ![UI](https://img.shields.io/badge/ui-Tailwind%20%2B%20shadcn%2Fui-38bdf8) ![Privacy](https://img.shields.io/badge/privacy-offline-green) [![Live Demo](https://img.shields.io/badge/demo-available-brightgreen)](https://personal-expense-manager.pages.dev/)
 
