@@ -74,12 +74,15 @@ src/components/
   Header, ThemeToggle, UserProfile, ImportExportBar
   CycleSelector, ConfigSection, ConfigList, OptionSelect, AmountInput, SectionHeader
   FinancialSummary, SummaryTables, ExpenseCharts, TopTransactions
+  ImportCardCsvDialog          Card statement CSV import (hand-rolled modal, no Radix dialog dep)
   ProtectedRoute
   tables/                      ExpensesTable, InstallmentsTable, FixedCostsTable, CashExpensesTable
   ui/                          shadcn primitives (vendored — regenerate, don't hand-restyle)
   bento/BentoGrid.tsx          Vendored Kokonut bento grid used by FinancialSummary
 src/hooks/                     useTheme, useAltAShortcut
 src/lib/                       authCookie, cycle, format, io, palette, utils (pure helpers)
+  cardCsv.ts                   Bank CSV tokenizer + DBS/POSB statement parser
+  importPlan.ts                Dedup fingerprints and the new/duplicate/skipped classification
 src/pages/                     Home, Docs, Login, Callback
 src/state/                     types, reducer, AppContext, selectors
 src/index.css                  Tailwind layers + light/dark design tokens
@@ -190,7 +193,7 @@ hit on `/docs` 404s.
 
 Actions: `ADD_ROW`, `DUPLICATE_LAST_EXPENSE`, `DELETE_ROW`, `UPDATE_EXPENSE`, `UPDATE_INSTALLMENT`,
 `UPDATE_FIXED`, `UPDATE_CASH`, `ADD_CONFIG`, `REMOVE_CONFIG`, `SET_CYCLE`, `SHIFT_CYCLE`,
-`SET_INCOME`, `SET_SAVINGS`, `LOAD`.
+`SET_INCOME`, `SET_SAVINGS`, `IMPORT_EXPENSES`, `LOAD`.
 
 Conventions:
 
@@ -206,6 +209,9 @@ Conventions:
   with `parseFloat(...) || 0` at the point of use.
 - `LOAD` resets IDs from 1, falls back to current config lists when the imported list is empty, and
   seeds one blank row per table so the UI is never an empty grid.
+- `IMPORT_EXPENSES` **appends** rows (it is not a `LOAD`) and drops the table's lone seeded blank
+  row so an import doesn't leave an empty row above the transactions. Rows the user has started
+  typing are never removed.
 
 ### Selectors
 
@@ -246,6 +252,47 @@ Cycle dates are stored as plain `YYYY-MM-DD` strings and parsed as **local** tim
 code, keep using this convention; don't introduce `Date` objects into state or UTC parsing, which
 would shift cycle boundaries by a day in some timezones.
 
+### Card statement CSV import
+
+`ImportCardCsvDialog` (opened from the "Import CSV" button on the Credit Card Expenses header)
+reads the **unbilled transactions** CSV that DBS/POSB internet banking exports and appends the
+transactions the table does not already hold. Two pure modules do the work:
+
+- `src/lib/cardCsv.ts` — `parseCsv` (RFC 4180 tokenizer) and `parseCardCsv`, which finds the
+  `Transaction Date` header rather than assuming a fixed preamble, reads the card label and
+  "as at" date from the preamble, and converts `"15 Aug 2026"` to a local `YYYY-MM-DD` **built
+  from parts**, never via `new Date(string)`, for the same timezone reason as the cycle dates.
+- `src/lib/importPlan.ts` — `buildImportPlan` classifies every line as `new`, `duplicate`,
+  `outside-cycle`, `credit`, or `invalid`, and `toExpenseRows` turns the `new` ones into expense
+  rows. Nothing is written until the user confirms in the dialog.
+
+**Deduplication.** An unbilled export is cumulative — the file pulled on the 29th repeats
+everything from the file pulled on the 22nd — and the bank issues no transaction id. Each charge
+is therefore fingerprinted from the fields that are stable once a charge exists:
+
+```
+card identity | transaction date | description | amount | occurrence number
+```
+
+hashed to `dbs1:<16 hex>` and stored as `Expense.importKey`. Points that are load-bearing:
+
+- The **occurrence number** is what makes two genuinely identical charges (same shop, same
+  amount, same day — the sample file has a pair) import as two rows while a re-import of that
+  same pair adds nothing. It is assigned over every charge in the file **before** any filtering,
+  so a row's fingerprint never depends on the cycle in force or on where the export was cut off.
+- **Card identity** is the preamble label, which carries the masked card number, so dedup holds
+  even if the user picks a different payment-method name on a later import.
+- Posting date and `Transaction Status` are deliberately **excluded**: a charge that moves from
+  Pending to Settled must keep the same fingerprint. The consequence is that a charge whose
+  amount changes on settlement (tips, fuel holds) reads as a new transaction — see §14.
+- `importKey` is exported and restored by `LOAD`, so dedup survives a JSON round trip. Rows typed
+  by hand have no key and are never matched against an import.
+
+**Cycle validation.** Transactions outside `cycleStart … cycleEnd` are listed but not imported;
+the user switches cycle and imports the same file again to pick them up. Credit lines (refunds,
+card payments) are reported and skipped rather than imported as negatives, since no total in the
+app models a negative expense.
+
 ### Legacy config options
 
 Removing a category or payment method does **not** rewrite existing rows. `OptionSelect` detects a
@@ -283,8 +330,10 @@ pretty-printed JSON via `downloadBlob`, named `expense_export_<YYYY-MM-DD-HHmm>.
 a file with `readFileAsText`, `JSON.parse`s it, and dispatches `LOAD`; a parse failure is a plain
 `alert('Invalid JSON file.')`.
 
-**JSON is the only supported format — CSV import/export was removed.** Don't reintroduce it
-without a reason; JSON already covers backup/restore.
+**JSON is the only supported format for backup/restore, and the only format that is exported.**
+The removed general-purpose CSV export stays removed; JSON already covers backup/restore. The one
+CSV path in the app is the **one-way card statement import** described in §7, which solves a
+different problem (getting a bank's transaction list in) and never writes CSV.
 
 ```jsonc
 {
@@ -295,7 +344,8 @@ without a reason; JSON already covers backup/restore.
   "categories": ["Grocery", "..."],
   "cardPaymentMethods": ["HSBC", "..."],
   "cashPaymentMethods": ["Cash", "..."],
-  "expenses":     [{ "description": "", "amount": 0, "category": "", "payment": "", "validated": false }],
+  "expenses":     [{ "description": "", "amount": 0, "category": "", "payment": "", "validated": false,
+                     "importKey": "dbs1:…" /* optional; only on rows added by the CSV import */ }],
   "installments": [{ "description": "", "amount": 0, "remainingMonths": 0, "card": "", "validated": false }],
   "fixedCosts":   [{ "description": "", "amount": 0, "validated": false }],
   "cashExpenses": [{ "description": "", "amount": 0, "paymentMethod": "", "category": "" }]
@@ -395,6 +445,10 @@ gate is invisible in dev — only the SPA `ProtectedRoute` applies there.
 7. **Legacy-option behavior** in `OptionSelect` — removing a config value must not silently
    rewrite historical rows.
 8. **Seeded blank rows** after `LOAD` — the UI assumes at least one row per table.
+9. **The `importKey` fingerprint recipe** in §7, including the `dbs1:` prefix. Changing what goes
+   into the hash makes every previously imported row unrecognisable, so the next import of an
+   overlapping statement duplicates everything. If it must change, bump the prefix (`dbs2:`) and
+   decide explicitly what happens to rows carrying the old one.
 
 ---
 
@@ -408,6 +462,9 @@ the least friction, and the highest-value targets are the pure logic:
 3. `reducer` `LOAD`: ID reset, empty-list fallback, blank-row seeding.
 4. `computeSummary` arithmetic, including negative `remainingBudget` and the `null` per-day case.
 5. JSON export → import round-trip equality ignoring IDs.
+6. `buildImportPlan`: re-importing an overlapping statement adds nothing; two identical charges on
+   one day import as two rows; out-of-cycle, credit, and malformed lines are classified, not
+   imported; dedup still holds after an export → import round trip.
 
 Keep test tooling in `devDependencies` only; it must not reach the shipped bundle.
 
@@ -422,6 +479,14 @@ Keep test tooling in `devDependencies` only; it must not reach the shipped bundl
 - Single implicit currency: amounts are formatted with `toLocaleString`, with no currency symbol
   or conversion.
 - Installments do not auto-decrement `remainingMonths` when the cycle shifts.
+- CSV import understands the DBS/POSB unbilled export only; other banks' layouts are rejected with
+  a message rather than guessed at.
+- A charge whose **amount changes between Pending and Settled** (tips, fuel holds) imports a
+  second time as a new row, because the amount is part of the fingerprint. Delete the stale row by
+  hand. Dropping the amount from the fingerprint would fix this but would break repeated identical
+  charges, which are the commoner case.
+- Deleting an imported row and re-importing the same statement brings it back — the fingerprint
+  records what was imported, not what was deliberately removed.
 - No service worker, so there is no true offline mode.
 - Tokens live in memory, so a hard refresh triggers a silent refresh-token round trip.
 

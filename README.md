@@ -25,6 +25,7 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | Live Projections | ✅ | Spend projection, bill projection, savings calc |
 | Import / Export JSON | ✅ | Full data model + expected income + configurable lists |
 | Import / Export CSV | ❌ (Removed) | JSON covers backup/restore |
+| Card statement CSV import | ✅ | One-way import of a DBS/POSB unbilled transactions export, with duplicate detection |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
 | Theme Selector | ✅ | Light, Dark, Dracula, VSCode, Pink (header dropdown, persisted) |
 | Expense Distribution Charts | ✅ | Live pie charts by Category & Payment/Card |
@@ -161,6 +162,23 @@ Installment row “Total Remaining” updates whenever Amount or Remaining Month
 
 Buttons: Export JSON, Import… (choose a previously exported file).
 
+### Card statement CSV import
+
+The **Import CSV** button on the Credit Card Expenses table takes the *unbilled transactions* CSV
+exported from DBS/POSB internet banking, so a month of card spending does not have to be typed in.
+Pick the file, confirm which card and category the rows belong to, review the preview, and import.
+
+Because an unbilled export is cumulative — the file you pull on the 29th repeats everything from
+the file you pulled on the 22nd — every imported row stores a fingerprint of its statement line
+(`importKey`). Importing a later export therefore adds only the transactions that are genuinely
+new. Two identical charges on the same day at the same merchant still import as two rows; only
+re-imports of the same charge are skipped. The fingerprint travels in the JSON export, so
+duplicate detection survives a backup and restore.
+
+The preview also reports what will *not* be imported: transactions dated outside the current
+billing cycle (switch cycle and import the same file again to pick them up), refunds and card
+payments, and any line the parser could not read.
+
 ### JSON Schema
 
 ```json
@@ -172,7 +190,7 @@ Buttons: Export JSON, Import… (choose a previously exported file).
   "categories": ["Grocery", "Outside Food", "..."] ,
   "cardPaymentMethods": ["HSBC", "CITI", "SC"],
   "cashPaymentMethods": ["Cash", "Paylah", "Bank Transfer"],
-  "expenses": [ { "description": "", "amount": 0, "category": "", "payment": "" } ],
+  "expenses": [ { "description": "", "amount": 0, "category": "", "payment": "", "validated": false, "importKey": "dbs1:… (optional, CSV-imported rows only)" } ],
   "installments": [ { "description": "", "amount": 0, "remainingMonths": 0, "card": "" } ],
   "fixedCosts": [ { "description": "", "amount": 0 } ],
   "cashExpenses": [ { "description": "", "amount": 0, "paymentMethod": "", "category": "" } ]
@@ -195,7 +213,7 @@ Row IDs are regenerated sequentially; only semantic fields persist.
 ## 12. Data Model (In-Memory)
 
 ```ts
-interface Expense { description: string; amount: number; category: string; payment: string; }
+interface Expense { description: string; amount: number; category: string; payment: string; validated: boolean; importKey?: string; }
 interface Installment { description: string; amount: number; remainingMonths: number; card: string; }
 interface FixedCost { description: string; amount: number; }
 interface CashExpense { description: string; amount: number; paymentMethod: string; category: string; }
@@ -316,6 +334,7 @@ Future Enhancement (Optional):
 * UI: Added live expense distribution pie charts (Category & Payment/Card)
 * SEO: Added meta description and dynamic canonical via Cloudflare Pages Function
 * Simplified: Removed CSV import/export (JSON is the only data format)
+* Added: Card statement CSV import for DBS/POSB unbilled transactions, with duplicate detection and billing-cycle validation
 
 ## 22. SEO & Canonicalization (for forks)
 

@@ -59,6 +59,10 @@ __pycache__/
 *.tgz
 *.gz
 
+# === Bank statement exports (real transactions — never commit) ===
+transaction_history_*.csv
+expense_export_*.json
+
 # === Design / source assets (exported working files) ===
 *.psd
 *.ai

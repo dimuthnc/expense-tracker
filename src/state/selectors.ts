@@ -140,12 +140,14 @@ export function computeSummary(state: AppState): FinancialSummary {
 export function toDataModel(state: AppState): DataModel {
   const expenses = state.expenses
     .filter((e) => e.description || e.amount)
-    .map(({ description, amount, category, payment, validated }) => ({
+    .map(({ description, amount, category, payment, validated, importKey }) => ({
       description,
       amount,
       category,
       payment,
       validated,
+      // Omitted rather than exported as undefined so hand-entered rows keep the original shape.
+      ...(importKey ? { importKey } : {}),
     }));
   const installments = state.installments
     .filter((i) => i.description || i.amount || i.remainingMonths)

@@ -5,6 +5,13 @@ export interface Expense {
   category: string;
   payment: string;
   validated: boolean;
+  /**
+   * Stable fingerprint of the statement line this row came from, set only by the card CSV
+   * import. It is what makes re-importing an overlapping unbilled export skip rows that are
+   * already here, so it must survive a JSON export/import round trip. Rows typed by hand
+   * have no key and are never matched against an import.
+   */
+  importKey?: string;
 }
 
 export interface Installment {
