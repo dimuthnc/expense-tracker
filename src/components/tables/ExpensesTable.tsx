@@ -1,5 +1,7 @@
-import { Copy, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Copy, Trash2, Upload } from 'lucide-react';
 import { AmountInput } from '@/components/AmountInput';
+import { ImportCardCsvDialog } from '@/components/ImportCardCsvDialog';
 import { OptionSelect } from '@/components/OptionSelect';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Button } from '@/components/ui/button';
@@ -22,10 +24,17 @@ export function ExpensesTable() {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const total = sumExpenses(state);
+  const [importOpen, setImportOpen] = useState(false);
 
   return (
     <section className="mb-8">
-      <SectionHeader title="Credit Card Expenses" anchor="expense-bottom" />
+      <SectionHeader title="Credit Card Expenses" anchor="expense-bottom">
+        <Button type="button" size="sm" variant="outline" onClick={() => setImportOpen(true)}>
+          <Upload className="h-3.5 w-3.5" />
+          Import CSV
+        </Button>
+      </SectionHeader>
+      <ImportCardCsvDialog open={importOpen} onClose={() => setImportOpen(false)} />
       <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
         <Table>
           <TableHeader>
