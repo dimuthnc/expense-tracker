@@ -159,7 +159,10 @@ export function reducer(state: AppState, action: Action): AppState {
       const last = state.expenses[state.expenses.length - 1];
       const id = state.nextIds.expense;
       const copy: Expense = last
-        ? { ...last, id, validated: false }
+        ? // importKey is deliberately dropped: the copy is a new hand-made row, not the statement
+          // line the original came from. Letting it inherit the fingerprint would make a later
+          // import of that statement treat the real transaction as already present.
+          { ...last, id, validated: false, importKey: undefined }
         : blankExpense(id, state.categories, state.cardPaymentMethods);
       return {
         ...state,
