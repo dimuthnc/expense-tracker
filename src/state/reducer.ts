@@ -65,6 +65,10 @@ function blankCashExpense(id: number, cashMethods: string[], categories: string[
   };
 }
 
+function isBlankExpense(e: Expense): boolean {
+  return !e.description.trim() && !e.amount;
+}
+
 export function createInitialState(): AppState {
   const today = new Date();
   const { start, end } = computeCycleContaining(today);
@@ -101,6 +105,7 @@ export type Action =
   | { type: 'SHIFT_CYCLE'; delta: number }
   | { type: 'SET_INCOME'; value: string }
   | { type: 'SET_SAVINGS'; value: string }
+  | { type: 'IMPORT_EXPENSES'; rows: Omit<Expense, 'id'>[] }
   | { type: 'LOAD'; data: DataModel };
 
 export function reducer(state: AppState, action: Action): AppState {
@@ -226,6 +231,21 @@ export function reducer(state: AppState, action: Action): AppState {
     case 'SET_SAVINGS':
       return { ...state, expectedSavings: action.value };
 
+    case 'IMPORT_EXPENSES': {
+      if (action.rows.length === 0) return state;
+      let id = state.nextIds.expense;
+      const imported: Expense[] = action.rows.map((row) => ({ ...row, id: id++ }));
+      // A freshly loaded table holds one seeded placeholder; drop it so the import doesn't
+      // leave an empty row above the transactions. Anything the user has started typing stays.
+      const existing =
+        state.expenses.length === 1 && isBlankExpense(state.expenses[0]) ? [] : state.expenses;
+      return {
+        ...state,
+        expenses: [...existing, ...imported],
+        nextIds: { ...state.nextIds, expense: id },
+      };
+    }
+
     case 'LOAD': {
       const d = action.data;
       const categories = d.categories?.length ? [...d.categories] : state.categories;
@@ -248,6 +268,7 @@ export function reducer(state: AppState, action: Action): AppState {
         category: e.category || categories[0] || '',
         payment: e.payment || cardPaymentMethods[0] || '',
         validated: Boolean(e.validated),
+        importKey: e.importKey || undefined,
       }));
       const installments: Installment[] = (d.installments || []).map((i) => ({
         id: nextInstallment++,
