@@ -43,7 +43,7 @@ export function Docs() {
     if (meta) {
       meta.setAttribute(
         'content',
-        'Beginner-friendly guide to using the Personal Expense Manager: setup, adding expenses, installments, fixed costs, cash expenses, summaries, and import/export.',
+        'Beginner-friendly guide to using the Personal Expense Manager: setup, adding expenses, importing a card statement CSV, installments, fixed costs, cash expenses, summaries, and import/export.',
       );
     }
   }, []);
@@ -88,6 +88,11 @@ export function Docs() {
             <li>
               <a href="#summary" className="hover:underline">
                 Read the summary
+              </a>
+            </li>
+            <li>
+              <a href="#importCsv" className="hover:underline">
+                Import your card statement (CSV)
               </a>
             </li>
             <li>
@@ -253,7 +258,46 @@ export function Docs() {
           />
         </Section>
 
-        <Section id="importExport" title="7) Import & Export (JSON)">
+        <Section id="importCsv" title="7) Import your card statement (CSV)">
+          <p className="text-sm">
+            Instead of typing every transaction, you can import the{' '}
+            <strong>unbilled transactions</strong> CSV that DBS/POSB internet banking exports.
+            Click <strong>Import CSV</strong> on the Credit Card Expenses table, choose the file,
+            confirm which card and category the transactions belong to, then review the list and
+            click Import.
+          </p>
+          <Card className="my-3 surface-alt p-3 text-sm">
+            <strong>Importing twice is safe.</strong> An unbilled export always repeats the earlier
+            transactions &ndash; the file you download on the 29th contains everything from the one
+            you downloaded on the 22nd. The app remembers which statement lines it has already
+            taken, so a second import adds only what is new. Two separate charges at the same shop
+            for the same amount on the same day still come in as two rows.
+          </Card>
+          <p className="text-sm">The preview also tells you what it is leaving out:</p>
+          <ul className="list-disc space-y-1 pl-5 text-sm">
+            <li>
+              <strong>Already imported</strong> &ndash; nothing to do.
+            </li>
+            <li>
+              <strong>Outside cycle</strong> &ndash; the transaction is dated outside your current
+              billing cycle. Switch to that cycle and import the same file again to add it.
+            </li>
+            <li>
+              <strong>Refund / payment</strong> &ndash; credits are not imported; add them by hand
+              if you track them.
+            </li>
+            <li>
+              <strong>Skipped</strong> &ndash; a line the app could not read.
+            </li>
+          </ul>
+          <p className="text-sm">
+            Imported rows arrive unvalidated, so you can tick them off against your statement as
+            usual, and you can edit the description, amount, or category afterwards like any other
+            row.
+          </p>
+        </Section>
+
+        <Section id="importExport" title="8) Import & Export (JSON)">
           <p className="text-sm">Use the buttons in the page header:</p>
           <ul className="list-disc space-y-1 pl-5 text-sm">
             <li>
@@ -270,14 +314,14 @@ export function Docs() {
           </Card>
         </Section>
 
-        <Section id="themes" title="8) Themes">
+        <Section id="themes" title="9) Themes">
           <p className="text-sm">
             Switch themes using the dropdown at the top right. Your choice is remembered and shared
             between pages.
           </p>
         </Section>
 
-        <Section id="tips" title="9) Tips & shortcuts">
+        <Section id="tips" title="10) Tips & shortcuts">
           <ul className="list-disc space-y-1 pl-5 text-sm">
             <li>
               <Kbd>Alt</Kbd> + <Kbd>A</Kbd> adds a new credit card expense row (when not typing).
@@ -290,14 +334,14 @@ export function Docs() {
           </ul>
         </Section>
 
-        <Section id="privacy" title="10) Privacy">
+        <Section id="privacy" title="11) Privacy">
           <p className="text-sm">
             This is a client-side tool. It doesn&rsquo;t send your data anywhere. Your work exists
             in the page while it&rsquo;s open. Export a file to save it for later.
           </p>
         </Section>
 
-        <Section id="troubleshooting" title="11) Troubleshooting">
+        <Section id="troubleshooting" title="12) Troubleshooting">
           <ul className="list-disc space-y-1 pl-5 text-sm">
             <li>
               <strong>I lost my data</strong> &ndash; If you didn&rsquo;t export, the page
