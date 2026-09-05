@@ -26,12 +26,14 @@ const STATUS_LABEL: Record<ImportRowStatus, string> = {
   invalid: 'Skipped',
 };
 
+// Accent meanings: teal = the machine will act, amber = needs a human decision (change cycle),
+// blue = an aside (credits are reported, not acted on), coral = a warning, neutral = nothing to do.
 const STATUS_CLASS: Record<ImportRowStatus, string> = {
-  new: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-  duplicate: 'bg-muted text-muted-foreground',
-  'outside-cycle': 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
-  credit: 'bg-sky-500/15 text-sky-700 dark:text-sky-400',
-  invalid: 'bg-destructive/15 text-destructive',
+  new: 'fx-tag fx-tag--machine',
+  duplicate: 'fx-tag',
+  'outside-cycle': 'fx-tag fx-tag--human',
+  credit: 'fx-tag fx-tag--thought',
+  invalid: 'fx-tag border-signal-edge bg-signal-wash text-signal',
 };
 
 /** Pick the payment method whose name looks like the card in the CSV, e.g. "DBS/POSB …" → "DBS". */
@@ -126,7 +128,7 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 sm:items-center"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -137,14 +139,14 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
         aria-modal="true"
         aria-labelledby="import-csv-title"
         tabIndex={-1}
-        className="w-full max-w-3xl rounded-lg border bg-card shadow-lg outline-none"
+        className="w-full max-w-3xl rounded border border-rule-strong border-l-bar border-l-machine bg-popover outline-none"
       >
-        <div className="flex items-start justify-between gap-4 border-b px-4 py-3">
+        <div className="flex items-start justify-between gap-4 border-b border-rule px-4 py-3">
           <div>
-            <h2 id="import-csv-title" className="text-base font-semibold">
+            <h2 id="import-csv-title" className="font-display text-body font-semibold leading-tight tracking-tight">
               Import card transactions
             </h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-1 text-micro text-ink-dim">
               Upload the unbilled transactions CSV from your bank. Transactions already imported
               are skipped automatically.
             </p>
@@ -164,8 +166,8 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
         <div className="px-4 py-3">
           {!parsed && (
             <div
-              className={`flex flex-col items-center justify-center rounded-lg border border-dashed px-4 py-10 text-center transition-colors ${
-                dragging ? 'border-primary bg-accent' : 'border-border'
+              className={`flex flex-col items-center justify-center rounded border border-dashed px-4 py-10 text-center transition-colors ${
+                dragging ? 'border-machine bg-machine-wash' : 'border-rule-strong'
               }`}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -179,8 +181,8 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
                 if (file) loadFile(file);
               }}
             >
-              <Upload className="mb-2 h-6 w-6 text-muted-foreground" />
-              <p className="text-sm">Drop the CSV here, or</p>
+              <Upload className="mb-2 h-6 w-6 text-ink-faint" />
+              <p className="text-small text-ink-dim">Drop the CSV here, or</p>
               <Button
                 type="button"
                 size="sm"
@@ -189,14 +191,14 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
               >
                 Choose file
               </Button>
-              {readError && <p className="mt-3 text-xs text-destructive">{readError}</p>}
+              {readError && <p className="mt-3 text-micro text-signal">{readError}</p>}
             </div>
           )}
 
           {parsed?.error && (
-            <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3">
-              <p className="text-sm font-medium text-destructive">{fileName}</p>
-              <p className="mt-1 text-xs text-destructive">{parsed.error}</p>
+            <div className="rounded border border-signal-edge border-l-bar border-l-signal bg-signal-wash p-3">
+              <p className="text-small font-medium text-signal">{fileName}</p>
+              <p className="mt-1 text-micro text-signal">{parsed.error}</p>
               <Button
                 type="button"
                 size="sm"
@@ -211,10 +213,10 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
 
           {parsed && !parsed.error && plan && (
             <>
-              <div className="surface-alt flex flex-wrap items-center justify-between gap-2 rounded-md p-3 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded border border-rule bg-surface p-3 text-small">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{parsed.cardLabel || fileName}</p>
-                  <p className="text-muted-foreground">
+                  <p className="fx-figure text-micro text-ink-dim">
                     {fileName}
                     {parsed.statementDate && ` • as at ${parsed.statementDate}`} •{' '}
                     {parsed.transactions.length} line
@@ -232,64 +234,64 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
               </div>
 
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="block text-xs">
-                  <span className="mb-1 block font-medium">Credit card</span>
+                <label className="block">
+                  <span className="fx-label mb-2 block">Credit card</span>
                   <OptionSelect
                     value={card}
                     options={state.cardPaymentMethods}
                     onChange={setCard}
                     ariaLabel="Credit card"
-                    className="h-9 w-full text-xs"
+                    className="h-9 w-full"
                   />
                 </label>
-                <label className="block text-xs">
-                  <span className="mb-1 block font-medium">Category for imported rows</span>
+                <label className="block">
+                  <span className="fx-label mb-2 block">Category for imported rows</span>
                   <OptionSelect
                     value={category}
                     options={state.categories}
                     onChange={setCategory}
                     ariaLabel="Category for imported rows"
-                    className="h-9 w-full text-xs"
+                    className="h-9 w-full"
                   />
                 </label>
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-1.5 text-xs">
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {(Object.keys(STATUS_LABEL) as ImportRowStatus[])
                   .filter((s) => (counts?.[s] ?? 0) > 0)
                   .map((s) => (
-                    <span key={s} className={`rounded px-2 py-1 font-medium ${STATUS_CLASS[s]}`}>
+                    <span key={s} className={STATUS_CLASS[s]}>
                       {counts?.[s]} {STATUS_LABEL[s].toLowerCase()}
                     </span>
                   ))}
               </div>
 
-              <div className="mt-3 max-h-72 overflow-y-auto rounded-md border">
-                <table className="w-full text-xs">
-                  <thead className="sticky top-0 bg-footer">
-                    <tr className="text-left">
-                      <th className="px-2 py-1.5 font-medium">Date</th>
-                      <th className="px-2 py-1.5 font-medium">Description</th>
-                      <th className="px-2 py-1.5 text-right font-medium">Amount</th>
-                      <th className="px-2 py-1.5 font-medium">Status</th>
+              <div className="mt-3 max-h-72 overflow-y-auto rounded border border-rule">
+                <table className="w-full text-small">
+                  <thead className="sticky top-0 bg-popover">
+                    <tr className="border-b border-rule-strong text-left">
+                      <th className="fx-label px-2 py-2">Date</th>
+                      <th className="fx-label px-2 py-2">Description</th>
+                      <th className="fx-label px-2 py-2 text-right">Amount</th>
+                      <th className="fx-label px-2 py-2">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {plan.rows.map((row, i) => (
                       <tr
                         key={`${row.importKey ?? 'x'}-${i}`}
-                        className={`border-t ${row.status === 'new' ? '' : 'text-muted-foreground'}`}
+                        className={`border-t border-rule ${row.status === 'new' ? '' : 'text-ink-dim'}`}
                       >
-                        <td className="whitespace-nowrap px-2 py-1.5 tabular-nums">
+                        <td className="fx-figure whitespace-nowrap px-2 py-1.5">
                           {row.transaction.date || row.transaction.rawDate || '—'}
                         </td>
                         <td className="px-2 py-1.5">{row.transaction.description || '—'}</td>
-                        <td className="whitespace-nowrap px-2 py-1.5 text-right tabular-nums">
+                        <td className="fx-figure whitespace-nowrap px-2 py-1.5 text-right">
                           {formatCurrency(row.transaction.debit || row.transaction.credit)}
                         </td>
                         <td className="px-2 py-1.5">
                           <span
-                            className={`inline-block rounded px-1.5 py-0.5 ${STATUS_CLASS[row.status]}`}
+                            className={`${STATUS_CLASS[row.status]} px-1.5 py-0.5`}
                             title={row.reason}
                           >
                             {STATUS_LABEL[row.status]}
@@ -299,7 +301,7 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
                     ))}
                     {plan.rows.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="px-2 py-4 text-center text-muted-foreground">
+                        <td colSpan={4} className="px-2 py-4 text-center text-ink-faint">
                           No transactions found in this file.
                         </td>
                       </tr>
@@ -309,7 +311,7 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
               </div>
 
               {(counts?.['outside-cycle'] ?? 0) > 0 && (
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-3 border-l-bar border-l-human pl-3 text-micro text-ink-dim">
                   {counts?.['outside-cycle']} transaction
                   {counts?.['outside-cycle'] === 1 ? ' falls' : 's fall'} outside the current{' '}
                   {state.cycleStart} → {state.cycleEnd} cycle and will not be imported. Switch to
@@ -320,8 +322,8 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
           )}
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t px-4 py-3">
-          <p className="text-xs text-muted-foreground" aria-live="polite">
+        <div className="flex items-center justify-between gap-3 border-t border-rule px-4 py-3">
+          <p className="fx-figure text-micro text-ink-dim" aria-live="polite">
             {plan
               ? newCount > 0
                 ? `${newCount} new transaction${newCount === 1 ? '' : 's'} • ${formatCurrency(plan.newTotal)}`
@@ -329,7 +331,7 @@ export function ImportCardCsvDialog({ open, onClose }: ImportCardCsvDialogProps)
               : 'No file selected.'}
           </p>
           <div className="flex gap-2">
-            <Button type="button" size="sm" variant="secondary" onClick={onClose}>
+            <Button type="button" size="sm" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button type="button" size="sm" disabled={newCount === 0} onClick={onImport}>

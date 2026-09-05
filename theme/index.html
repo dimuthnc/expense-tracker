@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>factory-ui — reference</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+
+<style>
+  /* Page-specific layout only. Nothing here belongs in the library. */
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  .demo-section { padding-block: var(--fx-9); }
+  .demo-section + .demo-section { border-top: 1px solid var(--fx-rule); }
+  .demo-hero { padding-block: var(--fx-10) var(--fx-9); }
+  .demo-swatches {
+    display: grid;
+    gap: var(--fx-3);
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+  .demo-swatch {
+    padding: var(--fx-3);
+    border: 1px solid var(--fx-rule);
+    border-radius: var(--fx-radius-sm);
+    font-family: var(--fx-font-mono);
+    font-size: var(--fx-text-micro);
+    color: var(--fx-ink-dim);
+  }
+  .demo-chip {
+    height: 2.5rem;
+    border-radius: var(--fx-radius-sm);
+    margin-bottom: var(--fx-3);
+  }
+  .demo-scale > * { margin: 0 0 var(--fx-4); }
+</style>
+</head>
+
+<body class="fx-page">
+
+<!-- ===================== HERO ===================== -->
+<header class="fx-shell demo-hero">
+  <div class="fx-split">
+    <div>
+      <p class="fx-eyebrow">
+        Singapore <span class="fx-dot"></span> Platform engineering
+      </p>
+
+      <h1 class="fx-display">
+        Payment systems that fail <em>loudly</em>, and only in staging.
+      </h1>
+
+      <p class="fx-lead" style="margin-top: var(--fx-5)">
+        I'm Dimuth. For eight years I've built Java integration platforms for banks —
+        the parts that move money, reconcile it, and prove afterwards that they did.
+      </p>
+
+      <div class="fx-cluster" style="margin-top: var(--fx-6)">
+        <a class="fx-button" href="#work">Read the case studies</a>
+        <a class="fx-button fx-button--quiet" href="#system">Design notes</a>
+      </div>
+    </div>
+
+    <aside>
+      <div class="fx-metric">
+        <span class="fx-metric__label">Years shipping</span>
+        <span class="fx-metric__value">08</span>
+      </div>
+      <div class="fx-metric" style="margin-top: var(--fx-3)">
+        <span class="fx-metric__label">Regions live</span>
+        <span class="fx-metric__value fx-metric__value--human">06</span>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<!-- ===================== SEQUENCE OF PANELS ===================== -->
+<section class="fx-shell demo-section" id="work">
+  <p class="fx-eyebrow fx-eyebrow--machine">How a change reaches production</p>
+  <h2 class="fx-title">Three gates, no exceptions</h2>
+
+  <div class="fx-stack" style="margin-top: var(--fx-6)">
+
+    <article class="fx-panel fx-panel--human">
+      <div class="fx-panel__head">
+        <span class="fx-panel__badge">1</span>
+        <span class="fx-panel__label">Intent</span>
+        <span class="fx-panel__count">1 / 3</span>
+      </div>
+      <p class="fx-panel__body">
+        A person writes down what should change and
+        <span class="fx-mark--human">why it matters to the customer</span>.
+        No ticket moves without that second half.
+      </p>
+    </article>
+
+    <article class="fx-panel fx-panel--machine">
+      <div class="fx-panel__head">
+        <span class="fx-panel__badge">2</span>
+        <span class="fx-panel__label">Build and prove</span>
+        <span class="fx-panel__count">2 / 3</span>
+      </div>
+      <p class="fx-panel__body">
+        Contract tests, replayed production traffic, and a
+        <span class="fx-mark--machine">reconciliation run against yesterday's ledger</span>.
+        The pipeline is allowed to be slow. It is not allowed to be quiet.
+      </p>
+    </article>
+
+    <article class="fx-panel fx-panel--signal">
+      <div class="fx-panel__head">
+        <span class="fx-panel__badge">3</span>
+        <span class="fx-panel__label">Release</span>
+        <span class="fx-panel__count">3 / 3</span>
+      </div>
+      <p class="fx-panel__body">
+        Canary on one corridor, watched for a full settlement cycle before it
+        widens. Rollback is a button, not a runbook.
+      </p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== TRACK + TAGS ===================== -->
+<section class="fx-shell demo-section">
+  <p class="fx-eyebrow fx-eyebrow--quiet">Primitives</p>
+  <h2 class="fx-title">Process track</h2>
+  <p class="fx-prose" style="margin-top: var(--fx-4)">
+    A neutral line for anything that moves through stages. Swap the node
+    contents for step names, commit hashes, or dates.
+  </p>
+
+  <div class="fx-track">
+    <span class="fx-node fx-node--human">spec</span>
+    <span class="fx-node">lint</span>
+    <span class="fx-node">unit</span>
+    <span class="fx-node">contract</span>
+    <span class="fx-node">replay</span>
+    <span class="fx-node fx-node--pending">canary</span>
+    <span class="fx-node fx-node--pending">live</span>
+  </div>
+
+  <div class="fx-cluster" style="margin-top: var(--fx-5)">
+    <span class="fx-tag fx-tag--human">Human decision</span>
+    <span class="fx-tag fx-tag--machine">Automated</span>
+    <span class="fx-tag fx-tag--thought">Under review</span>
+    <span class="fx-tag">Neutral</span>
+    <span class="fx-tag fx-tag--solid">Blocking</span>
+  </div>
+</section>
+
+<!-- ===================== TOKEN REFERENCE ===================== -->
+<section class="fx-shell demo-section" id="system">
+  <p class="fx-eyebrow fx-eyebrow--quiet">Reference</p>
+  <h2 class="fx-title">Palette</h2>
+  <p class="fx-prose" style="margin-top: var(--fx-4); margin-bottom: var(--fx-6)">
+    Four accents, each with a fixed meaning. If you need a fifth, you probably
+    need to merge two of the existing four instead.
+  </p>
+
+  <div class="demo-swatches">
+    <div class="demo-swatch">
+      <div class="demo-chip" style="background: var(--fx-human)"></div>
+      --fx-human<br>#fbbf24<br>Human judgement
+    </div>
+    <div class="demo-swatch">
+      <div class="demo-chip" style="background: var(--fx-machine)"></div>
+      --fx-machine<br>#2dd4bf<br>Automated work
+    </div>
+    <div class="demo-swatch">
+      <div class="demo-chip" style="background: var(--fx-thought)"></div>
+      --fx-thought<br>#7ba7f5<br>Emphasis, asides
+    </div>
+    <div class="demo-swatch">
+      <div class="demo-chip" style="background: var(--fx-signal)"></div>
+      --fx-signal<br>#ef6f52<br>Markers, alerts
+    </div>
+    <div class="demo-swatch">
+      <div class="demo-chip" style="background: var(--fx-bg); border: 1px solid var(--fx-rule)"></div>
+      --fx-bg<br>#070d18<br>Base surface
+    </div>
+    <div class="demo-swatch">
+      <div class="demo-chip" style="background: var(--fx-surface); border: 1px solid var(--fx-rule)"></div>
+      --fx-surface<br>white / 3.5%<br>Panels
+    </div>
+  </div>
+
+  <hr class="fx-divider" style="margin-block: var(--fx-8)">
+
+  <h2 class="fx-title">Type scale</h2>
+  <div class="demo-scale" style="margin-top: var(--fx-6)">
+    <p class="fx-eyebrow fx-eyebrow--quiet">Mono label &middot; 11px &middot; tracked 0.17em</p>
+    <p class="fx-display" style="font-size: var(--fx-text-title)">Display, Sora 600 <em>with a serif aside</em></p>
+    <p class="fx-lead">Lead paragraph, Inter 400 at a fluid 1.05–1.3rem.</p>
+    <p class="fx-prose">Body copy, Inter 400 at 1rem with 1.62 leading, capped at 62 characters so a line never outruns the eye.</p>
+  </div>
+</section>
+
+<!-- ===================== STATUS BAR ===================== -->
+<footer class="fx-shell">
+  <div class="fx-statusbar">
+    <span class="fx-pulse"></span>
+    <span>factory-ui</span>
+    <span class="fx-dot"></span>
+    <span>v0.1</span>
+    <span class="fx-statusbar__end">Built in Singapore</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+/* ==========================================================================
+   factory-ui — components
+   Requires tokens.css to be loaded first.
+   Every class is prefixed fx- so it can drop into an existing site without
+   colliding with anything.
+   ========================================================================== */
+
+/* --- Page shell ---------------------------------------------------------- */
+
+.fx-page {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--fx-bg);
+  background-image: var(--fx-glow);
+  background-attachment: fixed;
+  color: var(--fx-ink);
+  font-family: var(--fx-font-body);
+  font-size: var(--fx-text-body);
+  line-height: var(--fx-leading-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.fx-shell {
+  width: min(100% - var(--fx-5) * 2, 68rem);
+  margin-inline: auto;
+}
+
+.fx-shell--narrow { width: min(100% - var(--fx-5) * 2, 46rem); }
+
+.fx-stack > * + * { margin-top: var(--fx-5); }
+.fx-stack--loose > * + * { margin-top: var(--fx-8); }
+
+/* --- Eyebrow -------------------------------------------------------------
+   A mono, tracked-out marker above a heading. It earns its place only when it
+   tells you WHERE you are — a section name, a chapter, a status. If it just
+   restates the heading, delete it. */
+
+.fx-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fx-2);
+  margin: 0 0 var(--fx-4);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  font-weight: 500;
+  letter-spacing: var(--fx-track-label);
+  text-transform: uppercase;
+  color: var(--fx-signal);
+}
+
+.fx-eyebrow--machine { color: var(--fx-machine); }
+.fx-eyebrow--human   { color: var(--fx-human); }
+.fx-eyebrow--quiet   { color: var(--fx-ink-faint); }
+
+/* A small dot separator for meta strings. Use the element, not a literal
+   middot in the copy, so spacing stays consistent. */
+.fx-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+/* --- Display heading -----------------------------------------------------
+   The one place the page is allowed to be loud. Pair it with <em> to drop a
+   phrase into the serif italic — one phrase per page, not one per section. */
+
+.fx-display {
+  margin: 0;
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-display);
+  font-weight: 600;
+  line-height: var(--fx-leading-tight);
+  letter-spacing: var(--fx-track-tight);
+  text-wrap: balance;
+}
+
+.fx-display em {
+  font-family: var(--fx-font-quote);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--fx-thought);
+  letter-spacing: 0;
+}
+
+.fx-title {
+  margin: 0;
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-title);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: var(--fx-track-tight);
+}
+
+.fx-lead {
+  margin: 0;
+  max-width: var(--fx-measure);
+  font-size: var(--fx-text-lead);
+  color: var(--fx-ink-dim);
+}
+
+.fx-prose {
+  max-width: var(--fx-measure);
+  color: var(--fx-ink-dim);
+}
+
+.fx-prose p { margin: 0 0 var(--fx-4); }
+.fx-prose p:last-child { margin-bottom: 0; }
+.fx-prose strong { color: var(--fx-ink); font-weight: 600; }
+
+/* Inline emphasis carrying accent meaning. */
+.fx-mark--human   { color: var(--fx-human);   font-weight: 600; }
+.fx-mark--machine { color: var(--fx-machine); font-weight: 600; }
+.fx-mark--thought { color: var(--fx-thought); font-weight: 600; }
+
+/* --- Panel ---------------------------------------------------------------
+   The workhorse. A washed surface with a thick accent bar on the leading edge.
+   The bar's colour says which layer the content belongs to. */
+
+.fx-panel {
+  position: relative;
+  padding: var(--fx-5) var(--fx-5) var(--fx-5) var(--fx-6);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-rule);
+  border-radius: var(--fx-radius);
+  border-left: var(--fx-bar) solid var(--fx-rule-strong);
+}
+
+.fx-panel--human   { border-left-color: var(--fx-human); }
+.fx-panel--machine { border-left-color: var(--fx-machine); }
+.fx-panel--thought { border-left-color: var(--fx-thought); }
+.fx-panel--signal  { border-left-color: var(--fx-signal); }
+
+.fx-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-3);
+  margin-bottom: var(--fx-3);
+}
+
+.fx-panel__label {
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  font-weight: 500;
+  letter-spacing: var(--fx-track-label);
+  text-transform: uppercase;
+  color: var(--fx-ink-dim);
+}
+
+/* Numbered badge. Only use it when the panels genuinely form a sequence. */
+.fx-panel__badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: var(--fx-radius-sm);
+  background: var(--fx-human);
+  color: var(--fx-bg-deep);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  font-weight: 700;
+}
+
+.fx-panel--machine .fx-panel__badge { background: var(--fx-machine); }
+.fx-panel--thought .fx-panel__badge { background: var(--fx-thought); }
+.fx-panel--signal  .fx-panel__badge { background: var(--fx-signal); }
+
+/* Position counter, pushed to the far edge of the head row. */
+.fx-panel__count {
+  margin-left: auto;
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  letter-spacing: 0.08em;
+  color: var(--fx-ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.fx-panel__body {
+  margin: 0;
+  max-width: var(--fx-measure);
+  font-size: var(--fx-text-lead);
+  line-height: 1.5;
+  color: var(--fx-ink);
+}
+
+/* --- Tag -----------------------------------------------------------------
+   A hard-edged label for a state or an actor. Not a button. */
+
+.fx-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fx-2);
+  padding: 0.3rem var(--fx-3);
+  border: 1px solid var(--fx-rule-strong);
+  border-radius: var(--fx-radius-sm);
+  background: var(--fx-surface);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fx-ink-dim);
+  white-space: nowrap;
+}
+
+.fx-tag--human {
+  border-color: var(--fx-human-edge);
+  background: var(--fx-human-wash);
+  color: var(--fx-human);
+}
+
+.fx-tag--machine {
+  border-color: var(--fx-machine-edge);
+  background: var(--fx-machine-wash);
+  color: var(--fx-machine);
+}
+
+.fx-tag--thought {
+  border-color: var(--fx-thought-edge);
+  background: var(--fx-thought-wash);
+  color: var(--fx-thought);
+}
+
+.fx-tag--solid {
+  border-color: transparent;
+  background: var(--fx-human);
+  color: var(--fx-bg-deep);
+  font-weight: 700;
+}
+
+/* --- Metric tile ---------------------------------------------------------
+   A quiet label with a loud number. Keep these rare — one or two per screen. */
+
+.fx-metric {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fx-5);
+  padding: var(--fx-4) var(--fx-5);
+  min-height: 6.5rem;
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-rule);
+  border-radius: var(--fx-radius);
+}
+
+.fx-metric__label {
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  letter-spacing: var(--fx-track-label);
+  text-transform: uppercase;
+  color: var(--fx-ink-dim);
+}
+
+.fx-metric__value {
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-figure);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--fx-track-tight);
+  color: var(--fx-machine);
+  font-variant-numeric: tabular-nums;
+}
+
+.fx-metric__value--human { color: var(--fx-human); }
+.fx-metric__value--plain { color: var(--fx-ink); }
+
+/* --- Process track -------------------------------------------------------
+   A neutral primitive for showing a sequence of units moving along a line:
+   build steps, a pipeline, a career timeline. Author your own illustration
+   for anything more specific than this. */
+
+.fx-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--fx-3);
+  padding: var(--fx-5) 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.fx-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--fx-4);
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--fx-rule-strong) 12%,
+    var(--fx-rule-strong) 88%,
+    transparent
+  );
+}
+
+.fx-node {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-width: 3.4rem;
+  padding: var(--fx-3) var(--fx-3);
+  background: var(--fx-surface-raised);
+  border: 1px solid var(--fx-machine-edge);
+  border-radius: var(--fx-radius-sm);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  color: var(--fx-machine);
+}
+
+.fx-node--pending {
+  border-color: var(--fx-rule);
+  color: var(--fx-ink-faint);
+}
+
+.fx-node--human {
+  border-color: var(--fx-human-edge);
+  color: var(--fx-human);
+}
+
+/* --- Status bar ----------------------------------------------------------
+   The persistent footer strip. Use it for one honest piece of state, not
+   decoration. */
+
+.fx-statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fx-3);
+  padding: var(--fx-4) 0;
+  border-top: 1px solid var(--fx-rule);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fx-ink-faint);
+}
+
+.fx-statusbar__end { margin-left: auto; }
+
+.fx-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fx-machine);
+  box-shadow: 0 0 0 0 var(--fx-machine-wash);
+  animation: fx-pulse 2.6s var(--fx-ease) infinite;
+  flex: none;
+}
+
+@keyframes fx-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.45); }
+  70%  { box-shadow: 0 0 0 7px rgba(45, 212, 191, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+}
+
+/* --- Links and buttons ---------------------------------------------------- */
+
+.fx-link {
+  color: var(--fx-machine);
+  text-decoration: none;
+  border-bottom: 1px solid var(--fx-machine-edge);
+  padding-bottom: 1px;
+  transition: border-color var(--fx-fast) var(--fx-ease);
+}
+
+.fx-link:hover { border-bottom-color: var(--fx-machine); }
+
+.fx-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fx-2);
+  padding: var(--fx-3) var(--fx-5);
+  border: 1px solid var(--fx-machine-edge);
+  border-radius: var(--fx-radius-sm);
+  background: var(--fx-machine-wash);
+  color: var(--fx-machine);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--fx-fast) var(--fx-ease),
+              border-color var(--fx-fast) var(--fx-ease);
+}
+
+.fx-button:hover {
+  background: rgba(45, 212, 191, 0.2);
+  border-color: var(--fx-machine);
+}
+
+.fx-button--quiet {
+  background: transparent;
+  border-color: var(--fx-rule-strong);
+  color: var(--fx-ink-dim);
+}
+
+.fx-button--quiet:hover {
+  background: var(--fx-surface);
+  border-color: var(--fx-ink-faint);
+}
+
+/* --- Layout helpers ------------------------------------------------------- */
+
+.fx-split {
+  display: grid;
+  gap: var(--fx-6);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 60rem) {
+  .fx-split { grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); }
+}
+
+.fx-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fx-3);
+}
+
+.fx-divider {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: var(--fx-rule);
+}
+
+/* --- Quality floor -------------------------------------------------------- */
+
+.fx-page :focus-visible {
+  outline: var(--fx-focus);
+  outline-offset: var(--fx-focus-offset);
+  border-radius: var(--fx-radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-page *,
+  .fx-page *::before,
+  .fx-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

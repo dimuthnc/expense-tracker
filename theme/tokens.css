@@ -1,0 +1,140 @@
+/* ==========================================================================
+   factory-ui — design tokens
+   Every visual decision in the system resolves to a value in this file.
+   Change a token here and the whole site moves with it.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Surfaces -----------------------------------------------------------
+     A single deep navy base. Panels are not lighter greys — they are the base
+     with a low-alpha white wash on top, so they stay in the same colour family
+     no matter what sits behind them. */
+  --fx-bg:             #070d18;
+  --fx-bg-deep:        #04080f;
+  --fx-surface:        rgba(255, 255, 255, 0.035);
+  --fx-surface-raised: rgba(255, 255, 255, 0.06);
+  --fx-rule:           rgba(255, 255, 255, 0.09);
+  --fx-rule-strong:    rgba(255, 255, 255, 0.18);
+
+  /* --- Ink ---------------------------------------------------------------- */
+  --fx-ink:       #eaf0f8;
+  --fx-ink-dim:   #93a4bb;
+  --fx-ink-faint: #56677f;
+
+  /* --- Accents ------------------------------------------------------------
+     Four accents, and each one MEANS something. Amber is always human
+     judgement. Teal is always machine work. Blue is always an aside or an
+     emphasis. Coral is always a section marker or a warning. Never pick one
+     because it looks nice in that spot — that is what makes the palette read
+     as a system instead of a mood board. */
+  --fx-human:   #fbbf24;
+  --fx-machine: #2dd4bf;
+  --fx-thought: #7ba7f5;
+  --fx-signal:  #ef6f52;
+
+  --fx-human-wash:   rgba(251, 191, 36, 0.13);
+  --fx-machine-wash: rgba(45, 212, 191, 0.11);
+  --fx-thought-wash: rgba(123, 167, 245, 0.13);
+  --fx-signal-wash:  rgba(239, 111, 82, 0.13);
+
+  --fx-human-edge:   rgba(251, 191, 36, 0.38);
+  --fx-machine-edge: rgba(45, 212, 191, 0.34);
+  --fx-thought-edge: rgba(123, 167, 245, 0.36);
+  --fx-signal-edge:  rgba(239, 111, 82, 0.36);
+
+  /* Ambient glow behind the whole page. One light source, low in the frame. */
+  --fx-glow: radial-gradient(
+      ellipse 120% 80% at 78% 108%,
+      rgba(45, 212, 191, 0.16) 0%,
+      rgba(45, 212, 191, 0.05) 34%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 90% 70% at 8% -10%,
+      rgba(123, 167, 245, 0.10) 0%,
+      transparent 60%
+    );
+
+  /* --- Type ---------------------------------------------------------------
+     Three roles, three faces. Swap the families here and nothing else needs
+     to change:
+       display — geometric sans, carries the page's voice
+       mono    — small structural labels only, never body copy
+       quote   — serif italic, used for one emphasised phrase at a time */
+  --fx-font-display: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --fx-font-body:    "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --fx-font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fx-font-quote:   "Instrument Serif", Georgia, "Times New Roman", serif;
+
+  /* Major-third scale (1.25), fluid where it matters. */
+  --fx-text-micro:   0.6875rem;   /* 11px — mono labels, counters */
+  --fx-text-small:   0.8125rem;
+  --fx-text-body:    1rem;
+  --fx-text-lead:    clamp(1.05rem, 0.96rem + 0.42vw, 1.3rem);
+  --fx-text-title:   clamp(1.45rem, 1.15rem + 1.4vw, 2.25rem);
+  --fx-text-display: clamp(2.2rem, 1.35rem + 3.6vw, 4rem);
+  --fx-text-figure:  clamp(1.9rem, 1.4rem + 2.1vw, 2.9rem);
+
+  --fx-track-label: 0.17em;   /* the wide tracking on mono labels */
+  --fx-track-tight: -0.02em;  /* pulled in slightly on large display text */
+  --fx-leading-tight: 1.06;
+  --fx-leading-body:  1.62;
+
+  --fx-measure: 62ch;   /* max line length for body copy */
+
+  /* --- Space — 4px base --------------------------------------------------- */
+  --fx-1:  0.25rem;
+  --fx-2:  0.5rem;
+  --fx-3:  0.75rem;
+  --fx-4:  1rem;
+  --fx-5:  1.5rem;
+  --fx-6:  2rem;
+  --fx-7:  2.5rem;
+  --fx-8:  3rem;
+  --fx-9:  4rem;
+  --fx-10: 6rem;
+  --fx-11: 8rem;
+
+  /* --- Geometry -----------------------------------------------------------
+     Radius is small and nearly uniform. The one structural device that does
+     the heavy lifting is the accent bar down the left edge of a panel. */
+  --fx-radius-sm:   3px;
+  --fx-radius:      6px;
+  --fx-radius-pill: 999px;
+  --fx-bar:         3px;
+
+  /* --- Motion ------------------------------------------------------------- */
+  --fx-ease:  cubic-bezier(0.2, 0.8, 0.2, 1);
+  --fx-fast:  140ms;
+  --fx-slow:  420ms;
+
+  /* --- Focus -------------------------------------------------------------- */
+  --fx-focus: 2px solid var(--fx-machine);
+  --fx-focus-offset: 3px;
+}
+
+/* Optional light theme. The accents survive the flip; the surfaces invert.
+   Add data-fx-theme="light" to <html> to use it. */
+[data-fx-theme="light"] {
+  color-scheme: light;
+  --fx-bg:             #f4f6fa;
+  --fx-bg-deep:        #e8ecf3;
+  --fx-surface:        rgba(7, 13, 24, 0.03);
+  --fx-surface-raised: rgba(7, 13, 24, 0.05);
+  --fx-rule:           rgba(7, 13, 24, 0.10);
+  --fx-rule-strong:    rgba(7, 13, 24, 0.20);
+  --fx-ink:            #0c1626;
+  --fx-ink-dim:        #4a5a70;
+  --fx-ink-faint:      #7c8a9e;
+  --fx-human:          #a16207;
+  --fx-machine:        #0d7d70;
+  --fx-thought:        #3560c0;
+  --fx-signal:         #c2411f;
+  --fx-glow: radial-gradient(
+    ellipse 120% 80% at 78% 108%,
+    rgba(13, 125, 112, 0.09) 0%,
+    transparent 66%
+  );
+}
