@@ -27,7 +27,7 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | Import / Export CSV | ❌ (Removed) | JSON covers backup/restore |
 | Card statement CSV import | ✅ | One-way import of a DBS/POSB unbilled transactions export, with duplicate detection |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
-| Theme Selector | ✅ | Light, Dark, Dracula, VSCode, Pink (header dropdown, persisted) |
+| Theme Toggle | ✅ | Dark (default) and light, factory-ui design system (header button, persisted) |
 | Expense Distribution Charts | ✅ | Live pie charts by Category & Payment/Card |
 | Accessibility Basics | ✅ | Native controls, labels, focus outlines |
 | Undo / Edit Modes | ❌ (Removed) | Simplified immediate edits & deletes |
@@ -66,7 +66,7 @@ Common tasks at a glance:
 | Update expected income | Edit numeric field in Summary panel |
 | Remaining budget | See "Remaining Budget" metric |
 | Save work | Export (no automatic persistence) |
-| Change theme | Use theme dropdown (top right) |
+| Change theme | Use the sun / moon button in the header (top right) |
 
 ## 4. Overview
 
@@ -250,7 +250,7 @@ Designed for personal-scale usage (hundreds of rows). All operations are DOM-bas
 
 ## 16. Development
 
-React + TypeScript + Vite. Tailwind CSS + shadcn/ui (copied components under `src/components/ui/`). Kokonut Bento Grid is vendored at `src/components/bento/BentoGrid.tsx`.
+React + TypeScript + Vite. Visual system is **factory-ui** (`theme/` — tokens, component classes and a living reference page; see `theme/README.md`), with Tailwind CSS bridged onto its tokens and restyled shadcn/ui primitives under `src/components/ui/`.
 
 ```bash
 npm install
@@ -263,9 +263,10 @@ Source layout:
 
 * `src/state/` — `useReducer` store, types, selectors
 * `src/lib/` — pure utilities (cycle math, currency formatting, JSON IO, palette)
-* `src/components/` — feature components, plus shadcn primitives in `ui/` and Kokonut in `bento/`
+* `src/components/` — feature components, plus restyled shadcn primitives in `ui/`
+* `theme/` — factory-ui design system (`tokens.css`, `components.css`, `index.html` reference)
 * `src/pages/` — `Home` and `Docs` routes
-* `src/hooks/` — `useTheme`, `useAltAShortcut`
+* `src/hooks/` — `useTheme`, `useAltAShortcut`, `useFxTokens`
 
 ## 17. Known Constraints
 

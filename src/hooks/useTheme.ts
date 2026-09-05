@@ -3,6 +3,11 @@ import { THEME_NAMES, type ThemeName } from '@/state/types';
 
 const STORAGE_KEY = 'et_theme';
 
+// factory-ui is dark-first: tokens.css defines the dark palette on :root and
+// the light palette behind html[data-fx-theme="light"]. Dark is therefore the
+// default when nothing is stored.
+const DEFAULT_THEME: ThemeName = 'dark';
+
 function readStored(): ThemeName {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
@@ -10,12 +15,19 @@ function readStored(): ThemeName {
   } catch {
     /* ignore */
   }
-  return 'light';
+  return DEFAULT_THEME;
 }
 
+// Keep in sync with the inline pre-paint script in index.html.
 function applyThemeClass(theme: ThemeName) {
   const root = document.documentElement;
-  root.classList.toggle('dark', theme === 'dark');
+  const isDark = theme === 'dark';
+  root.classList.toggle('dark', isDark);
+  if (isDark) {
+    root.removeAttribute('data-fx-theme');
+  } else {
+    root.setAttribute('data-fx-theme', 'light');
+  }
 }
 
 export function useTheme() {
@@ -31,7 +43,7 @@ export function useTheme() {
       const next =
         e.newValue && (THEME_NAMES as string[]).includes(e.newValue)
           ? (e.newValue as ThemeName)
-          : 'light';
+          : DEFAULT_THEME;
       setThemeState(next);
     };
     window.addEventListener('storage', onStorage);

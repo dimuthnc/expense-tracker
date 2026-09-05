@@ -1,4 +1,4 @@
-import { CheckCircle2, CreditCard, Repeat2 } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import {
   Table,
@@ -9,19 +9,18 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/format';
+import { cn } from '@/lib/utils';
 import { useAppState } from '@/state/AppContext';
 import { topTransactions, type TopTransactionSource } from '@/state/selectors';
 
 const SOURCE_LABEL: Record<TopTransactionSource, string> = {
-  expense: 'Credit Card',
+  expense: 'Card',
   installment: 'Installment',
 };
 
-function SourceBadge({ source }: { source: TopTransactionSource }) {
-  const Icon = source === 'expense' ? CreditCard : Repeat2;
+function SourceTag({ source }: { source: TopTransactionSource }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-md surface-alt px-2 py-0.5 text-[0.7rem] font-medium">
-      <Icon className="h-3 w-3" />
+    <span className={cn('fx-tag', source === 'installment' && 'fx-tag--thought')}>
       {SOURCE_LABEL[source]}
     </span>
   );
@@ -33,10 +32,12 @@ export function TopTransactions() {
 
   return (
     <section className="mb-8">
-      <h2 className="mb-3 mt-0 text-lg font-semibold">Top 10 Transactions</h2>
-      <Card className="p-4">
+      <h2 className="mb-3 mt-0 font-display text-lead font-semibold leading-tight tracking-tight">
+        Top 10 transactions
+      </h2>
+      <Card className="border-l-bar border-l-machine p-4 pl-5">
         {rows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="m-0 text-small text-ink-dim">
             No transactions recorded yet. Add credit card expenses or installments to see them
             ranked here.
           </p>
@@ -48,7 +49,7 @@ export function TopTransactions() {
                 <TableHead className="w-32">Source</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead className="w-32">Category</TableHead>
-                <TableHead className="w-32">Card / Method</TableHead>
+                <TableHead className="w-32">Card / method</TableHead>
                 <TableHead className="w-24 text-center">Validated</TableHead>
                 <TableHead className="w-32 text-right">Amount</TableHead>
               </TableRow>
@@ -56,35 +57,34 @@ export function TopTransactions() {
             <TableBody>
               {rows.map((row, idx) => (
                 <TableRow key={row.key}>
-                  <TableCell className="text-xs text-muted-foreground">{idx + 1}</TableCell>
+                  <TableCell className="fx-figure font-mono text-micro text-ink-faint">
+                    {String(idx + 1).padStart(2, '0')}
+                  </TableCell>
                   <TableCell>
-                    <SourceBadge source={row.source} />
+                    <SourceTag source={row.source} />
                   </TableCell>
-                  <TableCell className="text-sm">
-                    <div className="truncate">{row.description || <span className="text-muted-foreground">(no description)</span>}</div>
-                    {row.meta && (
-                      <div className="text-[0.7rem] text-muted-foreground">{row.meta}</div>
-                    )}
+                  <TableCell className="text-small">
+                    <div className="truncate">
+                      {row.description || <span className="text-ink-faint">(no description)</span>}
+                    </div>
+                    {row.meta && <div className="text-micro text-ink-faint">{row.meta}</div>}
                   </TableCell>
-                  <TableCell className="text-xs">
-                    {row.category || <span className="text-muted-foreground">—</span>}
+                  <TableCell className="text-small">
+                    {row.category || <span className="text-ink-faint">—</span>}
                   </TableCell>
-                  <TableCell className="text-xs">
-                    {row.paymentOrCard || <span className="text-muted-foreground">—</span>}
+                  <TableCell className="text-small">
+                    {row.paymentOrCard || <span className="text-ink-faint">—</span>}
                   </TableCell>
                   <TableCell className="text-center">
                     {row.validated ? (
-                      <CheckCircle2
-                        className="mx-auto h-4 w-4 text-emerald-600 dark:text-emerald-400"
-                        aria-label="Validated"
-                      />
+                      <Check className="mx-auto h-4 w-4 text-human" aria-label="Validated" />
                     ) : (
-                      <span className="text-xs text-muted-foreground" aria-label="Not validated">
+                      <span className="text-micro text-ink-faint" aria-label="Not validated">
                         —
                       </span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right text-sm font-semibold tabular-nums">
+                  <TableCell className="fx-figure text-right text-small font-semibold text-machine">
                     {formatCurrency(row.amount)}
                   </TableCell>
                 </TableRow>

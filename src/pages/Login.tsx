@@ -2,7 +2,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 function GoogleIcon() {
   return (
@@ -35,7 +34,7 @@ export function Login() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" aria-label="Checking session" />
+        <Loader2 className="h-6 w-6 animate-spin text-machine" aria-label="Checking session" />
       </div>
     );
   }
@@ -45,23 +44,34 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-lg">Personal Expense Manager</CardTitle>
-          <CardDescription>Sign in to access your dashboard</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button
-            className="w-full"
-            variant="outline"
-            onClick={() => loginWithRedirect({ appState: { returnTo } })}
-          >
+    <div className="flex min-h-screen flex-col justify-between px-6 py-10 sm:px-10">
+      <main className="fx-shell fx-shell--narrow flex flex-1 flex-col justify-center py-16">
+        <p className="fx-eyebrow">
+          Personal finance
+          <span className="fx-dot" aria-hidden="true" />
+          Sign in
+        </p>
+        <h1 className="fx-display">
+          Know where the month <em>actually</em> went.
+        </h1>
+        <p className="fx-lead mt-6">
+          Card bills, installments, fixed costs and cash, totalled against one billing cycle.
+          Nothing is stored online. Export a file when you are done.
+        </p>
+        <div className="fx-cluster mt-10">
+          <Button size="lg" onClick={() => loginWithRedirect({ appState: { returnTo } })}>
             <GoogleIcon />
-            Login with Google
+            Continue with Google
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </main>
+      <footer className="fx-shell fx-shell--narrow">
+        <div className="fx-statusbar">
+          <span className="fx-pulse" aria-hidden="true" />
+          <span>Personal Expense Manager</span>
+          <span className="fx-statusbar__end">Data stays in your browser</span>
+        </div>
+      </footer>
     </div>
   );
 }

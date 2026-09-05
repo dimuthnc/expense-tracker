@@ -35,7 +35,7 @@ Deployed on Cloudflare Pages: <https://personal-expense-manager.pages.dev/>
 | Language | TypeScript 5, `strict: true`, `noUnusedLocals`/`noUnusedParameters` on |
 | Build | Vite 8 (`@vitejs/plugin-react`) |
 | Routing | react-router-dom 7 (`BrowserRouter`) |
-| Styling | Tailwind CSS 3 + CSS custom properties (shadcn token scheme) |
+| Styling | factory-ui design system (`theme/tokens.css` + `theme/components.css`, see `theme/README.md`) with Tailwind CSS 3 bridged onto its tokens |
 | UI primitives | shadcn/ui components vendored in `src/components/ui/` (Radix under the hood) |
 | Charts | Recharts (`PieChart`) |
 | Icons | lucide-react |
@@ -72,20 +72,22 @@ src/auth/
   AuthCookieSync               Mirrors the access token into the edge cookie
 src/components/
   Header, ThemeToggle, UserProfile, ImportExportBar
-  CycleSelector, ConfigSection, ConfigList, OptionSelect, AmountInput, SectionHeader
+  CycleSelector, ConfigSection, ConfigList, OptionSelect, AmountInput
+  SectionHeader, SectionMarker, StatusBar
   FinancialSummary, SummaryTables, ExpenseCharts, TopTransactions
   ImportCardCsvDialog          Card statement CSV import (hand-rolled modal, no Radix dialog dep)
   ProtectedRoute
   tables/                      ExpensesTable, InstallmentsTable, FixedCostsTable, CashExpensesTable
-  ui/                          shadcn primitives (vendored — regenerate, don't hand-restyle)
-  bento/BentoGrid.tsx          Vendored Kokonut bento grid used by FinancialSummary
-src/hooks/                     useTheme, useAltAShortcut
+  ui/                          shadcn primitives (vendored, restyled onto factory-ui tokens)
+theme/                         factory-ui design system: tokens.css, components.css, README.md,
+                               index.html (living reference — open it in a browser)
+src/hooks/                     useTheme, useAltAShortcut, useFxTokens
 src/lib/                       authCookie, cycle, format, io, palette, utils (pure helpers)
   cardCsv.ts                   Bank CSV tokenizer + DBS/POSB statement parser
   importPlan.ts                Dedup fingerprints and the new/duplicate/skipped classification
 src/pages/                     Home, Docs, Login, Callback
 src/state/                     types, reducer, AppContext, selectors
-src/index.css                  Tailwind layers + light/dark design tokens
+src/index.css                  Tailwind layers + the bridge from shadcn names onto fx tokens
 functions/_middleware.js       Cloudflare edge auth gate (runs first)
 functions/[[path]].js          Cloudflare canonical Link header injection
 public/_redirects              SPA fallback: /* → /index.html 200
@@ -315,8 +317,11 @@ Installments carry a `"<n> mo left"` meta line.
 ### Charts
 
 `ExpenseCharts` renders two Recharts donuts (by category, by payment/card) driven by
-`generatePalette(count, seedHue)` from `src/lib/palette.ts` — evenly spaced HSL hues, seeded 330
-for category and 210 for payment so the two charts stay visually distinct. Animation is off
+`generatePalette(count, base)` from `src/lib/palette.ts` — one accent (`--fx-machine`) stepped
+through opacity, so a distribution reads as a single ramp rather than a rainbow. Slices are sorted
+by value so the ramp doubles as magnitude. Recharts sets SVG presentation attributes, which can't
+resolve `var()`, so `useFxTokens` hands the chart the *computed* token values and re-reads them
+when the theme flips. Animation is off
 (`isAnimationActive={false}`); a zero total renders a "No data" ring instead of an empty chart.
 The legend beneath each donut carries the accessible text, and the chart wrapper has
 `role="img"` + `aria-label`.
@@ -365,19 +370,43 @@ repurpose an existing key, and update this section plus the README schema block 
 
 ### Theming
 
-Light and dark **only** — the old light/dark/dracula/vscode/pink set was dropped in the React
-rewrite. `THEME_NAMES` in `src/state/types.ts` is the source of truth. `useTheme` persists the
-choice in `localStorage['et_theme']`, toggles the `.dark` class on `<html>`, and syncs across tabs
-via the `storage` event. Colors are HSL custom properties in `src/index.css` under `:root` and
-`.dark`; add tokens there, not as hard-coded Tailwind colors, so both themes stay covered.
+The visual system is **factory-ui**, vendored under `theme/` (read `theme/README.md` first — its
+rules are short and binding). `src/main.tsx` imports `theme/tokens.css` and `theme/components.css`
+before `src/index.css`; `tailwind.config.ts` maps every Tailwind colour, font, size and radius onto
+an `--fx-*` token, and `src/index.css` holds the few app-level aliases (`--app-popover`,
+`.fx-label`, `.fx-figure`, `.bg-footer`). Never type a hex or pixel value in a component: if a
+token is missing, add it to `theme/tokens.css`.
+
+Accent meanings are fixed and the app leans on them: **amber** (`human`) for anything the user
+decides — income, savings target, cycle dates, config lists, the Validated tick; **teal**
+(`machine`) for anything derived — every total, the remaining budget, charts, primary buttons;
+**blue** (`thought`) for asides and the single serif-italic phrase per page; **coral** (`signal`)
+for section markers (`SectionMarker`, eyebrows) and the over-budget / legacy-value warnings.
+Choosing an accent because it looks nice in a spot breaks the system.
+
+Light and dark **only** — dark is the default because the tokens are dark-first. `THEME_NAMES` in
+`src/state/types.ts` is the source of truth. `useTheme` persists the choice in
+`localStorage['et_theme']`, toggles the `.dark` class **and** the `data-fx-theme="light"`
+attribute on `<html>` (the latter is what `tokens.css` keys the light palette on), and syncs
+across tabs via the `storage` event. An inline script in `index.html` applies the stored theme
+before first paint; keep it in step with `useTheme`.
+
+Fonts (Sora, Inter, JetBrains Mono, Instrument Serif) load from Google Fonts in `index.html`; the
+tokens declare system fallbacks so nothing depends on them arriving.
 
 ### Components
 
-- `src/components/ui/` is vendored shadcn output (config in `components.json`, base color `slate`).
-  Prefer `npx shadcn@latest add <component>` over writing primitives by hand. Note `ui/checkbox.tsx`
-  is a plain styled `<input type="checkbox">`, not the Radix one — it takes `onChange`, not
-  `onCheckedChange`.
-- `src/components/bento/BentoGrid.tsx` is vendored Kokonut, used only by `FinancialSummary`.
+- `src/components/ui/` started as shadcn output (config in `components.json`) but has been
+  restyled onto factory-ui: buttons are mono/uppercase/hard-edged with accent washes, inputs are
+  transparent with hairline rules, table heads are `.fx-label`. If you regenerate a primitive with
+  `npx shadcn@latest add`, re-apply that treatment. Note `ui/checkbox.tsx` is a plain styled
+  `<input type="checkbox">`, not the Radix one — it takes `onChange`, not `onCheckedChange`.
+- `cn()` in `src/lib/utils.ts` uses `extendTailwindMerge` so the custom sizes (`text-title`,
+  `text-display`, …) aren't mistaken for colours and dropped. Register new custom `text-*` or
+  `font-*` names there too.
+- `FinancialSummary` is hand-laid-out: one loud figure (remaining budget), two supporting figures,
+  two amber input panels, four quiet ledger totals. Keep that hierarchy — "one loud thing per
+  screen" is a rule of the design system, not a preference.
 - The four tables under `components/tables/` follow one shape: `SectionHeader` (with a "↓ bottom"
   anchor link) → bordered `Table` with a totals `TableFooter` → an "Add …" button. Copy that
   structure for any new table.
@@ -424,8 +453,10 @@ gate is invisible in dev — only the SPA `ProtectedRoute` applies there.
 - Derive in selectors and render from that; don't cache computed values in state or `useMemo`
   unless a profile shows a real cost.
 - Tailwind utilities inline; use `cn()` from `@/lib/utils` for conditional classes. Reach for the
-  semantic tokens (`bg-card`, `text-muted-foreground`, `surface-alt`, `bg-footer`) rather than raw
-  palette colors.
+  token-backed names (`text-ink-dim`, `border-rule-strong`, `bg-surface`, `text-machine`,
+  `border-l-human`, `.fx-label`, `.fx-figure`) or the library classes (`fx-eyebrow`, `fx-tag`,
+  `fx-panel`, `fx-statusbar`) rather than raw palette colours. Tailwind's `/opacity` modifier
+  does not work on these colours — use the `*-wash` / `*-edge` tokens instead.
 - Handle failure gracefully — skip bad rows, coerce with `|| 0`, fail open at the edge — instead of
   throwing into the user's face.
 - Comments explain *why* (see `_middleware.js` and `authCookie.ts` for the intended density). Don't

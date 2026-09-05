@@ -3,22 +3,27 @@ import type { ReactNode } from 'react';
 interface SectionHeaderProps {
   title: string;
   anchor: string;
+  /** Short mono counter for the head row, e.g. "12 rows". */
+  meta?: string;
   children?: ReactNode;
 }
 
-export function SectionHeader({ title, anchor, children }: SectionHeaderProps) {
+export function SectionHeader({ title, anchor, meta, children }: SectionHeaderProps) {
   return (
-    <div className="mb-3 flex items-center justify-between">
-      <h2 className="flex items-center gap-2 text-lg font-semibold">
-        {title}
+    <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <h2 className="m-0 font-display text-lead font-semibold leading-tight tracking-tight">
+          {title}
+        </h2>
+        {meta && <span className="fx-label fx-figure text-ink-faint">{meta}</span>}
         <a
           href={`#${anchor}`}
-          className="rounded border border-border bg-muted px-1.5 py-0.5 text-[0.6rem] text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+          className="fx-link fx-label text-machine"
           title="Scroll to bottom of table"
         >
           ↓ bottom
         </a>
-      </h2>
+      </div>
       {children}
     </div>
   );

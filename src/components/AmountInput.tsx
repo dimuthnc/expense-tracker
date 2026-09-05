@@ -38,7 +38,7 @@ export function AmountInput({
       placeholder={placeholder}
       value={raw}
       onChange={(e) => commit(e.target.value)}
-      className={className ?? 'h-8 text-right text-xs'}
+      className={className ?? 'fx-figure h-8 text-right'}
     />
   );
 }

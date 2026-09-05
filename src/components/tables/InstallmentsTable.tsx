@@ -26,17 +26,21 @@ export function InstallmentsTable() {
 
   return (
     <section className="mb-8">
-      <SectionHeader title="Installations and Monthly Bills" anchor="installments-bottom" />
-      <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+      <SectionHeader
+        title="Installments and monthly bills"
+        anchor="installments-bottom"
+        meta={`${state.installments.length} ${state.installments.length === 1 ? 'row' : 'rows'}`}
+      />
+      <div className="overflow-hidden rounded border border-rule bg-surface">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-16">ID</TableHead>
               <TableHead>Description</TableHead>
               <TableHead className="w-32 text-right">Amount</TableHead>
-              <TableHead className="w-32 text-right">Remaining Months</TableHead>
+              <TableHead className="w-32 text-right">Months left</TableHead>
               <TableHead className="w-40">Card</TableHead>
-              <TableHead className="w-36 text-right">Total Remaining</TableHead>
+              <TableHead className="w-36 text-right">Total remaining</TableHead>
               <TableHead className="w-24 text-center">Validated</TableHead>
               <TableHead className="w-16 text-center">Actions</TableHead>
             </TableRow>
@@ -46,12 +50,12 @@ export function InstallmentsTable() {
               const totalRemaining = (i.amount || 0) * (i.remainingMonths || 0);
               return (
                 <TableRow key={i.id}>
-                  <TableCell className="text-xs text-muted-foreground">{i.id}</TableCell>
+                  <TableCell className="fx-figure font-mono text-micro text-ink-faint">{i.id}</TableCell>
                   <TableCell>
                     <Input
                       value={i.description}
                       placeholder="Description"
-                      className="h-8 text-xs"
+                      className="h-8"
                       onChange={(ev) =>
                         dispatch({
                           type: 'UPDATE_INSTALLMENT',
@@ -93,7 +97,7 @@ export function InstallmentsTable() {
                       ariaLabel="Card"
                     />
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="fx-figure text-right text-small text-machine">
                     {formatCurrency(totalRemaining)}
                   </TableCell>
                   <TableCell className="text-center">
@@ -114,8 +118,8 @@ export function InstallmentsTable() {
                     <Button
                       type="button"
                       size="icon"
-                      variant="destructive"
-                      className="h-8 w-8"
+                      variant="ghost"
+                      className="h-8 w-8 text-ink-faint hover:bg-signal-wash hover:text-signal"
                       aria-label="Delete row"
                       onClick={() =>
                         dispatch({ type: 'DELETE_ROW', table: 'installments', id: i.id })
@@ -133,21 +137,17 @@ export function InstallmentsTable() {
               <TableHead colSpan={2} className="bg-footer text-right">
                 Totals:
               </TableHead>
-              <TableHead className="bg-footer text-right tabular-nums">
-                {formatCurrency(monthly)}
-              </TableHead>
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer text-right tabular-nums">
-                {formatCurrency(remaining)}
-              </TableHead>
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
+              <TableCell className="bg-footer fx-figure px-3 text-right font-display text-small font-semibold text-machine">{formatCurrency(monthly)}</TableCell>
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer fx-figure px-3 text-right font-display text-small font-semibold text-machine">{formatCurrency(remaining)}</TableCell>
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
             </TableRow>
           </TableFooter>
         </Table>
       </div>
-      <div id="installments-bottom" className="mt-2">
+      <div id="installments-bottom" className="mt-3">
         <Button size="sm" onClick={() => dispatch({ type: 'ADD_ROW', table: 'installments' })}>
           Add Item
         </Button>

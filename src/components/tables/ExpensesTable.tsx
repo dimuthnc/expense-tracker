@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { Copy, Trash2, Upload } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { AmountInput } from '@/components/AmountInput';
-import { ImportCardCsvDialog } from '@/components/ImportCardCsvDialog';
 import { OptionSelect } from '@/components/OptionSelect';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Button } from '@/components/ui/button';
@@ -24,26 +22,23 @@ export function ExpensesTable() {
   const state = useAppState();
   const dispatch = useAppDispatch();
   const total = sumExpenses(state);
-  const [importOpen, setImportOpen] = useState(false);
 
   return (
     <section className="mb-8">
-      <SectionHeader title="Credit Card Expenses" anchor="expense-bottom">
-        <Button type="button" size="sm" variant="outline" onClick={() => setImportOpen(true)}>
-          <Upload className="h-3.5 w-3.5" />
-          Import CSV
-        </Button>
-      </SectionHeader>
-      <ImportCardCsvDialog open={importOpen} onClose={() => setImportOpen(false)} />
-      <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+      <SectionHeader
+        title="Credit card expenses"
+        anchor="expense-bottom"
+        meta={`${state.expenses.length} ${state.expenses.length === 1 ? 'row' : 'rows'}`}
+      />
+      <div className="overflow-hidden rounded border border-rule bg-surface">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20">Expense ID</TableHead>
+              <TableHead className="w-20">ID</TableHead>
               <TableHead>Description</TableHead>
               <TableHead className="w-32 text-right">Amount</TableHead>
               <TableHead className="w-40">Category</TableHead>
-              <TableHead className="w-44">Payment Method / Card</TableHead>
+              <TableHead className="w-44">Payment method / card</TableHead>
               <TableHead className="w-24 text-center">Validated</TableHead>
               <TableHead className="w-16 text-center">Actions</TableHead>
             </TableRow>
@@ -51,12 +46,12 @@ export function ExpensesTable() {
           <TableBody>
             {state.expenses.map((e) => (
               <TableRow key={e.id}>
-                <TableCell className="text-xs text-muted-foreground">{e.id}</TableCell>
+                <TableCell className="fx-figure font-mono text-micro text-ink-faint">{e.id}</TableCell>
                 <TableCell>
                   <Input
                     value={e.description}
                     placeholder="Description"
-                    className="h-8 text-xs"
+                    className="h-8"
                     onChange={(ev) =>
                       dispatch({
                         type: 'UPDATE_EXPENSE',
@@ -112,8 +107,8 @@ export function ExpensesTable() {
                   <Button
                     type="button"
                     size="icon"
-                    variant="destructive"
-                    className="h-8 w-8"
+                    variant="ghost"
+                    className="h-8 w-8 text-ink-faint hover:bg-signal-wash hover:text-signal"
                     aria-label="Delete row"
                     onClick={() => dispatch({ type: 'DELETE_ROW', table: 'expenses', id: e.id })}
                   >
@@ -128,18 +123,16 @@ export function ExpensesTable() {
               <TableHead colSpan={2} className="bg-footer text-right">
                 Total:
               </TableHead>
-              <TableHead className="bg-footer text-right tabular-nums">
-                {formatCurrency(total)}
-              </TableHead>
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
+              <TableCell className="bg-footer fx-figure px-3 text-right font-display text-small font-semibold text-machine">{formatCurrency(total)}</TableCell>
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
             </TableRow>
           </TableFooter>
         </Table>
       </div>
-      <div id="expense-bottom" className="mt-2 flex flex-wrap gap-2">
+      <div id="expense-bottom" className="mt-3 flex flex-wrap gap-2">
         <Button
           id="addRowBtn"
           size="sm"

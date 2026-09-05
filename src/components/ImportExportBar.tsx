@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Download, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppState } from '@/state/AppContext';
 import { toDataModel } from '@/state/selectors';
@@ -27,10 +28,12 @@ export function ImportExportBar() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Button size="sm" onClick={onExportJson}>
+        <Download className="h-3.5 w-3.5" />
         Export JSON
       </Button>
-      <Button size="sm" variant="secondary" onClick={() => fileRef.current?.click()}>
-        Import...
+      <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
+        <Upload className="h-3.5 w-3.5" />
+        Import
       </Button>
       <input
         ref={fileRef}

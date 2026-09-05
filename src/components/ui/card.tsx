@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
+/** A washed surface with a hairline rule. Add a `border-l-bar border-l-<accent>`
+ *  to turn it into a factory-ui panel whose bar says which layer it belongs to. */
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('rounded-xl border bg-card text-card-foreground shadow', className)}
+      className={cn('rounded border border-rule bg-surface text-ink', className)}
       {...props}
     />
   ),
@@ -23,7 +25,7 @@ const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('font-semibold leading-none tracking-tight', className)}
+      className={cn('font-display font-semibold leading-none tracking-tight', className)}
       {...props}
     />
   ),
@@ -32,7 +34,7 @@ CardTitle.displayName = 'CardTitle';
 
 const CardDescription = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
+    <div ref={ref} className={cn('text-small text-ink-dim', className)} {...props} />
   ),
 );
 CardDescription.displayName = 'CardDescription';

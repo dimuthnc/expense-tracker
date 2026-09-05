@@ -3,25 +3,32 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
+/**
+ * factory-ui buttons are mono, tracked, uppercase, hard-edged. Colour carries
+ * meaning: `default` is teal (an action the machine performs for you),
+ * `destructive` is coral (a warning), and everything else stays quiet.
+ */
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm border font-mono uppercase tracking-[0.08em] transition-colors duration-fast ease-fx disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default:
+          'border-machine-edge bg-machine-wash text-machine hover:border-machine hover:bg-machine-edge',
         destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+          'border-signal-edge bg-signal-wash text-signal hover:border-signal hover:bg-signal-edge',
         outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+          'border-rule-strong bg-transparent text-ink-dim hover:border-ink-faint hover:bg-surface hover:text-ink',
         secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'border-rule-strong bg-transparent text-ink-dim hover:border-ink-faint hover:bg-surface hover:text-ink',
+        ghost:
+          'border-transparent bg-transparent normal-case tracking-normal font-sans text-ink-dim hover:bg-surface hover:text-ink',
+        link: 'border-0 normal-case tracking-normal font-sans text-machine underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-10 rounded-md px-6',
+        default: 'h-9 px-4 text-small',
+        sm: 'h-8 px-3 text-micro',
+        lg: 'h-10 px-6 text-small',
         icon: 'h-9 w-9',
       },
     },

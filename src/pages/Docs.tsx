@@ -1,39 +1,59 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Header } from '@/components/Header';
-import { Card } from '@/components/ui/card';
 
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id: string;
-  title: string;
-  children: React.ReactNode;
-}) {
+const STEPS = [
+  { id: 'setup', title: 'Set up your billing cycle' },
+  { id: 'credit', title: 'Add credit card expenses' },
+  { id: 'installments', title: 'Track installments & monthly bills' },
+  { id: 'fixed', title: 'Add fixed monthly costs' },
+  { id: 'cash', title: 'Track cash expenses' },
+  { id: 'summary', title: 'Read the summary' },
+  { id: 'importExport', title: 'Import & export (JSON)' },
+  { id: 'themes', title: 'Themes' },
+  { id: 'tips', title: 'Tips & shortcuts' },
+  { id: 'privacy', title: 'Privacy' },
+  { id: 'troubleshooting', title: 'Troubleshooting' },
+] as const;
+
+/** Numbered because the guide really is a sequence: the steps mirror the page top to bottom. */
+function Step({ index, children }: { index: number; children: ReactNode }) {
+  const step = STEPS[index];
   return (
-    <section id={id} className="my-5">
-      <h2 className="mb-2 mt-1 text-xl font-semibold">{title}</h2>
-      {children}
+    <section id={step.id} className="fx-panel scroll-mt-6">
+      <div className="fx-panel__head">
+        <span className="fx-panel__badge">{index + 1}</span>
+        <h2 className="m-0 font-display text-body font-semibold leading-tight tracking-tight">
+          {step.title}
+        </h2>
+        <span className="fx-panel__count">
+          {index + 1} / {STEPS.length}
+        </span>
+      </div>
+      <div className="max-w-[62ch] space-y-3 text-small text-ink-dim [&_li]:pl-1 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:m-0 [&_strong]:font-semibold [&_strong]:text-ink [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5">
+        {children}
+      </div>
     </section>
+  );
+}
+
+/** An aside. Blue, because it comments on the step rather than being part of it. */
+function Aside({ children }: { children: ReactNode }) {
+  return (
+    <p className="border-l-bar border-l-thought pl-4 text-small text-ink-dim">{children}</p>
   );
 }
 
 function Figure({ src, alt, caption }: { src: string; alt: string; caption: string }) {
   return (
-    <figure className="my-3 rounded-lg border bg-card p-3 shadow-sm">
-      <img src={src} alt={alt} className="block w-full rounded-md border border-border" />
-      <figcaption className="mt-2 text-xs text-muted-foreground">{caption}</figcaption>
+    <figure className="m-0 mt-4 max-w-none">
+      <img src={src} alt={alt} className="block w-full rounded-sm border border-rule-strong" />
+      <figcaption className="fx-label mt-2 normal-case tracking-[0.08em]">{caption}</figcaption>
     </figure>
   );
 }
 
-function Kbd({ children }: { children: React.ReactNode }) {
-  return (
-    <kbd className="rounded border border-border border-b-2 bg-card px-1.5 py-0.5 font-mono text-xs">
-      {children}
-    </kbd>
-  );
+function Kbd({ children }: { children: ReactNode }) {
+  return <kbd className="fx-tag px-1.5 py-0.5 text-ink">{children}</kbd>;
 }
 
 export function Docs() {
@@ -43,323 +63,229 @@ export function Docs() {
     if (meta) {
       meta.setAttribute(
         'content',
-        'Beginner-friendly guide to using the Personal Expense Manager: setup, adding expenses, importing a card statement CSV, installments, fixed costs, cash expenses, summaries, and import/export.',
+        'Beginner-friendly guide to using the Personal Expense Manager: setup, adding expenses, installments, fixed costs, cash expenses, summaries, and import/export.',
       );
     }
   }, []);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-8">
-      <Header title="Documentation" showImportExport={false} docsLink={false} backLink />
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-8 sm:py-8">
+      <Header
+        title="Documentation"
+        eyebrow={
+          <>
+            Reference
+            <span className="fx-dot" aria-hidden="true" />
+            User guide
+          </>
+        }
+        showImportExport={false}
+        docsLink={false}
+        backLink
+      />
+
       <main className="mx-auto max-w-4xl">
-        <nav className="surface-alt mb-4 rounded-lg p-3" aria-label="On this page">
-          <strong className="text-sm">Quick links</strong>
-          <ul className="mt-2 list-disc pl-5 text-sm">
-            <li>
-              <a href="#howToUse" className="hover:underline">
-                How to use
-              </a>
-            </li>
-            <li>
-              <a href="#setup" className="hover:underline">
-                Set up your billing cycle
-              </a>
-            </li>
-            <li>
-              <a href="#credit" className="hover:underline">
-                Add credit card expenses
-              </a>
-            </li>
-            <li>
-              <a href="#installments" className="hover:underline">
-                Track installments &amp; monthly bills
-              </a>
-            </li>
-            <li>
-              <a href="#fixed" className="hover:underline">
-                Add fixed monthly costs
-              </a>
-            </li>
-            <li>
-              <a href="#cash" className="hover:underline">
-                Track cash expenses
-              </a>
-            </li>
-            <li>
-              <a href="#summary" className="hover:underline">
-                Read the summary
-              </a>
-            </li>
-            <li>
-              <a href="#importCsv" className="hover:underline">
-                Import your card statement (CSV)
-              </a>
-            </li>
-            <li>
-              <a href="#importExport" className="hover:underline">
-                Import &amp; Export (JSON)
-              </a>
-            </li>
-            <li>
-              <a href="#themes" className="hover:underline">
-                Themes
-              </a>
-            </li>
-            <li>
-              <a href="#tips" className="hover:underline">
-                Tips &amp; shortcuts
-              </a>
-            </li>
-            <li>
-              <a href="#privacy" className="hover:underline">
-                Privacy
-              </a>
-            </li>
-            <li>
-              <a href="#troubleshooting" className="hover:underline">
-                Troubleshooting
-              </a>
-            </li>
-          </ul>
+        <p className="fx-lead">
+          This tool keeps everyday spending, card bills, subscriptions and cash in one place and
+          totals them against <em className="font-quote not-italic text-thought [font-style:italic]">one billing cycle</em>.
+          Nothing is saved online: your data stays in the page while it is open. Export a file to
+          keep a copy.
+        </p>
+
+        <nav className="mt-8 border-l-bar border-l-thought pl-5" aria-label="On this page">
+          <p className="fx-label m-0 mb-3">On this page</p>
+          <ol className="m-0 grid list-none gap-x-8 gap-y-1.5 p-0 sm:grid-cols-2">
+            {STEPS.map((s, i) => (
+              <li key={s.id} className="flex items-baseline gap-3 text-small">
+                <span className="fx-figure font-mono text-micro text-ink-faint">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <a href={`#${s.id}`} className="fx-link">
+                  {s.title}
+                </a>
+              </li>
+            ))}
+          </ol>
         </nav>
 
-        <Section id="howToUse" title="How to use">
-          <p className="text-sm">
-            This tool helps you keep track of everyday spending, card bills, monthly subscriptions
-            or installments, and cash expenses. It automatically totals amounts and shows a simple
-            monthly budget picture.
-          </p>
-          <Card className="my-3 surface-alt p-3 text-sm">
-            Nothing is saved online. Your data stays in the page while it&rsquo;s open. To keep a
-            copy, use Export and save a file to your computer.
-          </Card>
-          <Figure
-            src="/screenshots/preview.png"
-            alt="Overview of the Personal Expense Manager interface"
-            caption="Overview of the main dashboard (placeholder)"
-          />
-        </Section>
+        <Figure
+          src="/screenshots/preview.png"
+          alt="Overview of the Personal Expense Manager interface"
+          caption="Overview of the main dashboard"
+        />
 
-        <Section id="setup" title="1) Set up your billing cycle">
-          <ol className="list-decimal space-y-1 pl-5 text-sm">
-            <li>
-              At the top of the app, set &ldquo;Cycle From&rdquo; and &ldquo;Cycle To.&rdquo; By
-              default, it uses 15th &rarr; 15th for the current month.
-            </li>
-            <li>Use the small arrows to move to the previous or next cycle.</li>
-          </ol>
-          <p className="mt-2 text-xs text-muted-foreground">
-            Why this matters: your &ldquo;Days Remaining in Cycle&rdquo; and budget hints use these
-            dates.
-          </p>
-          <Figure
-            src="/screenshots/billing-cycle.png"
-            alt="Billing cycle date controls and previous/next buttons"
-            caption="Billing cycle controls (placeholder)"
-          />
-        </Section>
+        <div className="fx-stack mt-10">
+          <Step index={0}>
+            <ol>
+              <li>
+                At the top of the app, set &ldquo;Cycle from&rdquo; and &ldquo;Cycle to.&rdquo; By
+                default it uses the 15th to the 15th around today.
+              </li>
+              <li>Use the arrows to move to the previous or next cycle.</li>
+            </ol>
+            <Aside>
+              &ldquo;Days remaining&rdquo; and the per-day budget are calculated from these dates.
+            </Aside>
+            <Figure
+              src="/screenshots/billing-cycle.png"
+              alt="Billing cycle date controls and previous/next buttons"
+              caption="Billing cycle controls"
+            />
+          </Step>
 
-        <Section id="credit" title="2) Add credit card expenses">
-          <ol className="list-decimal space-y-1 pl-5 text-sm">
-            <li>Click &ldquo;Add Expense.&rdquo;</li>
-            <li>Type a short description and the amount.</li>
-            <li>Choose a Category and the Card you used.</li>
-          </ol>
-          <p className="mt-2 text-sm">
-            New rows start with the Category and Card of the row above, so a run of expenses on the
-            same card needs no re-picking. For expenses that repeat almost exactly, click &ldquo;Add
-            Duplicate Row&rdquo; instead &ndash; it copies the last row in full (description and
-            amount too, unticking Validated) so you only edit what differs.
-          </p>
-          <p className="mt-2 text-sm">
-            The table footer shows the total of your card expenses. The summary tables and charts
-            update automatically.
-          </p>
-          <Figure
-            src="/screenshots/credit-expenses.png"
-            alt="Credit card expenses table with fields for description, amount, category, and card"
-            caption="Credit card expenses table (placeholder)"
-          />
-        </Section>
+          <Step index={1}>
+            <ol>
+              <li>Click &ldquo;Add expense.&rdquo;</li>
+              <li>Type a short description and the amount.</li>
+              <li>Choose a category and the card you used.</li>
+            </ol>
+            <p>
+              New rows start with the category and card of the row above, so a run of expenses on
+              the same card needs no re-picking. For expenses that repeat almost exactly, click
+              &ldquo;Add duplicate row&rdquo; instead. It copies the last row in full (description
+              and amount too, unticking Validated) so you only edit what differs.
+            </p>
+            <p>
+              The table footer shows the total of your card expenses. The summary tables and charts
+              update automatically.
+            </p>
+            <Figure
+              src="/screenshots/credit-expenses.png"
+              alt="Credit card expenses table with fields for description, amount, category, and card"
+              caption="Credit card expenses table"
+            />
+          </Step>
 
-        <Section id="installments" title="3) Track installments & monthly bills">
-          <ol className="list-decimal space-y-1 pl-5 text-sm">
-            <li>Click &ldquo;Add Item&rdquo; in the Installments section.</li>
-            <li>Enter the monthly amount, remaining months, and which card it&rsquo;s on.</li>
-            <li>The &ldquo;Total Remaining&rdquo; column multiplies amount &times; months.</li>
-          </ol>
-          <Figure
-            src="/screenshots/installments.png"
-            alt="Installments table showing monthly amount, remaining months, and total remaining"
-            caption="Installments and monthly bills (placeholder)"
-          />
-        </Section>
+          <Step index={2}>
+            <ol>
+              <li>Click &ldquo;Add item&rdquo; in the installments section.</li>
+              <li>Enter the monthly amount, months left, and which card it is on.</li>
+              <li>&ldquo;Total remaining&rdquo; multiplies amount by months.</li>
+            </ol>
+            <Figure
+              src="/screenshots/installments.png"
+              alt="Installments table showing monthly amount, remaining months, and total remaining"
+              caption="Installments and monthly bills"
+            />
+          </Step>
 
-        <Section id="fixed" title="4) Add fixed monthly costs">
-          <ol className="list-decimal space-y-1 pl-5 text-sm">
-            <li>Click &ldquo;Add Fixed Cost.&rdquo;</li>
-            <li>Enter a description (e.g., Rent, Internet) and the monthly amount.</li>
-          </ol>
-          <Figure
-            src="/screenshots/fixed-costs.png"
-            alt="Fixed costs table with description and amount"
-            caption="Fixed monthly costs (placeholder)"
-          />
-        </Section>
+          <Step index={3}>
+            <ol>
+              <li>Click &ldquo;Add fixed cost.&rdquo;</li>
+              <li>Enter a description (rent, internet) and the monthly amount.</li>
+            </ol>
+            <Figure
+              src="/screenshots/fixed-costs.png"
+              alt="Fixed costs table with description and amount"
+              caption="Fixed monthly costs"
+            />
+          </Step>
 
-        <Section id="cash" title="5) Track cash expenses">
-          <ol className="list-decimal space-y-1 pl-5 text-sm">
-            <li>Click &ldquo;Add Cash Expense.&rdquo;</li>
-            <li>Enter the description, amount, payment method, and category.</li>
-          </ol>
-          <Figure
-            src="/screenshots/cash-expenses.png"
-            alt="Cash expenses table"
-            caption="Cash expenses (placeholder)"
-          />
-        </Section>
+          <Step index={4}>
+            <ol>
+              <li>Click &ldquo;Add cash expense.&rdquo;</li>
+              <li>Enter the description, amount, payment method, and category.</li>
+            </ol>
+            <Figure src="/screenshots/cash-expenses.png" alt="Cash expenses table" caption="Cash expenses" />
+          </Step>
 
-        <Section id="summary" title="6) Read the summary">
-          <ul className="list-disc space-y-1 pl-5 text-sm">
-            <li>
-              <strong>Total Credit Card Bill</strong> &ndash; sum of card expenses.
-            </li>
-            <li>
-              <strong>Total Installment Cost (Monthly)</strong> &ndash; sum of all monthly
-              installment amounts.
-            </li>
-            <li>
-              <strong>Total Fixed Costs</strong> &ndash; sum of fixed monthly obligations.
-            </li>
-            <li>
-              <strong>Total Cash Expenses</strong> &ndash; sum of cash/transfer spending.
-            </li>
-            <li>
-              <strong>Monthly Expected Income</strong> &ndash; type your income for the cycle.
-            </li>
-            <li>
-              <strong>Expected Savings</strong> &ndash; enter the savings you want to set aside.
-            </li>
-            <li>
-              <strong>Remaining Budget</strong> &ndash; Income minus Card + Installments + Fixed +
-              Expected Savings.
-            </li>
-            <li>
-              <strong>Remaining Budget Per Day</strong> &ndash; Remaining Budget &divide; days left.
-            </li>
-            <li>
-              <strong>Days Remaining in Cycle</strong> &ndash; based on your cycle dates.
-            </li>
-          </ul>
-          <Figure
-            src="/screenshots/summary.png"
-            alt="Summary section showing totals and remaining budget"
-            caption="Summary panel (placeholder)"
-          />
-        </Section>
+          <Step index={5}>
+            <p>
+              Amber figures are ones you decide. Teal figures are worked out for you. Coral means
+              you are over budget.
+            </p>
+            <ul>
+              <li>
+                <strong>Remaining budget</strong>: income minus card, installments, fixed costs and
+                the savings target. The one big number on the page.
+              </li>
+              <li>
+                <strong>Per day</strong>: remaining budget divided by the days left in the cycle.
+              </li>
+              <li>
+                <strong>Days remaining</strong>: from your cycle dates, excluding today.
+              </li>
+              <li>
+                <strong>Expected income</strong> and <strong>savings target</strong>: type your
+                own figures for the cycle. Projected savings is shown beneath the target.
+              </li>
+              <li>
+                <strong>Card bill, installments, fixed costs, cash</strong>: the totals of each
+                ledger.
+              </li>
+            </ul>
+            <Figure
+              src="/screenshots/summary.png"
+              alt="Summary section showing totals and remaining budget"
+              caption="Summary panel"
+            />
+          </Step>
 
-        <Section id="importCsv" title="7) Import your card statement (CSV)">
-          <p className="text-sm">
-            Instead of typing every transaction, you can import the{' '}
-            <strong>unbilled transactions</strong> CSV that DBS/POSB internet banking exports.
-            Click <strong>Import CSV</strong> on the Credit Card Expenses table, choose the file,
-            confirm which card and category the transactions belong to, then review the list and
-            click Import.
-          </p>
-          <Card className="my-3 surface-alt p-3 text-sm">
-            <strong>Importing twice is safe.</strong> An unbilled export always repeats the earlier
-            transactions &ndash; the file you download on the 29th contains everything from the one
-            you downloaded on the 22nd. The app remembers which statement lines it has already
-            taken, so a second import adds only what is new. Two separate charges at the same shop
-            for the same amount on the same day still come in as two rows.
-          </Card>
-          <p className="text-sm">The preview also tells you what it is leaving out:</p>
-          <ul className="list-disc space-y-1 pl-5 text-sm">
-            <li>
-              <strong>Already imported</strong> &ndash; nothing to do.
-            </li>
-            <li>
-              <strong>Outside cycle</strong> &ndash; the transaction is dated outside your current
-              billing cycle. Switch to that cycle and import the same file again to add it.
-            </li>
-            <li>
-              <strong>Refund / payment</strong> &ndash; credits are not imported; add them by hand
-              if you track them.
-            </li>
-            <li>
-              <strong>Skipped</strong> &ndash; a line the app could not read.
-            </li>
-          </ul>
-          <p className="text-sm">
-            Imported rows arrive unvalidated, so you can tick them off against your statement as
-            usual, and you can edit the description, amount, or category afterwards like any other
-            row.
-          </p>
-        </Section>
+          <Step index={6}>
+            <p>Use the buttons in the page header:</p>
+            <ul>
+              <li>
+                <strong>Export JSON</strong>: full data with lists and inputs. Best for backups and
+                later re-import.
+              </li>
+              <li>
+                <strong>Import</strong>: load a previous JSON export to restore your data.
+              </li>
+            </ul>
+            <Aside>
+              Export when you are done for the day. Next time, import that file to continue.
+            </Aside>
+          </Step>
 
-        <Section id="importExport" title="8) Import & Export (JSON)">
-          <p className="text-sm">Use the buttons in the page header:</p>
-          <ul className="list-disc space-y-1 pl-5 text-sm">
-            <li>
-              <strong>Export JSON</strong> &ndash; full data with lists and inputs. Best for
-              backups and later re-import.
-            </li>
-            <li>
-              <strong>Import&hellip;</strong> &ndash; load a previous JSON export to restore
-              your data.
-            </li>
-          </ul>
-          <Card className="my-3 surface-alt p-3 text-sm">
-            Tip: Export when you&rsquo;re done for the day. Next time, import that file to continue.
-          </Card>
-        </Section>
+          <Step index={7}>
+            <p>
+              The app is dark by default. Use the sun / moon button in the header to switch to the
+              light theme. Your choice is remembered and shared between pages and tabs.
+            </p>
+          </Step>
 
-        <Section id="themes" title="9) Themes">
-          <p className="text-sm">
-            Switch themes using the dropdown at the top right. Your choice is remembered and shared
-            between pages.
-          </p>
-        </Section>
+          <Step index={8}>
+            <ul>
+              <li>
+                <Kbd>Alt</Kbd> + <Kbd>A</Kbd> adds a new credit card expense row when you are not
+                typing in a field.
+              </li>
+              <li>Click the small &ldquo;↓ bottom&rdquo; link beside a table title to jump.</li>
+              <li>
+                Use the setup block to add or remove categories and payment methods. Removed items
+                still appear as &ldquo;(legacy)&rdquo; in old rows.
+              </li>
+            </ul>
+          </Step>
 
-        <Section id="tips" title="10) Tips & shortcuts">
-          <ul className="list-disc space-y-1 pl-5 text-sm">
-            <li>
-              <Kbd>Alt</Kbd> + <Kbd>A</Kbd> adds a new credit card expense row (when not typing).
-            </li>
-            <li>Click the small &ldquo;&darr; bottom&rdquo; link below a table header to jump.</li>
-            <li>
-              Use the Configuration block to add or remove Categories and Payment Methods. Removed
-              items still appear as &ldquo;(legacy)&rdquo; in old rows.
-            </li>
-          </ul>
-        </Section>
+          <Step index={9}>
+            <p>
+              This is a client-side tool. It does not send your data anywhere. Your work exists in
+              the page while it is open. Export a file to save it for later.
+            </p>
+          </Step>
 
-        <Section id="privacy" title="11) Privacy">
-          <p className="text-sm">
-            This is a client-side tool. It doesn&rsquo;t send your data anywhere. Your work exists
-            in the page while it&rsquo;s open. Export a file to save it for later.
-          </p>
-        </Section>
+          <Step index={10}>
+            <ul>
+              <li>
+                <strong>I lost my data</strong>: if you did not export, the page does not keep your
+                data after closing or refreshing.
+              </li>
+              <li>
+                <strong>My totals look wrong</strong>: check for empty amounts or typos.
+              </li>
+              <li>
+                <strong>Import failed</strong>: make sure you exported from this tool.
+              </li>
+            </ul>
+          </Step>
+        </div>
 
-        <Section id="troubleshooting" title="12) Troubleshooting">
-          <ul className="list-disc space-y-1 pl-5 text-sm">
-            <li>
-              <strong>I lost my data</strong> &ndash; If you didn&rsquo;t export, the page
-              doesn&rsquo;t keep your data after closing or refreshing.
-            </li>
-            <li>
-              <strong>My totals look wrong</strong> &ndash; Check for empty amounts or typos.
-            </li>
-            <li>
-              <strong>Import failed</strong> &ndash; Make sure you exported from this tool.
-            </li>
-          </ul>
-        </Section>
-
-        <div className="my-4 h-px bg-border" />
-        <p className="text-xs text-muted-foreground">
-          Need improvements? Open an issue or contribute a pull request on the project repository.
-        </p>
+        <footer className="fx-statusbar mt-16">
+          <span>Need improvements?</span>
+          <span className="fx-dot" aria-hidden="true" />
+          <span>Open an issue or a pull request on the project repository</span>
+        </footer>
       </main>
     </div>
   );

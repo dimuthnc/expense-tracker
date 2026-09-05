@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ImportExportBar } from './ImportExportBar';
@@ -6,32 +7,43 @@ import { UserProfile } from './UserProfile';
 
 interface HeaderProps {
   title: string;
+  /** Mono marker above the title. Say *where* the reader is, not what the title says. */
+  eyebrow?: ReactNode;
   showImportExport?: boolean;
   docsLink?: boolean;
   backLink?: boolean;
 }
 
-export function Header({ title, showImportExport = true, docsLink = true, backLink = false }: HeaderProps) {
+export function Header({
+  title,
+  eyebrow,
+  showImportExport = true,
+  docsLink = true,
+  backLink = false,
+}: HeaderProps) {
   return (
-    <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
-      <h1 className="m-0 flex-1 text-xl font-semibold leading-tight">{title}</h1>
-      <div className="flex flex-wrap items-center gap-2">
+    <header className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-5 border-b border-rule pb-6">
+      <div className="min-w-0 flex-1">
+        {eyebrow && <p className="fx-eyebrow mb-2">{eyebrow}</p>}
+        <h1 className="fx-title">{title}</h1>
+      </div>
+      <div className="fx-cluster">
         {showImportExport && <ImportExportBar />}
-        <ThemeToggle />
         {docsLink && (
-          <Button size="sm" variant="secondary" asChild>
+          <Button size="sm" variant="outline" asChild>
             <Link to="/docs" title="Open documentation">
-              Documentation
+              Docs
             </Link>
           </Button>
         )}
         {backLink && (
-          <Button size="sm" variant="secondary" asChild>
+          <Button size="sm" variant="outline" asChild>
             <Link to="/" title="Back to app">
-              Back to App
+              Back to app
             </Link>
           </Button>
         )}
+        <ThemeToggle />
         <UserProfile />
       </div>
     </header>

@@ -24,8 +24,12 @@ export function FixedCostsTable() {
 
   return (
     <section className="mb-8">
-      <SectionHeader title="Fixed Costs" anchor="fixedcosts-bottom" />
-      <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+      <SectionHeader
+        title="Fixed costs"
+        anchor="fixedcosts-bottom"
+        meta={`${state.fixedCosts.length} ${state.fixedCosts.length === 1 ? 'row' : 'rows'}`}
+      />
+      <div className="overflow-hidden rounded border border-rule bg-surface">
         <Table>
           <TableHeader>
             <TableRow>
@@ -39,12 +43,12 @@ export function FixedCostsTable() {
           <TableBody>
             {state.fixedCosts.map((f) => (
               <TableRow key={f.id}>
-                <TableCell className="text-xs text-muted-foreground">{f.id}</TableCell>
+                <TableCell className="fx-figure font-mono text-micro text-ink-faint">{f.id}</TableCell>
                 <TableCell>
                   <Input
                     value={f.description}
                     placeholder="Description"
-                    className="h-8 text-xs"
+                    className="h-8"
                     onChange={(ev) =>
                       dispatch({
                         type: 'UPDATE_FIXED',
@@ -80,8 +84,8 @@ export function FixedCostsTable() {
                   <Button
                     type="button"
                     size="icon"
-                    variant="destructive"
-                    className="h-8 w-8"
+                    variant="ghost"
+                    className="h-8 w-8 text-ink-faint hover:bg-signal-wash hover:text-signal"
                     aria-label="Delete row"
                     onClick={() => dispatch({ type: 'DELETE_ROW', table: 'fixedCosts', id: f.id })}
                   >
@@ -96,16 +100,14 @@ export function FixedCostsTable() {
               <TableHead colSpan={2} className="bg-footer text-right">
                 Total:
               </TableHead>
-              <TableHead className="bg-footer text-right tabular-nums">
-                {formatCurrency(total)}
-              </TableHead>
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
+              <TableCell className="bg-footer fx-figure px-3 text-right font-display text-small font-semibold text-machine">{formatCurrency(total)}</TableCell>
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
             </TableRow>
           </TableFooter>
         </Table>
       </div>
-      <div id="fixedcosts-bottom" className="mt-2">
+      <div id="fixedcosts-bottom" className="mt-3">
         <Button size="sm" onClick={() => dispatch({ type: 'ADD_ROW', table: 'fixedCosts' })}>
           Add Fixed Cost
         </Button>

@@ -14,7 +14,7 @@
       property="og:description"
       content="Client-side expense tracker to manage credit card and cash spending, installments and fixed costs, with live summaries, charts, and JSON import/export."
     />
-    <meta property="og:image" content="/screenshots/main-light.png" />
+    <meta property="og:image" content="/screenshots/main-dark.png" />
     <meta property="og:image:alt" content="Personal Expense Manager dashboard screenshot" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Personal Expense Manager" />
@@ -22,9 +22,32 @@
       name="twitter:description"
       content="Client-side expense tracker to manage credit card and cash spending, installments and fixed costs, with live summaries, charts, and JSON import/export."
     />
-    <meta name="twitter:image" content="/screenshots/main-light.png" />
+    <meta name="twitter:image" content="/screenshots/main-dark.png" />
+
+    <!-- Apply the stored theme before first paint so a light-theme user never sees a dark flash.
+         Must stay in sync with useTheme (storage key + attribute/class names). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('et_theme');
+          var root = document.documentElement;
+          if (t === 'light') {
+            root.setAttribute('data-fx-theme', 'light');
+          } else {
+            root.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body>
+  <body class="fx-page">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -24,15 +24,19 @@ export function CashExpensesTable() {
 
   return (
     <section className="mb-8">
-      <SectionHeader title="Cash Expenses" anchor="cash-bottom" />
-      <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+      <SectionHeader
+        title="Cash expenses"
+        anchor="cash-bottom"
+        meta={`${state.cashExpenses.length} ${state.cashExpenses.length === 1 ? 'row' : 'rows'}`}
+      />
+      <div className="overflow-hidden rounded border border-rule bg-surface">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-16">ID</TableHead>
               <TableHead>Description</TableHead>
               <TableHead className="w-32 text-right">Amount</TableHead>
-              <TableHead className="w-40">Payment Method</TableHead>
+              <TableHead className="w-40">Payment method</TableHead>
               <TableHead className="w-40">Category</TableHead>
               <TableHead className="w-16 text-center">Actions</TableHead>
             </TableRow>
@@ -40,12 +44,12 @@ export function CashExpensesTable() {
           <TableBody>
             {state.cashExpenses.map((c) => (
               <TableRow key={c.id}>
-                <TableCell className="text-xs text-muted-foreground">{c.id}</TableCell>
+                <TableCell className="fx-figure font-mono text-micro text-ink-faint">{c.id}</TableCell>
                 <TableCell>
                   <Input
                     value={c.description}
                     placeholder="Description"
-                    className="h-8 text-xs"
+                    className="h-8"
                     onChange={(ev) =>
                       dispatch({
                         type: 'UPDATE_CASH',
@@ -87,8 +91,8 @@ export function CashExpensesTable() {
                   <Button
                     type="button"
                     size="icon"
-                    variant="destructive"
-                    className="h-8 w-8"
+                    variant="ghost"
+                    className="h-8 w-8 text-ink-faint hover:bg-signal-wash hover:text-signal"
                     aria-label="Delete row"
                     onClick={() => dispatch({ type: 'DELETE_ROW', table: 'cashExpenses', id: c.id })}
                   >
@@ -103,17 +107,15 @@ export function CashExpensesTable() {
               <TableHead colSpan={2} className="bg-footer text-right">
                 Total:
               </TableHead>
-              <TableHead className="bg-footer text-right tabular-nums">
-                {formatCurrency(total)}
-              </TableHead>
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
-              <TableHead className="bg-footer" />
+              <TableCell className="bg-footer fx-figure px-3 text-right font-display text-small font-semibold text-machine">{formatCurrency(total)}</TableCell>
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
+              <TableCell className="bg-footer" />
             </TableRow>
           </TableFooter>
         </Table>
       </div>
-      <div id="cash-bottom" className="mt-2">
+      <div id="cash-bottom" className="mt-3">
         <Button size="sm" onClick={() => dispatch({ type: 'ADD_ROW', table: 'cashExpenses' })}>
           Add Cash Expense
         </Button>

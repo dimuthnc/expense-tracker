@@ -32,24 +32,24 @@ export function UserProfile() {
               src={user.picture}
               alt=""
               referrerPolicy="no-referrer"
-              className="h-6 w-6 rounded-full"
+              className="h-6 w-6 rounded-pill border border-rule-strong"
             />
           ) : (
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-medium">
+            <span className="flex h-6 w-6 items-center justify-center rounded-pill border border-human-edge bg-human-wash font-mono text-micro font-bold text-human">
               {initial}
             </span>
           )}
-          <span className="hidden max-w-[10rem] truncate sm:inline">{user.name}</span>
+          <span className="hidden max-w-[10rem] truncate text-small sm:inline">{user.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="truncate text-sm font-medium">{user.name}</div>
-          <div className="truncate text-xs text-muted-foreground">{user.email}</div>
+        <DropdownMenuLabel>
+          <div className="truncate text-small font-medium text-ink">{user.name}</div>
+          <div className="truncate text-micro text-ink-dim">{user.email}</div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={handleLogout}>
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-3.5 w-3.5 text-ink-dim" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
