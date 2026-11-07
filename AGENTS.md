@@ -88,6 +88,7 @@ src/lib/                       authCookie, cycle, format, io, palette, utils (pu
 src/pages/                     Home, Docs, Login, Callback
 src/state/                     types, reducer, AppContext, selectors
 src/index.css                  Tailwind layers + the bridge from shadcn names onto fx tokens
+.claude/skills/expense-insights/  Agent skill for analysing exports (see §8); no personal data here
 functions/_middleware.js       Cloudflare edge auth gate (runs first)
 functions/[[path]].js          Cloudflare canonical Link header injection
 public/_redirects              SPA fallback: /* → /index.html 200
@@ -362,7 +363,19 @@ placeholder rows. There is currently **no `schemaVersion` field**; if the schema
 incompatibly, add one and branch in the `LOAD` case rather than silently reinterpreting old files.
 
 Rules for schema changes: add optional fields with defaults applied in `LOAD`, never rename or
-repurpose an existing key, and update this section plus the README schema block together.
+repurpose an existing key, and update this section, the README schema block, and the
+expense-insights skill together.
+
+### Analysing exports with AI agents
+
+`.claude/skills/expense-insights/` teaches an agent to read exports outside the app: `SKILL.md` covers
+the workflow and misreadings to avoid, `references/data-dictionary.md` the fields and formulas, and
+`scripts/load_exports.py` turns a folder of exports into CSVs. If the schema or `computeSummary`
+changes, update the dictionary and loader too.
+
+This repo is public, so the skill stays generic. Anything about the actual household (names, income,
+what a line means) belongs in `EXPENSE_PROFILE.md` beside the private data, and the loader's output
+defaults to a temp directory so it can't be committed by accident.
 
 ---
 
