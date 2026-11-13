@@ -76,6 +76,7 @@ src/components/
   SectionHeader, SectionMarker, StatusBar
   FinancialSummary, SummaryTables, ExpenseCharts, TopTransactions
   ImportCardCsvDialog          Card statement CSV import (hand-rolled modal, no Radix dialog dep)
+  ReportPanel                  Cycle report: format choice (HTML / PDF) + Generate button
   ProtectedRoute
   tables/                      ExpensesTable, InstallmentsTable, FixedCostsTable, CashExpensesTable
   ui/                          shadcn primitives (vendored, restyled onto factory-ui tokens)
@@ -85,6 +86,7 @@ src/hooks/                     useTheme, useAltAShortcut, useFxTokens
 src/lib/                       authCookie, cycle, format, io, palette, utils (pure helpers)
   cardCsv.ts                   Bank CSV tokenizer + DBS/POSB statement parser
   importPlan.ts                Dedup fingerprints and the new/duplicate/skipped classification
+  report.ts / report.css       Standalone cycle report document (see §8)
 src/pages/                     Home, Docs, Login, Callback
 src/state/                     types, reducer, AppContext, selectors
 src/index.css                  Tailwind layers + the bridge from shadcn names onto fx tokens
@@ -366,6 +368,39 @@ Rules for schema changes: add optional fields with defaults applied in `LOAD`, n
 repurpose an existing key, and update this section, the README schema block, and the
 expense-insights skill together.
 
+### Cycle report (HTML / PDF)
+
+`ReportPanel` sits at the bottom of `Home` (under the "Report" marker) and turns the cycle into a
+read-only document: everything the Summary section shows — the summary figures, both
+distributions, the top 10 — followed by every row of the four ledgers. It is a **presentation**
+format, not a backup: nothing can be imported from it, and JSON stays the only restore path.
+
+- `src/lib/report.ts` — `buildReportHtml(state, { theme, now? })` returns one self-contained HTML
+  string. It is built as a string, not rendered from the React tree, so the same document serves
+  both formats and carries no app code. Every figure comes from the selectors and the ledgers come
+  from `toDataModel`, so the report lists exactly what an export would hold.
+- **Theming.** `theme/tokens.css` and `src/lib/report.css` are imported with Vite's `?raw` and
+  inlined into the document, so the report resolves the same `--fx-*` tokens as the site and
+  follows whichever theme is active when the button is clicked (`data-fx-theme="light"` on its
+  `<html>`). A token change restyles the report with no further work; keep `report.css` on tokens
+  only. The donuts are hand-drawn SVG that take the accent through CSS, stepped with `rampAlphas`
+  from `palette.ts` — Recharts is not involved.
+- **HTML** is saved through `downloadBlob` as `expense_report_<cycleStart>_to_<cycleEnd>.html`.
+- **PDF** goes through the browser's own print pipeline (`printHtml` in `src/lib/io.ts`): the
+  document is loaded into an off-screen iframe and `print()` is called on it, and the user picks
+  "Save as PDF". This is deliberate — it yields a vector, selectable-text PDF with no PDF library
+  in the bundle. The cost is one extra click in the print dialog.
+- **Escaping is load-bearing.** Descriptions can come straight from a bank CSV, and the PDF path
+  loads the document into a same-origin frame. Every user string goes through `esc()`, and the
+  frame is sandboxed without `allow-scripts` as a second line of defence. Any new field added to
+  the report must be escaped the same way.
+- **Print layout.** `@page` margin is zero and the page gutters come from a layout table whose
+  header/footer groups repeat on every sheet (see the comment in `report.css`); `print-color-adjust:
+  exact` keeps the dark theme dark on paper. Ledger `tfoot`s are demoted to row groups so a total
+  prints once, at the end, instead of on every page.
+- The panel does not gate on the cycle being over. `cycleStatus` labels the report "Cycle closed"
+  from the end date onward; before that the report says it is a snapshot.
+
 ### Analysing exports with AI agents
 
 `.claude/skills/expense-insights/` teaches an agent to read exports outside the app: `SKILL.md` covers
@@ -509,6 +544,8 @@ the least friction, and the highest-value targets are the pure logic:
 6. `buildImportPlan`: re-importing an overlapping statement adds nothing; two identical charges on
    one day import as two rows; out-of-cycle, credit, and malformed lines are classified, not
    imported; dedup still holds after an export → import round trip.
+7. `buildReportHtml` (pass a fixed `now`): markup in a description comes out escaped; ledger
+   totals match the selectors; blank rows are absent; `cycleStatus` across the start/end dates.
 
 Keep test tooling in `devDependencies` only; it must not reach the shipped bundle.
 
@@ -531,6 +568,11 @@ Keep test tooling in `devDependencies` only; it must not reach the shipped bundl
   charges, which are the commoner case.
 - Deleting an imported row and re-importing the same statement brings it back — the fingerprint
   records what was imported, not what was deliberately removed.
+- The PDF report depends on the browser's print dialog and its "Save as PDF" destination; the app
+  cannot choose the destination or write the file itself. Verified in Chromium; other engines may
+  paginate slightly differently.
+- The report's webfonts load from Google Fonts when the file is opened; offline it falls back to
+  system faces.
 - No service worker, so there is no true offline mode.
 - Tokens live in memory, so a hard refresh triggers a silent refresh-token round trip.
 

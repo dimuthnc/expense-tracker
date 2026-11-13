@@ -9,16 +9,26 @@
  */
 export function generatePalette(count: number, base: string): string[] {
   const rgb = parseColor(base);
+  return rampAlphas(count).map(
+    (alpha) => `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha.toFixed(3)})`,
+  );
+}
+
+/**
+ * The opacity steps behind `generatePalette`, on their own for callers that can
+ * apply the accent through CSS (`var(--fx-machine)` + an opacity) and so never
+ * need the resolved colour — the standalone cycle report does this.
+ */
+export function rampAlphas(count: number): number[] {
   const n = Math.max(count, 1);
   const maxAlpha = 1;
   const minAlpha = n > 6 ? 0.18 : 0.28;
-  const colors: string[] = [];
+  const alphas: number[] = [];
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0 : i / (n - 1);
-    const alpha = maxAlpha - (maxAlpha - minAlpha) * t;
-    colors.push(`rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha.toFixed(3)})`);
+    alphas.push(maxAlpha - (maxAlpha - minAlpha) * t);
   }
-  return colors;
+  return alphas;
 }
 
 function parseColor(input: string): [number, number, number] {

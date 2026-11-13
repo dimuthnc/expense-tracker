@@ -1,0 +1,510 @@
+/* ==========================================================================
+   Cycle report stylesheet.
+
+   Inlined (with theme/tokens.css ahead of it) into the standalone document
+   that src/lib/report.ts builds, so the report is one self-contained file.
+   It is never loaded by the app itself. Everything resolves to an --fx-*
+   token: the report follows the site's theme because it carries the same
+   tokens, not because it copies their values.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Without this, browsers drop backgrounds when printing and the dark theme
+     comes out as pale text on white paper. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background-color: var(--fx-bg);
+}
+
+body {
+  margin: 0;
+  background-color: var(--fx-bg);
+  background-image: var(--fx-glow);
+  background-attachment: fixed;
+  color: var(--fx-ink);
+  font-family: var(--fx-font-body);
+  font-size: var(--fx-text-body);
+  line-height: var(--fx-leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.rp-shell {
+  width: min(100% - var(--fx-5) * 2, 68rem);
+  margin-inline: auto;
+  padding-block: var(--fx-7);
+}
+
+/* --- Type ----------------------------------------------------------------- */
+
+.rp-label {
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  font-weight: 500;
+  letter-spacing: var(--fx-track-label);
+  text-transform: uppercase;
+  color: var(--fx-ink-dim);
+}
+
+.rp-meta {
+  margin-top: var(--fx-1);
+  font-size: var(--fx-text-micro);
+  color: var(--fx-ink-faint);
+}
+
+.rp-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.rp-faint {
+  color: var(--fx-ink-faint);
+}
+
+.rp-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fx-2);
+  margin: 0 0 var(--fx-4);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  font-weight: 500;
+  letter-spacing: var(--fx-track-label);
+  text-transform: uppercase;
+  color: var(--fx-signal);
+}
+
+.rp-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+.rp-title {
+  margin: 0;
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-title);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: var(--fx-track-tight);
+}
+
+.rp-title em {
+  font-family: var(--fx-font-quote);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--fx-thought);
+  letter-spacing: 0;
+}
+
+.rp-lead {
+  margin: var(--fx-3) 0 0;
+  max-width: var(--fx-measure);
+  font-size: var(--fx-text-small);
+  color: var(--fx-ink-dim);
+}
+
+h2 {
+  margin: 0 0 var(--fx-3);
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-lead);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--fx-track-tight);
+  break-after: avoid;
+}
+
+h2 .rp-label {
+  margin-left: var(--fx-3);
+  color: var(--fx-ink-faint);
+}
+
+h3 {
+  margin: 0 0 var(--fx-3);
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-body);
+  font-weight: 600;
+  line-height: 1.2;
+  break-after: avoid;
+}
+
+/* --- Structure ------------------------------------------------------------ */
+
+.rp-marker {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-4);
+  margin: var(--fx-8) 0 var(--fx-5);
+  break-after: avoid;
+}
+
+.rp-marker p {
+  margin: 0;
+}
+
+.rp-marker hr {
+  flex: 1;
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--fx-rule);
+}
+
+.rp-section {
+  margin-bottom: var(--fx-6);
+}
+
+.rp-grid {
+  display: grid;
+  gap: var(--fx-4);
+}
+
+.rp-grid + .rp-grid {
+  margin-top: var(--fx-4);
+}
+
+.rp-grid--hero {
+  grid-template-columns: 2fr 1fr;
+}
+
+.rp-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rp-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rp-stack {
+  display: grid;
+  gap: var(--fx-4);
+}
+
+.rp-panel {
+  padding: var(--fx-5);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-rule);
+  border-radius: var(--fx-radius);
+  break-inside: avoid;
+}
+
+.rp-panel--machine,
+.rp-panel--human,
+.rp-panel--signal {
+  padding-left: var(--fx-6);
+  border-left-width: var(--fx-bar);
+}
+
+.rp-panel--machine { border-left-color: var(--fx-machine); }
+.rp-panel--human   { border-left-color: var(--fx-human); }
+.rp-panel--signal  { border-left-color: var(--fx-signal); }
+
+/* A ledger can run to many pages, so unlike the other panels it may split. */
+.rp-panel--table {
+  padding: var(--fx-4) var(--fx-4) var(--fx-4) var(--fx-5);
+  break-inside: auto;
+}
+
+.rp-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--fx-4);
+}
+
+.rp-tile__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--fx-3);
+}
+
+.rp-value {
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-lead);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--fx-track-tight);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.rp-value--large { font-size: var(--fx-text-title); }
+.rp-value--loud  { font-size: var(--fx-text-display); }
+
+.rp-machine { color: var(--fx-machine); }
+.rp-human   { color: var(--fx-human); }
+.rp-signal  { color: var(--fx-signal); }
+
+.rp-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem var(--fx-3);
+  border: 1px solid var(--fx-rule-strong);
+  border-radius: var(--fx-radius-sm);
+  background: var(--fx-surface);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fx-ink-dim);
+  white-space: nowrap;
+}
+
+.rp-tag--machine {
+  border-color: var(--fx-machine-edge);
+  background: var(--fx-machine-wash);
+  color: var(--fx-machine);
+}
+
+.rp-tag--thought {
+  border-color: var(--fx-thought-edge);
+  background: var(--fx-thought-wash);
+  color: var(--fx-thought);
+}
+
+.rp-tag--signal {
+  border-color: transparent;
+  background: var(--fx-signal);
+  color: var(--fx-bg-deep);
+  font-weight: 700;
+}
+
+/* --- Tables --------------------------------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fx-text-small);
+}
+
+th,
+td {
+  padding: var(--fx-2) var(--fx-3);
+  border-bottom: 1px solid var(--fx-rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+thead th {
+  border-bottom-color: var(--fx-rule-strong);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  font-weight: 500;
+  letter-spacing: var(--fx-track-label);
+  text-transform: uppercase;
+  color: var(--fx-ink-dim);
+  white-space: nowrap;
+}
+
+tbody tr {
+  break-inside: avoid;
+}
+
+td.rp-desc {
+  overflow-wrap: anywhere;
+}
+
+/* A footer group repeats on every printed sheet by default; a total that
+   shows up mid-ledger reads as a subtotal it is not. */
+tfoot {
+  display: table-row-group;
+}
+
+tfoot td {
+  border-bottom: 0;
+  background: var(--fx-surface-raised);
+  font-family: var(--fx-font-display);
+  font-weight: 600;
+}
+
+tfoot td.rp-label {
+  font-family: var(--fx-font-mono);
+  font-weight: 500;
+}
+
+.rp-r { text-align: right; }
+.rp-c { text-align: center; }
+
+.rp-idx {
+  width: 1%;
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  color: var(--fx-ink-faint);
+  white-space: nowrap;
+}
+
+.rp-empty {
+  margin: 0;
+  font-size: var(--fx-text-small);
+  color: var(--fx-ink-faint);
+}
+
+/* --- Distribution --------------------------------------------------------- */
+
+.rp-dist {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--fx-5);
+}
+
+.rp-donut {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.rp-donut circle {
+  fill: none;
+  stroke: var(--fx-machine);
+}
+
+.rp-donut circle.rp-donut__empty {
+  stroke: var(--fx-rule-strong);
+}
+
+/* Swatch and name share a row so a long name wraps beside its swatch, not under it. */
+.rp-key {
+  display: flex;
+  align-items: baseline;
+  gap: var(--fx-2);
+  /* Not `anywhere`: that would let the column shrink until names split mid-word. */
+  overflow-wrap: break-word;
+}
+
+.rp-swatch {
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: var(--fx-radius-sm);
+  background: var(--fx-machine);
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.rp-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--fx-3);
+  margin-top: var(--fx-8);
+  padding-top: var(--fx-4);
+  border-top: 1px solid var(--fx-rule);
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fx-ink-faint);
+}
+
+.rp-footer__end {
+  margin-left: auto;
+}
+
+/* --- Narrow screens ------------------------------------------------------- */
+
+@media screen and (max-width: 46rem) {
+  .rp-grid--hero,
+  .rp-grid--2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rp-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rp-dist {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rp-donut {
+    max-width: 9rem;
+    margin-inline: auto;
+  }
+
+  .rp-panel--table {
+    overflow-x: auto;
+  }
+}
+
+/* --- Paper ----------------------------------------------------------------
+   The page margin is zero and the gutters are drawn by the document itself:
+   left to @page, the margins would not reliably take the page colour, and on
+   the dark theme that frames every sheet in white. `.rp-frame` is a layout
+   table for one reason only — a table's header and footer groups repeat on
+   every printed sheet, which is what puts a gutter at the top and bottom of
+   each page rather than only the first and last. On screen it is flattened
+   back to plain blocks. */
+
+.rp-frame {
+  font-size: inherit;
+}
+
+.rp-frame > * > tr > td {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+}
+
+@media screen {
+  .rp-frame,
+  .rp-frame > tbody,
+  .rp-frame > tbody > tr,
+  .rp-frame > tbody > tr > td {
+    display: block;
+  }
+
+  .rp-frame > .rp-gutter {
+    display: none;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  /* Type is rem-based, so one ratio here scales the whole report to paper. */
+  html {
+    font-size: 68.75%;
+  }
+
+  body {
+    background-image: none;
+  }
+
+  .rp-frame > tfoot {
+    display: table-footer-group;
+  }
+
+  .rp-frame > .rp-gutter > tr > td {
+    height: 12mm;
+  }
+
+  .rp-shell {
+    width: auto;
+    margin-inline: 12mm;
+    padding-block: 0;
+  }
+
+  .rp-marker {
+    margin-top: var(--fx-6);
+  }
+
+  .rp-dist {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: var(--fx-4);
+  }
+}

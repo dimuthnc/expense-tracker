@@ -4,6 +4,7 @@ import { CycleSelector } from '@/components/CycleSelector';
 import { ExpenseCharts } from '@/components/ExpenseCharts';
 import { FinancialSummary } from '@/components/FinancialSummary';
 import { Header } from '@/components/Header';
+import { ReportPanel } from '@/components/ReportPanel';
 import { SectionMarker } from '@/components/SectionMarker';
 import { StatusBar } from '@/components/StatusBar';
 import { SummaryTables } from '@/components/SummaryTables';
@@ -53,6 +54,9 @@ export function Home() {
       <FinancialSummary />
       <ExpenseCharts />
       <TopTransactions />
+
+      <SectionMarker>Report</SectionMarker>
+      <ReportPanel />
 
       <StatusBar />
     </div>
