@@ -183,9 +183,9 @@ payments, and any line the parser could not read.
 ### Cycle report (HTML / PDF)
 
 At the bottom of the page, the **Cycle report** panel turns the cycle into a document you can
-keep or share: the full summary (remaining budget, per-day figure, income, savings target, the
-four ledger totals, both distributions, the top 10) followed by every transaction in the four
-ledgers. Pick a format and click **Generate report**.
+keep or share: the summary (income, amount saved, the four ledger totals, both distributions, the
+top 10) followed by every transaction in the four ledgers. Remaining budget, the per-day figure
+and days remaining are left out, since they only mean something while a cycle is still running. Pick a format and click **Generate report**.
 
 * **HTML** downloads one self-contained file, `expense_report_<start>_to_<end>.html`.
 * **PDF** opens the browser's print dialog with the report loaded; choose **Save as PDF** as the

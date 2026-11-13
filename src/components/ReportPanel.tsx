@@ -68,8 +68,8 @@ export function ReportPanel() {
             </span>
           </div>
           <p className="m-0 mt-3 text-small text-ink-dim">
-            Everything in the summary above, followed by every transaction in the four ledgers, in
-            the theme you are using now.
+            Income, savings, totals and distributions, followed by every transaction in the four
+            ledgers, in the theme you are using now.
             {!status.closed && daysRemaining > 0 && (
               <>
                 {' '}

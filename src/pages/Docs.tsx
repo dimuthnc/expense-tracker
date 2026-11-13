@@ -282,7 +282,8 @@ export function Docs() {
             <p>
               When a cycle is over, scroll to the <strong>Cycle report</strong> panel at the bottom
               of the page, choose a format, and click <strong>Generate report</strong>. The report
-              holds everything in the summary, followed by every transaction in the four ledgers.
+              holds your income, what you saved, the totals and charts, then every transaction in the
+              four ledgers.
             </p>
             <ul>
               <li>

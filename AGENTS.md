@@ -371,8 +371,10 @@ expense-insights skill together.
 ### Cycle report (HTML / PDF)
 
 `ReportPanel` sits at the bottom of `Home` (under the "Report" marker) and turns the cycle into a
-read-only document: everything the Summary section shows — the summary figures, both
-distributions, the top 10 — followed by every row of the four ledgers. It is a **presentation**
+read-only document: the summary figures, both distributions and the top 10, followed by every
+row of the four ledgers. The report looks back on a cycle, so it deliberately **omits** the
+forward-looking figures the live summary leads with (remaining budget, per day, days remaining)
+and labels `expectedSavings` as **Saved** rather than "Savings target". It is a **presentation**
 format, not a backup: nothing can be imported from it, and JSON stays the only restore path.
 
 - `src/lib/report.ts` — `buildReportHtml(state, { theme, now? })` returns one self-contained HTML

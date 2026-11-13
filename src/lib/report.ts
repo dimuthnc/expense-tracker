@@ -105,10 +105,10 @@ export function makeReportBasename(state: Pick<AppState, 'cycleStart' | 'cycleEn
   return `expense_report_${span}`;
 }
 
-function tile(label: string, meta: string, value: string, valueClass = ''): string {
+function tile(label: string, meta: string, value: string): string {
   return `<div class="rp-panel rp-tile">
   <div><div class="rp-label">${label}</div><div class="rp-meta">${meta}</div></div>
-  <div class="rp-value ${valueClass}">${value}</div>
+  <div class="rp-value">${value}</div>
 </div>`;
 }
 
@@ -119,39 +119,26 @@ function humanTile(label: string, meta: string, value: number): string {
 </div>`;
 }
 
+/**
+ * The report is the cycle looked back on, so the forward-looking figures the
+ * live summary leads with — remaining budget, per day, days remaining — are
+ * left out, and the savings figure is labelled as what was saved rather than
+ * as a target.
+ */
 function summarySection(state: AppState): string {
   const s = computeSummary(state);
-  const over = s.remainingBudget < 0;
-  const perDay = s.remainingPerDay == null ? 'n/a' : formatCurrency(s.remainingPerDay);
-  const perDayTone = s.remainingPerDay != null && s.remainingPerDay < 0 ? 'rp-signal' : 'rp-machine';
 
   return `<section class="rp-section">
 <h2>Summary</h2>
-<div class="rp-grid rp-grid--hero">
-  <div class="rp-panel ${over ? 'rp-panel--signal' : 'rp-panel--machine'} rp-tile">
-    <div class="rp-tile__head">
-      <div>
-        <div class="rp-label">Remaining budget</div>
-        <div class="rp-meta">Income − (card + installments + fixed + savings)</div>
-      </div>
-      <span class="rp-tag ${over ? 'rp-tag--signal' : 'rp-tag--machine'}">${over ? 'Over budget' : 'On track'}</span>
-    </div>
-    <div class="rp-value rp-value--loud ${over ? 'rp-signal' : 'rp-machine'}">${formatCurrency(s.remainingBudget)}</div>
-  </div>
-  <div class="rp-stack">
-    ${tile('Per day', 'Remaining ÷ days left', perDay, `rp-value--large ${perDayTone}`)}
-    ${tile('Days remaining', `Of ${plural(s.totalDays, 'day')} in the cycle`, String(s.daysRemaining), 'rp-value--large rp-machine')}
-  </div>
-</div>
 <div class="rp-grid rp-grid--2">
   ${humanTile('Expected income', 'Take-home or budgeted income for this cycle', parseFloat(state.expectedIncome) || 0)}
-  ${humanTile('Savings target', 'What you plan to set aside', s.projectedSavings)}
+  ${humanTile('Saved', 'Set aside this cycle', s.projectedSavings)}
 </div>
 <div class="rp-grid rp-grid--4">
   ${tile('Card bill', 'Credit card expenses', formatCurrency(s.cardTotal))}
   ${tile('Installments', 'Monthly amounts', formatCurrency(s.monthlyInstallments))}
   ${tile('Fixed costs', 'Recurring obligations', formatCurrency(s.fixedCosts))}
-  ${tile('Cash', 'Cash, transfer, wallet · not in remaining budget', formatCurrency(s.cashExpenses))}
+  ${tile('Cash', 'Cash, transfer, wallet', formatCurrency(s.cashExpenses))}
 </div>
 </section>`;
 }

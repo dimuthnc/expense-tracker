@@ -171,21 +171,12 @@ h3 {
   margin-top: var(--fx-4);
 }
 
-.rp-grid--hero {
-  grid-template-columns: 2fr 1fr;
-}
-
 .rp-grid--2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .rp-grid--4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.rp-stack {
-  display: grid;
-  gap: var(--fx-4);
 }
 
 .rp-panel {
@@ -197,15 +188,13 @@ h3 {
 }
 
 .rp-panel--machine,
-.rp-panel--human,
-.rp-panel--signal {
+.rp-panel--human {
   padding-left: var(--fx-6);
   border-left-width: var(--fx-bar);
 }
 
 .rp-panel--machine { border-left-color: var(--fx-machine); }
 .rp-panel--human   { border-left-color: var(--fx-human); }
-.rp-panel--signal  { border-left-color: var(--fx-signal); }
 
 /* A ledger can run to many pages, so unlike the other panels it may split. */
 .rp-panel--table {
@@ -220,14 +209,6 @@ h3 {
   gap: var(--fx-4);
 }
 
-.rp-tile__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--fx-3);
-}
-
 .rp-value {
   font-family: var(--fx-font-display);
   font-size: var(--fx-text-lead);
@@ -238,12 +219,8 @@ h3 {
   overflow-wrap: anywhere;
 }
 
-.rp-value--large { font-size: var(--fx-text-title); }
-.rp-value--loud  { font-size: var(--fx-text-display); }
-
 .rp-machine { color: var(--fx-machine); }
 .rp-human   { color: var(--fx-human); }
-.rp-signal  { color: var(--fx-signal); }
 
 .rp-tag {
   display: inline-flex;
@@ -270,13 +247,6 @@ h3 {
   border-color: var(--fx-thought-edge);
   background: var(--fx-thought-wash);
   color: var(--fx-thought);
-}
-
-.rp-tag--signal {
-  border-color: transparent;
-  background: var(--fx-signal);
-  color: var(--fx-bg-deep);
-  font-weight: 700;
 }
 
 /* --- Tables --------------------------------------------------------------- */
@@ -414,7 +384,6 @@ tfoot td.rp-label {
 /* --- Narrow screens ------------------------------------------------------- */
 
 @media screen and (max-width: 46rem) {
-  .rp-grid--hero,
   .rp-grid--2 {
     grid-template-columns: minmax(0, 1fr);
   }
