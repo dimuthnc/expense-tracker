@@ -25,6 +25,7 @@ Offline note: The app is fully client-side and can be saved locally (File > Save
 | Live Projections | ✅ | Spend projection, bill projection, savings calc |
 | Import / Export JSON | ✅ | Full data model + expected income + configurable lists |
 | Import / Export CSV | ❌ (Removed) | JSON covers backup/restore |
+| Cycle report (HTML / PDF) | ✅ | Themed summary + every transaction, generated from the bottom of the page |
 | Card statement CSV import | ✅ | One-way import of a DBS/POSB unbilled transactions export, with duplicate detection |
 | Expected Income Field | ✅ | Drives savings metric; persisted in export |
 | Theme Toggle | ✅ | Dark (default) and light, factory-ui design system (header button, persisted) |
@@ -178,6 +179,22 @@ duplicate detection survives a backup and restore.
 The preview also reports what will *not* be imported: transactions dated outside the current
 billing cycle (switch cycle and import the same file again to pick them up), refunds and card
 payments, and any line the parser could not read.
+
+### Cycle report (HTML / PDF)
+
+At the bottom of the page, the **Cycle report** panel turns the cycle into a document you can
+keep or share: the full summary (remaining budget, per-day figure, income, savings target, the
+four ledger totals, both distributions, the top 10) followed by every transaction in the four
+ledgers. Pick a format and click **Generate report**.
+
+* **HTML** downloads one self-contained file, `expense_report_<start>_to_<end>.html`.
+* **PDF** opens the browser's print dialog with the report loaded; choose **Save as PDF** as the
+  destination.
+
+The report uses the same theme tokens as the site and follows the theme you are in when you click
+— dark stays dark, including in the PDF. It can be generated at any time; before the cycle's end
+date it is labelled as a snapshot. A report is for reading, not for restoring: keep exporting JSON
+for backups.
 
 ### JSON Schema
 

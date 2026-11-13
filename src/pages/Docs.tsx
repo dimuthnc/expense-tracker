@@ -10,6 +10,7 @@ const STEPS = [
   { id: 'summary', title: 'Read the summary' },
   { id: 'importCsv', title: 'Import your card statement (CSV)' },
   { id: 'importExport', title: 'Import & export (JSON)' },
+  { id: 'report', title: 'Generate the cycle report' },
   { id: 'themes', title: 'Themes' },
   { id: 'tips', title: 'Tips & shortcuts' },
   { id: 'privacy', title: 'Privacy' },
@@ -279,12 +280,38 @@ export function Docs() {
 
           <Step index={8}>
             <p>
+              When a cycle is over, scroll to the <strong>Cycle report</strong> panel at the bottom
+              of the page, choose a format, and click <strong>Generate report</strong>. The report
+              holds everything in the summary, followed by every transaction in the four ledgers.
+            </p>
+            <ul>
+              <li>
+                <strong>HTML</strong>: downloads a single file you can open in any browser.
+              </li>
+              <li>
+                <strong>PDF</strong>: opens the print dialog with the report loaded. Choose{' '}
+                <strong>Save as PDF</strong> as the destination.
+              </li>
+            </ul>
+            <p>
+              The report follows the theme you are using when you click, so switch theme first if
+              you want the other look.
+            </p>
+            <Aside>
+              A report is for reading and sharing. It cannot be imported back, so keep exporting
+              JSON for your backups. You can also generate one mid-cycle; it will say that it is a
+              snapshot.
+            </Aside>
+          </Step>
+
+          <Step index={9}>
+            <p>
               The app is dark by default. Use the sun / moon button in the header to switch to the
               light theme. Your choice is remembered and shared between pages and tabs.
             </p>
           </Step>
 
-          <Step index={9}>
+          <Step index={10}>
             <ul>
               <li>
                 <Kbd>Alt</Kbd> + <Kbd>A</Kbd> adds a new credit card expense row when you are not
@@ -298,14 +325,14 @@ export function Docs() {
             </ul>
           </Step>
 
-          <Step index={10}>
+          <Step index={11}>
             <p>
               This is a client-side tool. It does not send your data anywhere. Your work exists in
               the page while it is open. Export a file to save it for later.
             </p>
           </Step>
 
-          <Step index={11}>
+          <Step index={12}>
             <ul>
               <li>
                 <strong>I lost my data</strong>: if you did not export, the page does not keep your
